@@ -1,0 +1,97 @@
+name: CI/CD for Notebook nuxt.js service
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_URL: us-central1-docker.pkg.dev/notebook-service-442013/notebook-frontend/nb-nuxtjs
+  IMAGE_TAG: latest
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Nuxt.js
+        run: npm run build
+
+      # - name: Save build output
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: nuxt-build
+      #     path: .output
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
+  image-upload:
+    runs-on: ubuntu-latest
+    needs: test
+    environment: develop
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up GCP authentication
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCE_SA_KEY }}
+      - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+
+      # Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t $IMAGE_URL:$IMAGE_TAG .
+
+      # Push Docker image to Google Artifact Registry
+      - name: Push Docker image
+        run: |
+          docker push $IMAGE_URL:$IMAGE_TAG
+
+  deploy-to-staging:
+    runs-on: ubuntu-latest
+    needs: image-upload
+    environment: develop
+    env:
+      GCE_INSTANCE: ${{ vars.GCE_INSTANCE }}
+      GCE_ZONE: ${{ vars.GCE_ZONE }}
+    steps:
+      - name: Set up GCP authentication
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCE_SA_KEY }}
+      - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+
+      # Deploy Docker image to GCE instance
+      - name: Deploy to GCE
+        run: |
+          gcloud compute ssh $GCE_INSTANCE --zone=$GCE_ZONE --command="
+            sudo docker pull $IMAGE_URL:$IMAGE_TAG &&
+            sudo docker stop nb-frontend || true &&
+            sudo docker rm nb-frontend || true &&
+            sudo docker run -d --name nb-frontend -p 3000:3000 $IMAGE_URL:$IMAGE_TAG
+          "
