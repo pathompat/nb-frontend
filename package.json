@@ -11,12 +11,14 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.7.0",
     "nuxt": "^3.14.159",
     "vue": "latest",
     "vue-router": "latest",
     "vuetify-nuxt-module": "^0.18.3"
   },
   "devDependencies": {
+    "@nuxtjs/dotenv": "^1.4.2",
     "@vitejs/plugin-vue": "^5.2.0",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^15.11.6",
