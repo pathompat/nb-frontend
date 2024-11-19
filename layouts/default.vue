@@ -1,33 +1,34 @@
 <template>
-  <v-card>
-    <v-layout>
-      <v-navigation-drawer
-        v-model="drawer"
-        permanent
-      >
-        <v-list :items="items">
-          <v-list-item 
-            v-for="item in items"
-            :key="item.title"
-            :prepend-icon="item.icon"
-            :title="item.title"
-            :value="item.value"
-          >
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer>
+  <v-layout>
+    <v-navigation-drawer
+      v-model="drawer"
+      permanent
+    >
+      <v-list :items="items">
+        <v-list-item 
+          v-for="item in items"
+          :key="item.title"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          :value="item.value"
+        >
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
-      <v-app-bar color="primary" flat>
-        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+    <v-app-bar color="primary" flat>
+      <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title>Application</v-toolbar-title>
-      </v-app-bar>
+      <v-toolbar-title>Application</v-toolbar-title>
+    </v-app-bar>
 
-      <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
+    <v-main class="d-flex align-center justify-center">
+      <v-container>
         <slot></slot>
-      </v-main>
-    </v-layout>
-  </v-card>
+      </v-container>
+    </v-main>
+
+  </v-layout>
 </template>
 
 <script setup lang="ts">
