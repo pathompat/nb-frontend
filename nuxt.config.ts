@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
-  compatibilityDate: '2024-04-03',
+  compatibilityDate: '2024-11-20',
   devtools: { enabled: true },
   modules: ['vuetify-nuxt-module', '@pinia/nuxt'],
   pinia: {
@@ -13,12 +13,13 @@ export default defineNuxtConfig({
     },
     vuetifyOptions: './vuetify.config.ts'
   },
+  // config for dev local
   nitro: {
     devProxy: {
         "/api": {
-            target: process.env.API_URL,
+            target: process.env.BASE_URL || 'https://test-nb.pathompat.me/api',
             changeOrigin: true,
         }
     }
-},
+  },
 })
