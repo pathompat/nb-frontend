@@ -1,10 +1,23 @@
 <template>
   <main>
     <div class="d-flex justify-space-between mx-8">
-      <h1>แบบฟอร์มสั่งผลิต #{{ production?.id }}</h1>
+      <h1>
+        แบบฟอร์มสั่งผลิต
+        {{ props.id ? `#PR${props.id.toString().padStart(5, "0")}` : "" }}
+      </h1>
       <div class="d-flex ga-2">
-        <v-btn variant="flat" color="success">ใบเสนอราคา</v-btn>
-        <v-btn variant="flat" color="purple">เอกสารสั่งผลิต</v-btn>
+        <v-btn
+          variant="flat"
+          color="success"
+          :to="`/quotation/document/${props.id}`"
+          >ใบเสนอราคา</v-btn
+        >
+        <v-btn
+          variant="flat"
+          color="purple"
+          :to="`/production/document/${props.id}`"
+          >เอกสารสั่งผลิต</v-btn
+        >
       </div>
     </div>
     <section class="pa-8">
@@ -137,6 +150,7 @@ import useProductionApi, {
 const productApi = useProductionApi();
 const loading = ref(false);
 const production = ref<Production>(defaultForm());
+const router = useRouter();
 function defaultForm() {
   return {
     id: 0,
@@ -152,6 +166,7 @@ function defaultForm() {
     items: [],
   };
 }
+
 onMounted(async () => {
   defaultForm();
   if (props.id) {

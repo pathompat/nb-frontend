@@ -178,12 +178,13 @@ export default function useProductionApi() {
         });
       }
     },
-    async create(production: Production) {
+    async create(production: Production): Promise<Production> {
       try {
         const response = await postRequest<Production>(controller, production);
         return response;
       } catch (error) {
         return new Promise((resolve) => {
+          production.id = mockProductions.length + 1;
           mockProductions.push(production);
           setTimeout(() => {
             resolve(production);

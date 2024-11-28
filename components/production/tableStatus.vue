@@ -40,7 +40,7 @@
             <v-btn
               variant="outlined"
               class="text-primary"
-              :to="`/production/${item.id}`"
+              :to="`/quotation/${item.id}`"
               >รายละเอียด</v-btn
             >
           </td>
