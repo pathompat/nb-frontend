@@ -18,7 +18,6 @@
 
     <v-app-bar color="primary" flat>
       <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-
       <v-toolbar-title>Application</v-toolbar-title>
     </v-app-bar>
 
