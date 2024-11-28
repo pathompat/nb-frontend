@@ -80,26 +80,9 @@ const items = ref<MenuItem[]>([
     icon: "mdi-folder",
   },
   {
-    title: "แดชบอร์ด",
-    value: "/dashboard",
-    icon: "mdi-collage",
-  },
-  {
     title: "จัดการ User",
     value: "/user",
     icon: "mdi-account-multiple",
-    tier: TIER.ADMIN,
-  },
-  {
-    title: "จัดการโรงเรียน",
-    value: "/school",
-    icon: "mdi-school",
-    tier: TIER.ADMIN,
-  },
-  {
-    title: "ใบเสนอราคา",
-    value: "/quotation",
-    icon: "mdi-invoice",
     tier: TIER.ADMIN,
   },
 ]);
