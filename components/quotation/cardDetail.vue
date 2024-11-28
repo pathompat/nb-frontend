@@ -3,9 +3,7 @@
     <div class="d-flex justify-space-between mx-8">
       <h1>แบบฟอร์มสั่งผลิต #{{ production?.id }}</h1>
       <div class="d-flex ga-2">
-        <v-btn variant="flat" color="success" @click="pdfForm.download()"
-          >ใบเสนอราคา</v-btn
-        >
+        <v-btn variant="flat" color="success">ใบเสนอราคา</v-btn>
         <v-btn variant="flat" color="purple">เอกสารสั่งผลิต</v-btn>
       </div>
     </div>
@@ -135,9 +133,8 @@ import useProductionApi, {
   statusColors,
   type Production,
 } from "@/composables/api/useProductionApi";
-import { quotationFormPdf } from "@/pdfForm/quotationForm";
-const pdfForm = quotationFormPdf();
 const productApi = useProductionApi();
+
 const loading = ref(false);
 const production = ref<Production>({
   id: 0,
@@ -149,7 +146,6 @@ const production = ref<Production>({
   address: "",
   dueDate: "",
   estimateDate: "",
-  status: PRINTSTATUS.OUTBOUND,
   items: [],
 });
 onMounted(async () => {
