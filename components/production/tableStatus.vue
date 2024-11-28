@@ -28,11 +28,12 @@
               class="text-white"
               :style="{
                 backgroundColor:
-                  statusColors.find((s) => s.id === item.status)?.color ||
-                  'gray',
+                  statusColors.find(
+                    (s) => s.id === getItemLowestStatus(item.items)
+                  )?.color || 'gray',
               }"
             >
-              {{ getStatusTitle(item.status) }}
+              {{ getStatusTitle(getItemLowestStatus(item.items)) }}
             </v-chip>
           </td>
           <td>
@@ -123,6 +124,7 @@ import useProductionApi, {
   getStatusTitle,
   plates,
   lines,
+  type ProductionItem,
 } from "@/composables/api/useProductionApi";
 import { TIER } from "@/composables/api/useUserApi";
 import useStateTable from "@/composables/useStateTable";
@@ -131,6 +133,9 @@ const { tableState, pagination } = useStateTable<Production[]>();
 const { userProfile } = inject(contextPluginSymbol)!;
 const loading = ref(false);
 const productApi = useProductionApi();
+function getItemLowestStatus(items: ProductionItem[]) {
+  return items.sort((a, b) => a.status - b.status)[0].status;
+}
 onMounted(async () => {
   loading.value = true;
   try {

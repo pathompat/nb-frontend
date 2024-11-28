@@ -12,9 +12,6 @@
                 {{ sectionProduct.amount }}
               </b>
             </span>
-            <span>
-              <v-icon>mdi-chevron-right</v-icon>
-            </span>
           </div>
         </v-card-text>
       </v-card>

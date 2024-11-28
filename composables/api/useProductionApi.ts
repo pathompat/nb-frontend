@@ -9,11 +9,10 @@ export interface Production {
   address: string;
   dueDate: string;
   estimateDate: string;
-  status: PRINTSTATUS;
-  items: Item[];
+  items: ProductionItem[];
   remark?: string;
 }
-interface Item {
+export interface ProductionItem {
   hasPlan: boolean;
   amount: number;
   status: PRINTSTATUS;
@@ -73,7 +72,6 @@ const mockProductions: Production[] = [
     address: "ถ.สุขุมวิท ต.ท่าช้าง อ.เมือง จ.สมุทรปราการ",
     dueDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
     estimateDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
-    status: PRINTSTATUS.PRINT,
     items: [
       {
         hasPlan: true,
@@ -118,7 +116,6 @@ const mockProductions: Production[] = [
     address: "ถ.สุขุมวิท ต.ท่าช้าง อ.เมือง จ.สมุทรปราการ",
     dueDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
     estimateDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
-    status: PRINTSTATUS.PRINT,
     items: [
       {
         hasPlan: false,
@@ -142,7 +139,6 @@ const mockProductions: Production[] = [
     dueDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
     estimateDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
     shop: "คุณจรัญ",
-    status: PRINTSTATUS.PRINT,
     items: [
       {
         hasPlan: true,
