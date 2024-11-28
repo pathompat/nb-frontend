@@ -44,11 +44,6 @@
       value: '/factory',
       icon: 'mdi-account-multiple'
     },
-    {
-      title: 'Starred',
-      value: '/starred',
-      icon: 'mdi-star'
-    },
   ]
 
   const drawer = ref(false)

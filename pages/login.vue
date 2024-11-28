@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
   definePageMeta({
-    layout: 'custom'
+    layout: 'custom' as globalThis.MaybeRef<false | "default">
   })
 </script>
 
