@@ -18,6 +18,7 @@ export interface ProductionItem {
   status: PRINTSTATUS;
   plate: PLATE;
   gram: number;
+  price: number;
   color: number;
   line: LINE;
   page: number;
@@ -79,6 +80,7 @@ const mockProductions: Production[] = [
         status: PRINTSTATUS.PRINT,
         plate: PLATE.SMALL,
         gram: 60,
+        price: 100,
         color: 1,
         line: LINE.HALF,
         page: 40,
@@ -89,6 +91,7 @@ const mockProductions: Production[] = [
         status: PRINTSTATUS.SEWING,
         plate: PLATE.SMALL,
         gram: 60,
+        price: 100,
         color: 1,
         line: LINE.HALF,
         page: 40,
@@ -99,6 +102,7 @@ const mockProductions: Production[] = [
         status: PRINTSTATUS.OUTBOUND,
         plate: PLATE.BIG,
         gram: 60,
+        price: 100,
         color: 1,
         line: LINE.HALF,
         page: 40,
@@ -123,6 +127,7 @@ const mockProductions: Production[] = [
         status: PRINTSTATUS.OUTBOUND,
         plate: PLATE.BIG,
         gram: 60,
+        price: 100,
         color: 1,
         line: LINE.HALF,
         page: 40,
@@ -148,6 +153,7 @@ const mockProductions: Production[] = [
         gram: 60,
         color: 1,
         line: LINE.HALF,
+        price: 100,
         page: 40,
       },
     ],

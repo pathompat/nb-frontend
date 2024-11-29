@@ -1,78 +1,76 @@
 <template>
-  <div class="border h-100 w-100">
-    <main ref="canvas" style="margin: 30px 20px 20px 35px">document test</main>
-  </div>
+  <html>
+    <head>
+      <title>Print Preview - Quotation {{ id }}</title>
+    </head>
+    <body>
+      <div class="content">test document</div>
+    </body>
+  </html>
 </template>
+
+<style>
+@page {
+  size: A4;
+  margin: 0;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: white;
+}
+
+body {
+  width: 210mm;
+  min-height: 297mm;
+  /* หรือใช้ px */
+  /* width: 794px; */
+  /* min-height: 1123px; */
+}
+
+.content {
+  /* ระยะขอบมาตรฐาน */
+  padding-top: 25.4mm; /* 1 นิ้ว */
+  padding-bottom: 25.4mm; /* 1 นิ้ว */
+  padding-left: 38.1mm; /* 1.5 นิ้ว */
+  padding-right: 25.4mm; /* 1 นิ้ว */
+
+  /* ตั้งค่าเพิ่มเติม */
+  box-sizing: border-box;
+  min-height: 297mm;
+  position: relative;
+}
+
+@media print {
+  html,
+  body {
+    width: 210mm;
+    height: 297mm;
+  }
+
+  .content {
+    padding-top: 25.4mm;
+    padding-bottom: 25.4mm;
+    padding-left: 38.1mm;
+    padding-right: 25.4mm;
+  }
+}
+</style>
 
 <script setup lang="ts">
 const route = useRoute();
 const { id } = route.params;
-const canvas = ref<HTMLElement | null>(null);
+
+definePageMeta({
+  layout: false,
+});
 
 onMounted(() => {
-  if (!canvas.value) {
-    console.error("Canvas element not found");
-    return;
-  }
-
+  // รอให้ render เสร็จก่อนสั่งพิมพ์
   nextTick(() => {
-    const features = [
-      "left=20",
-      "top=20",
-      "width=1000",
-      "height=1400",
-      "toolbar=yes",
-      "menubar=yes",
-      "scrollbars=no",
-      "resizable=no",
-      "location=no",
-      "status=no",
-    ].join(",");
-
-    const WinPrint = window.open("", "Print Preview", features);
-    try {
-      if (!WinPrint) {
-        alert("โปรดอนุญาตให้เปิดหน้าต่างป๊อปอัพ");
-        return;
-      }
-
-      WinPrint.document.write(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>Print Preview - Quotation ${id}</title>
-            <style>
-              @page {
-                size: A4;
-                margin: 0;
-              }
-              body { 
-                margin: 0;
-                padding: 0;
-              }
-             
-              @media print {
-                .content {
-                  padding: 96px 120px;
-                }
-              }
-            </style>
-          </head>
-          <body style="${canvas.value?.style.cssText}">
-           ${canvas.value!.innerHTML}
-          </body>
-        </html>
-      `);
-
-      WinPrint.document.close();
-      WinPrint.focus();
-      WinPrint.print();
-    } catch (error) {
-      console.error("Error opening print window:", error);
-      alert("เกิดข้อผิดพลาดในการเปิดหน้าต่างพิมพ์");
-    } finally {
-      WinPrint?.close();
-    }
+    window.print();
   });
 });
 </script>

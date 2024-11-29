@@ -65,7 +65,7 @@
           <div class="mt-4">
             <div class="d-flex justify-space-between align-center">
               <h2>รายการสินค้า</h2>
-              <v-btn variant="text" icon color="primary">
+              <v-btn variant="text" @click="addItem" icon color="primary">
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
             </div>
@@ -87,45 +87,56 @@
                 { title: 'ลบ', key: 'action' },
               ]"
             >
-              <template #item.id="{ index }"> {{ index + 1 }} </template>
-              <template #item.hasPlan="{ item }">
-                <v-checkbox v-model="item.hasPlan"></v-checkbox>
-              </template>
-              <template #item.plate="{ item }">
-                {{ plates.find((p) => p.value === item.plate)?.title }}
-              </template>
-              <template #item.line="{ item }">
-                {{ lines.find((l) => l.value === item.line)?.title }}
-              </template>
-              <template #item.status="{ item }">
-                <v-chip
-                  density="compact"
-                  class="text-white"
-                  :style="{
-                    backgroundColor:
-                      statusColors.find((s) => s.id === item.status)?.color ||
-                      'gray',
-                  }"
-                >
-                  {{ getStatusTitle(item.status) }}
-                </v-chip></template
-              >
-              <template #item.action="{ item }">
-                <v-btn
-                  size="small"
-                  variant="flat"
-                  :color="
-                    statusColors.find((s) => s.id === item.status + 1)?.color ||
-                    'gray'
-                  "
-                >
-                  {{ getStatusTitle(item.status + 1) }}
-                </v-btn>
+              <template #body="{ items }">
+                <tr v-if="items.length === 0">
+                  <td :colspan="11" class="text-center">ไม่มีรายการ</td>
+                </tr>
+                <tr v-for="(item, index) in items" :key="index">
+                  <UtilsReturnDataSlot
+                    :data="isSaved.find((i) => i.index === 0)?.isSaved"
+                  >
+                    <template #default="{ data }">
+                      <td>{{ index + 1 }}</td>
+                      <td>
+                        <div v-if="!data">
+                          <v-text-field v-model="item.plate"></v-text-field>
+                        </div>
+                        <div v-else>
+                          {{
+                            plates.find((p) => p.value === item.plate)?.title
+                          }}
+                        </div>
+                      </td>
+                      <td>{{ item.gram }}</td>
+                      <td>{{ item.color }}</td>
+                      <td>{{ item.page }}</td>
+                      <td>
+                        {{ lines.find((l) => l.value === item.line)?.title }}
+                      </td>
+                      <td><v-checkbox v-model="item.hasPlan"></v-checkbox></td>
+                      <td>{{ item.amount }}</td>
+                      <td>{{ item.price }}</td>
+                      <td>{{ item.price * item.amount }}</td>
+                      <td>
+                        <v-btn variant="text" icon color="error">
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                      </td>
+                    </template>
+                  </UtilsReturnDataSlot>
+                </tr>
               </template>
             </v-data-table>
-            <div class="d-flex justify-end">
-              <h2>รวม</h2>
-              <p>{{}}</p>
+            <div class="d-flex justify-end align-center ga-16 text-h6">
+              <p>รวม :</p>
+              <p>
+                {{
+                  production.items.reduce(
+                    (sum, item) => sum + item.price * item.amount,
+                    0
+                  )
+                }}
+              </p>
             </div>
             <v-divider class="my-4"></v-divider>
             <v-textarea
@@ -156,7 +167,9 @@
 <script setup lang="ts">
 import useProductionApi, {
   getStatusTitle,
+  LINE,
   lines,
+  PLATE,
   plates,
   PRINTSTATUS,
   statusColors,
@@ -165,6 +178,11 @@ import useProductionApi, {
 const productApi = useProductionApi();
 
 const loading = ref(false);
+interface SaveRow {
+  index: number;
+  isSaved: boolean;
+}
+const isSaved = ref<SaveRow[]>([]);
 const production = ref<Production>({
   id: 0,
   name: "",
@@ -183,6 +201,23 @@ async function create() {
   const { id } = await productApi.create(production.value);
   router.push({
     path: `/quotation/${id}`,
+  });
+}
+function addItem() {
+  isSaved.value.push({
+    index: production.value.items.length,
+    isSaved: false,
+  });
+  production.value.items.push({
+    plate: PLATE.BIG,
+    gram: 0,
+    color: 0,
+    page: 0,
+    line: LINE.SINGLE,
+    hasPlan: false,
+    amount: 0,
+    price: 0,
+    status: PRINTSTATUS.OUTBOUND,
   });
 }
 async function approve() {
