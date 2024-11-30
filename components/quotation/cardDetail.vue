@@ -24,21 +24,21 @@
                 <v-text-field
                   label="User"
                   disabled
-                  v-model="production.id"
+                  v-model="quotation.id"
                 ></v-text-field>
               </v-col>
               <v-col cols="4">
                 <v-text-field
                   label="ร้าน *"
                   disabled
-                  v-model="production.shop"
+                  v-model="quotation.shop"
                 ></v-text-field>
               </v-col>
               <v-col cols="4">
                 <v-select
                   label="โรงเรียน *"
                   disabled
-                  v-model="production.school"
+                  v-model="quotation.school"
                 ></v-select>
               </v-col>
               <v-col cols="3">
@@ -51,14 +51,14 @@
                 <v-select
                   label="ที่อยู่ *"
                   disabled
-                  v-model="production.address"
+                  v-model="quotation.address"
                 ></v-select>
               </v-col>
               <v-col cols="3">
                 <v-select
                   label="เบอร์ติดต่อ *"
                   disabled
-                  v-model="production.phone"
+                  v-model="quotation.phone"
                 ></v-select>
               </v-col> </v-row
           ></v-layout>
@@ -72,7 +72,7 @@
             <v-data-table
               class="my-4"
               hideDefaultFooter
-              :items="production.items"
+              :items="quotation.items"
               :headers="[
                 { title: 'ลำดับ', key: 'id' },
                 { title: 'เพลท', key: 'plate' },
@@ -98,7 +98,7 @@
                     <template #default="{ data }">
                       <td>{{ index + 1 }}</td>
                       <td>
-                        <div v-if="!data">
+                        <div v-if="!data && !props.id">
                           <v-select v-model="item.plate"></v-select>
                         </div>
                         <div v-else>
@@ -108,7 +108,7 @@
                         </div>
                       </td>
                       <td>
-                        <div v-if="!data">
+                        <div v-if="!data && !props.id">
                           <v-select v-model="item.gram"></v-select>
                         </div>
                         <div v-else>
@@ -116,7 +116,7 @@
                         </div>
                       </td>
                       <td>
-                        <div v-if="!data">
+                        <div v-if="!data && !props.id">
                           <v-select v-model="item.color"></v-select>
                         </div>
                         <div v-else>
@@ -124,7 +124,7 @@
                         </div>
                       </td>
                       <td>
-                        <div v-if="!data">
+                        <div v-if="!data && !props.id">
                           <v-select v-model="item.page"></v-select>
                         </div>
                         <div v-else>
@@ -132,7 +132,7 @@
                         </div>
                       </td>
                       <td>
-                        <div v-if="!data">
+                        <div v-if="!data && !props.id">
                           <v-select v-model="item.line"></v-select>
                         </div>
                         <div v-else>
@@ -141,7 +141,7 @@
                       </td>
                       <td><v-checkbox v-model="item.hasPlan"></v-checkbox></td>
                       <td>
-                        <div v-if="!data">
+                        <div v-if="!data && !props.id">
                           <v-text-field
                             type="number"
                             label="จำนวน"
@@ -153,7 +153,7 @@
                         </div>
                       </td>
                       <td>
-                        <div v-if="!data">
+                        <div v-if="!data && !props.id">
                           <v-text-field
                             type="number"
                             label="ราคา"
@@ -194,7 +194,7 @@
               <p>รวม :</p>
               <p>
                 {{
-                  production.items.reduce(
+                  quotation.items.reduce(
                     (sum, item) => sum + item.price * item.amount,
                     0
                   )
@@ -204,7 +204,7 @@
             <v-divider class="my-4"></v-divider>
             <v-textarea
               label="หมายเหตุ"
-              v-model="production.remark"
+              v-model="quotation.remark"
             ></v-textarea>
           </div>
         </v-card-text>
@@ -228,7 +228,7 @@
   </main>
 </template>
 <script setup lang="ts">
-import useProductionApi, {
+import useQuotationApi, {
   getStatusTitle,
   LINE,
   lines,
@@ -236,9 +236,9 @@ import useProductionApi, {
   plates,
   PRINTSTATUS,
   statusColors,
-  type Production,
-} from "@/composables/api/useProductionApi";
-const productApi = useProductionApi();
+  type Quotation,
+} from "@/composables/api/useQuotationApi";
+const quotationApi = useQuotationApi();
 
 const loading = ref(false);
 interface SaveRow {
@@ -246,7 +246,7 @@ interface SaveRow {
   isSaved: boolean;
 }
 const isSaved = ref<SaveRow[]>([]);
-const production = ref<Production>({
+const quotation = ref<Quotation>({
   id: 0,
   name: "",
   date: "",
@@ -261,17 +261,17 @@ const production = ref<Production>({
 const router = useRouter();
 async function create() {
   console.log("create");
-  const { id } = await productApi.create(production.value);
+  const { id } = await quotationApi.create(quotation.value);
   router.push({
     path: `/quotation/${id}`,
   });
 }
 function addItem() {
   isSaved.value.push({
-    index: production.value.items.length,
+    index: quotation.value.items.length,
     isSaved: false,
   });
-  production.value.items.push({
+  quotation.value.items.push({
     plate: PLATE.BIG,
     gram: 0,
     color: 0,
@@ -285,7 +285,7 @@ function addItem() {
 }
 function deleteItem(index: number) {
   isSaved.value = isSaved.value.filter((i) => i.index !== index);
-  production.value.items = production.value.items.filter((_, i) => i !== index);
+  quotation.value.items = quotation.value.items.filter((_, i) => i !== index);
 }
 function saveItem(index: number) {
   const item = isSaved.value.find((i) => i.index === index);
@@ -293,6 +293,7 @@ function saveItem(index: number) {
 }
 async function approve() {
   console.log("approve");
+  // const { id } = await quotationApi.approve(props.id);
   router.push(`/production/${props.id}`);
   // await productApi.approve(props.id);
 }
@@ -307,7 +308,7 @@ onMounted(async () => {
   if (!props.id) return;
   loading.value = true;
   try {
-    production.value = await productApi.getOne(props.id);
+    quotation.value = await quotationApi.getOne(props.id);
   } catch (error) {
     console.error(error);
   } finally {

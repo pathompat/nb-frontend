@@ -1,5 +1,6 @@
-import useBaseApi, { type Pagination } from "@/composables/api/useBaseApi";
-export interface Production {
+import useBaseApi, { type Pagination } from "./useBaseApi";
+import { ref } from "vue";
+export interface Quotation {
   id: number;
   name: string;
   date: string;
@@ -7,13 +8,12 @@ export interface Production {
   shop: string;
   phone: string;
   address: string;
-  quotationId: number;
   dueDate: string;
   estimateDate: string;
-  items: ProductionItem[];
+  items: QuotationItem[];
   remark?: string;
 }
-export interface ProductionItem {
+export interface QuotationItem {
   hasPlan: boolean;
   amount: number;
   status: PRINTSTATUS;
@@ -63,14 +63,13 @@ export const plates = [
   { title: "เล็ก", value: PLATE.SMALL },
   { title: "พิเศษ", value: PLATE.EXTRA },
 ];
-const mockProductions: Production[] = [
+const mockQuotations: Quotation[] = [
   {
     id: 1,
     name: "สั่งผลิตที่ 1",
     date: new Date("10/10/2024").toLocaleDateString("th-TH"),
     school: "โรงเรียนบ้านท่าช้าง",
     shop: "คุณจรัญ",
-    quotationId: 1,
     phone: "0812345678",
     address: "ถ.สุขุมวิท ต.ท่าช้าง อ.เมือง จ.สมุทรปราการ",
     dueDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
@@ -122,7 +121,6 @@ const mockProductions: Production[] = [
     address: "ถ.สุขุมวิท ต.ท่าช้าง อ.เมือง จ.สมุทรปราการ",
     dueDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
     estimateDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
-    quotationId: 2,
     items: [
       {
         hasPlan: false,
@@ -147,7 +145,6 @@ const mockProductions: Production[] = [
     dueDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
     estimateDate: new Date("10/10/2024").toLocaleDateString("th-TH"),
     shop: "คุณจรัญ",
-    quotationId: 3,
     items: [
       {
         hasPlan: true,
@@ -364,56 +361,56 @@ const mockProductions: Production[] = [
 export const getStatusTitle = (value: number) =>
   statuses.value.find((status) => status.value === value)?.title ||
   "ไม่ทราบสถานะ";
-export default function useProductionApi() {
-  const controller = "production";
+export default function useQuotationApi() {
+  const controller = "quotation";
   const { getRequest, postRequest } = useBaseApi();
   return {
-    async getAll(): Promise<Pagination<Production[]>> {
+    async getAll(): Promise<Pagination<Quotation[]>> {
       try {
-        const response = await getRequest<Pagination<Production[]>>(controller);
+        const response = await getRequest<Pagination<Quotation[]>>(controller);
         return response;
       } catch (error) {
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve({
-              items: JSON.parse(JSON.stringify(mockProductions)),
-              total: mockProductions.length,
+              items: JSON.parse(JSON.stringify(mockQuotations)),
+              total: mockQuotations.length,
               page: 1,
-              totalItems: mockProductions.length,
+              totalItems: mockQuotations.length,
               itemsPerPage: 10,
-            } as Pagination<Production[]>);
+            } as Pagination<Quotation[]>);
           }, 500);
         });
       }
     },
-    async create(production: Production): Promise<Production> {
+    async create(quotation: Quotation): Promise<Quotation> {
       try {
-        const response = await postRequest<Production>(controller, production);
+        const response = await postRequest<Quotation>(controller, quotation);
         return response;
       } catch (error) {
         return new Promise((resolve) => {
-          production.id = mockProductions.length + 1;
-          mockProductions.push(production);
+          quotation.id = mockQuotations.length + 1;
+          mockQuotations.push(quotation);
           setTimeout(() => {
-            resolve(production);
+            resolve(quotation);
           }, 500);
         });
       }
     },
-    async getOne(id: number): Promise<Production> {
+    async getOne(id: number): Promise<Quotation> {
       try {
-        const response = await getRequest<Production>(`${controller}/${id}`);
+        const response = await getRequest<Quotation>(`${controller}/${id}`);
         return response;
       } catch (error) {
         return new Promise((resolve) => {
           setTimeout(() => {
-            resolve(mockProductions.find((p) => p.id === id)!);
+            resolve(mockQuotations.find((q) => q.id === id)!);
           }, 500);
         });
       }
     },
-    async update(production: Production): Promise<Production> {
-      return production;
+    async update(quotation: Quotation): Promise<Quotation> {
+      return quotation;
       // try {
       //   const response = await putRequest<Production>(controller, production);
       //   return response;

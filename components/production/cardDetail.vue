@@ -9,13 +9,13 @@
         <v-btn
           variant="flat"
           color="success"
-          :to="`/quotation/document/${props.id}`"
+          :to="`/quotation/document/${production.quotationId}`"
           >ใบเสนอราคา</v-btn
         >
         <v-btn
           variant="flat"
           color="purple"
-          :to="`/production/document/${props.id}`"
+          :to="`/production/document/${production.id}`"
           >เอกสารสั่งผลิต</v-btn
         >
       </div>
