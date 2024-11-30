@@ -166,7 +166,7 @@
                       </td>
                       <td>{{ item.price * item.amount }}</td>
                       <td>
-                        <div v-if="!data">
+                        <div v-if="!data && !props.id">
                           <v-icon
                             @click="saveItem(index)"
                             color="black"
