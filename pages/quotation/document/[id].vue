@@ -4,12 +4,108 @@
       <title>Print Preview - Quotation {{ id }}</title>
     </head>
     <body>
-      <div class="content">test document</div>
+      <div class="content">
+        <h1>ใบเสนอราคา #QR-{{ production?.id.toString().padStart(5, "0") }}</h1>
+        <v-row class="w-100">
+          <v-col cols="3" class="text-start">
+            <p>วันที่:</p>
+            <p>Job No.:</p>
+            <p>ร้านค้า:</p>
+            <p>โรงเรียน:</p>
+          </v-col>
+          <v-col cols="3" class="text-end">
+            <p>{{ production?.date }}</p>
+            <p>
+              PR-{{ new Date().getFullYear().toString() }}-{{
+                production?.id.toString().padStart(4, "0")
+              }}
+            </p>
+            <p>{{ production?.shop }}</p>
+            <p>{{ production?.school }}</p>
+          </v-col>
+          <v-col cols="3" class="text-end">
+            <p>ส่ง:</p>
+            <p>กำหนดชำระ:</p>
+          </v-col>
+          <v-col cols="3" class="text-end">
+            <p>{{ production?.estimateDate }}</p>
+            <p>{{ production?.dueDate }}</p>
+          </v-col>
+        </v-row>
+        <div class="w-100">
+          <h1>รายการสินค้า</h1>
+          <v-table>
+            <thead>
+              <tr>
+                <th>ลำดับ</th>
+                <th>เพรท/แกรม/สี/แผ่น/เส้น</th>
+                <th>มีเเบบ</th>
+                <th>จำนวน</th>
+                <th>ราคา</th>
+                <th>รวม</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in production?.items" :key="index">
+                <td>{{ index + 1 }}</td>
+                <td>
+                  {{ plates.find((p) => p.value === item.plate)?.title }}/{{
+                    item.gram
+                  }}/{{ item.color }}/{{ item.page }}/{{
+                    lines.find((l) => l.value === item.line)?.title
+                  }}
+                </td>
+                <td>
+                  <v-checkbox :model-value="item.hasPlan" readonly />
+                </td>
+                <td>{{ item.amount }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.price * item.amount }}</td>
+              </tr>
+              <tr>
+                <td colspan="5" class="text-end">รวม</td>
+                <td>
+                  {{
+                    production?.items.reduce(
+                      (acc, item) => acc + item.price * item.amount,
+                      0
+                    )
+                  }}
+                </td>
+              </tr>
+            </tbody>
+          </v-table>
+        </div>
+      </div>
     </body>
   </html>
 </template>
+<script setup lang="ts">
+import useProductionApi, {
+  lines,
+  plates,
+  type Production,
+} from "~/composables/api/useProductionApi";
 
-<style>
+const route = useRoute();
+const { id } = route.params;
+const productionApi = useProductionApi();
+
+definePageMeta({
+  layout: false,
+});
+const production = ref<Production>();
+onMounted(async () => {
+  production.value = await productionApi.getOne(+id);
+
+  // รอให้ render เสร็จก่อนสั่งพิมพ์
+  nextTick(() => {
+    // window.print();
+  });
+});
+</script>
+
+<style scoped>
 @page {
   size: A4;
   margin: 0;
@@ -58,19 +154,3 @@ body {
   }
 }
 </style>
-
-<script setup lang="ts">
-const route = useRoute();
-const { id } = route.params;
-
-definePageMeta({
-  layout: false,
-});
-
-onMounted(() => {
-  // รอให้ render เสร็จก่อนสั่งพิมพ์
-  nextTick(() => {
-    window.print();
-  });
-});
-</script>
