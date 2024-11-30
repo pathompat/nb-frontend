@@ -81,7 +81,7 @@ export default function useUserApi() {
         return new Promise((resolve, reject) => {
           setTimeout(() => {
             resolve(tier);
-          }, 1000);
+          }, 500);
         });
       }
     },
@@ -100,7 +100,7 @@ export default function useUserApi() {
               itemsPerPage: 10,
               totalItems: 13,
             } as Pagination<User[]>);
-          }, 1000);
+          }, 500);
         });
       }
     },
@@ -112,7 +112,7 @@ export default function useUserApi() {
         return new Promise((resolve, reject) => {
           setTimeout(() => {
             resolve(mockUsers.find((x) => x.id == id) as User);
-          }, 1000);
+          }, 500);
         });
       }
     },
@@ -128,7 +128,7 @@ export default function useUserApi() {
           mockUsers.push(user);
           setTimeout(() => {
             resolve(user);
-          }, 1000);
+          }, 500);
         });
       }
     },
@@ -142,7 +142,7 @@ export default function useUserApi() {
           mockUsers[index] = user;
           setTimeout(() => {
             resolve(user);
-          }, 1000);
+          }, 500);
         });
       }
     },
@@ -156,7 +156,7 @@ export default function useUserApi() {
           mockUsers[index].active = false;
           setTimeout(() => {
             resolve(true);
-          }, 1000);
+          }, 500);
         });
       }
     },

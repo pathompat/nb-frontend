@@ -17,7 +17,7 @@ export default function useAuthApi() {
                   user.username === username && user.password === password
               ) ?? null
             );
-          }, 1000)
+          }, 500)
         );
       }
     },
@@ -29,7 +29,7 @@ export default function useAuthApi() {
         return new Promise((resolve) =>
           setTimeout(() => {
             resolve(mockUsers.find((user) => user.id === id) ?? null);
-          }, 1000)
+          }, 500)
         );
       }
     },

@@ -378,7 +378,7 @@ export default function useProductionApi() {
               totalItems: mockProductions.length,
               itemsPerPage: 10,
             } as Pagination<Production[]>);
-          }, 1000);
+          }, 500);
         });
       }
     },
@@ -392,7 +392,7 @@ export default function useProductionApi() {
           mockProductions.push(production);
           setTimeout(() => {
             resolve(production);
-          }, 1000);
+          }, 500);
         });
       }
     },
@@ -404,9 +404,16 @@ export default function useProductionApi() {
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve(mockProductions.find((p) => p.id === id)!);
-          }, 1000);
+          }, 500);
         });
       }
+    },
+    async update(production: Production): Promise<Production> {
+      return production;
+      // try {
+      //   const response = await putRequest<Production>(controller, production);
+      //   return response;
+      // }
     },
   };
 }
