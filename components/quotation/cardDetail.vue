@@ -93,13 +93,13 @@
                 </tr>
                 <tr v-for="(item, index) in items" :key="index">
                   <UtilsReturnDataSlot
-                    :data="isSaved.find((i) => i.index === 0)?.isSaved"
+                    :data="isSaved.find((i) => i.index === index)?.isSaved"
                   >
                     <template #default="{ data }">
                       <td>{{ index + 1 }}</td>
                       <td>
                         <div v-if="!data">
-                          <v-text-field v-model="item.plate"></v-text-field>
+                          <v-select v-model="item.plate"></v-select>
                         </div>
                         <div v-else>
                           {{
@@ -107,18 +107,81 @@
                           }}
                         </div>
                       </td>
-                      <td>{{ item.gram }}</td>
-                      <td>{{ item.color }}</td>
-                      <td>{{ item.page }}</td>
                       <td>
-                        {{ lines.find((l) => l.value === item.line)?.title }}
+                        <div v-if="!data">
+                          <v-select v-model="item.gram"></v-select>
+                        </div>
+                        <div v-else>
+                          {{ item.gram }}
+                        </div>
+                      </td>
+                      <td>
+                        <div v-if="!data">
+                          <v-select v-model="item.color"></v-select>
+                        </div>
+                        <div v-else>
+                          {{ item.color }}
+                        </div>
+                      </td>
+                      <td>
+                        <div v-if="!data">
+                          <v-select v-model="item.page"></v-select>
+                        </div>
+                        <div v-else>
+                          {{ item.page }}
+                        </div>
+                      </td>
+                      <td>
+                        <div v-if="!data">
+                          <v-select v-model="item.line"></v-select>
+                        </div>
+                        <div v-else>
+                          {{ lines.find((l) => l.value === item.line)?.title }}
+                        </div>
                       </td>
                       <td><v-checkbox v-model="item.hasPlan"></v-checkbox></td>
-                      <td>{{ item.amount }}</td>
-                      <td>{{ item.price }}</td>
+                      <td>
+                        <div v-if="!data">
+                          <v-text-field
+                            type="number"
+                            label="จำนวน"
+                            v-model="item.amount"
+                          ></v-text-field>
+                        </div>
+                        <div v-else>
+                          {{ item.amount }}
+                        </div>
+                      </td>
+                      <td>
+                        <div v-if="!data">
+                          <v-text-field
+                            type="number"
+                            label="ราคา"
+                            v-model="item.price"
+                          ></v-text-field>
+                        </div>
+                        <div v-else>
+                          {{ item.price }}
+                        </div>
+                      </td>
                       <td>{{ item.price * item.amount }}</td>
                       <td>
-                        <v-btn variant="text" icon color="error">
+                        <div v-if="!data">
+                          <v-icon
+                            @click="saveItem(index)"
+                            color="black"
+                            class="rounded-circle cursor-pointer"
+                            style="padding: 18px; background-color: #2e7d324d"
+                            >mdi-check-circle-outline</v-icon
+                          >
+                        </div>
+                        <v-btn
+                          v-else
+                          variant="text"
+                          icon
+                          color="error"
+                          @click="deleteItem(index)"
+                        >
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </td>
@@ -219,6 +282,14 @@ function addItem() {
     price: 0,
     status: PRINTSTATUS.OUTBOUND,
   });
+}
+function deleteItem(index: number) {
+  isSaved.value = isSaved.value.filter((i) => i.index !== index);
+  production.value.items = production.value.items.filter((_, i) => i !== index);
+}
+function saveItem(index: number) {
+  const item = isSaved.value.find((i) => i.index === index);
+  if (item) item.isSaved = true;
 }
 async function approve() {
   console.log("approve");
