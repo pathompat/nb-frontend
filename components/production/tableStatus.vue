@@ -1,5 +1,13 @@
 <template>
   <v-card :loading="loading">
+    <v-card-title>
+      <div class="d-flex justify-end">
+        <div class="d-flex ga-4">
+          <v-text-field label="ค้นหา" style="width: 300px" />
+          <v-select label="สถานะ" style="width: 170px"></v-select>
+        </div>
+      </div>
+    </v-card-title>
     <v-data-table :loading="loading" :items="tableState" :headers="headers">
       <template v-slot:item="{ internalItem, item, isExpanded, toggleExpand }">
         <tr
