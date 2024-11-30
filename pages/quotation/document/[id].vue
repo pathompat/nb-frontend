@@ -5,7 +5,7 @@
     </head>
     <body>
       <div class="content">
-        <h1>ใบเสนอราคา #QR-{{ production?.id.toString().padStart(5, "0") }}</h1>
+        <h1>ใบเสนอราคา #QT-{{ production?.id.toString().padStart(5, "0") }}</h1>
         <v-row class="w-100">
           <v-col cols="3" class="text-start">
             <p>วันที่:</p>
@@ -100,7 +100,7 @@ onMounted(async () => {
 
   // รอให้ render เสร็จก่อนสั่งพิมพ์
   nextTick(() => {
-    // window.print();
+    window.print();
   });
 });
 </script>
