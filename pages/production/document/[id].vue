@@ -114,7 +114,6 @@ const production = ref<Production>()
 onMounted(async () => {
     production.value = await productionApi.getOne(+id)
 
-    // รอให้ render เสร็จก่อนสั่งพิมพ์
     nextTick(() => {
         window.print()
     })
