@@ -364,8 +364,6 @@ export const useProductionStore = defineStore('production', {
             }
         },
         async updateProduction(production: Production) {
-            // Implement update logic here
-            // Example:
             const index = this.productions.findIndex(
                 (p) => p.id === production.id
             )
