@@ -6,4 +6,5 @@ export interface User {
     password?: string
     active: boolean
     role: string
+    tier: number
 }

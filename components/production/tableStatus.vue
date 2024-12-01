@@ -120,18 +120,14 @@
 </template>
 <script setup lang="ts">
 import useProductionApi, {
-    statuses,
-    type Production,
     statusColors,
     getStatusTitle,
     plates,
     lines,
-    type ProductionItem,
 } from '@/composables/api/useProductionApi'
-import { TIER } from '@/composables/api/useUserApi'
-import useStateTable from '@/composables/useStateTable'
 import { contextPluginSymbol } from '@/plugins/context'
-const { tableState, pagination } = useStateTable<Production[]>()
+import type { Production, ProductionItem } from '@/models/production/production'
+const tableState = ref<Production[]>([])
 const { userProfile } = inject(contextPluginSymbol)!
 const loading = ref(false)
 const productApi = useProductionApi()
@@ -169,8 +165,7 @@ onMounted(async () => {
     loading.value = true
     try {
         const res = await productApi.getAll()
-        tableState.value = res.items
-        pagination.value = res
+        tableState.value = res
     } catch (error) {
         console.error(error)
     }
@@ -188,7 +183,7 @@ const headers = computed(() => {
         { title: '#', key: 'action' },
     ]
     return header.filter(
-        (h) => userProfile.value?.tier !== 2 || h.key !== 'shop'
+        (h) => userProfile.value?.role !== 'user' || h.key !== 'shop'
     )
 })
 </script>

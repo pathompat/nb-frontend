@@ -73,9 +73,9 @@
     >
 </template>
 <script lang="ts" setup>
-import type { Tier, User } from '@/composables/api/useUserApi'
 import useUserApi from '@/composables/api/useUserApi'
-const tier = ref<Tier[]>([])
+import type { User } from '@/models/user/user'
+const tier = ref<[]>([])
 const dialogOpen = ref(false)
 const initFormEdit = ref<Partial<User>>({})
 const userApi = useUserApi()
@@ -94,7 +94,7 @@ const openDialog = async (id?: string): Promise<Partial<User>> => {
     }
     loading.value = true
     dialogOpen.value = true
-    tier.value = await userApi.getTierOptions()
+    tier.value = []
     if (id) {
         initFormEdit.value = await userApi.getOne(id)
     }
