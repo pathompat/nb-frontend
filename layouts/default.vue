@@ -36,7 +36,7 @@
         <v-navigation-drawer :model-value="drawer">
             <v-list>
                 <v-list-item
-                    v-for="(item, index) in items"
+                    v-for="item in ItemByRole"
                     :key="item.title"
                     :to="item.value"
                     :exact="item.value === '/'"
@@ -45,9 +45,7 @@
                         <v-icon>{{ item.icon }}</v-icon>
                     </template>
 
-                    <v-list-item-title
-                        v-if="item.role.includes(userProfile?.role || '')"
-                    >
+                    <v-list-item-title>
                         <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item-title>
                 </v-list-item>
@@ -70,12 +68,17 @@ const drawer = ref(true)
 const logout = () => {
     auth.logout()
 }
+const ItemByRole = computed(() => {
+    return items.value.filter((i) =>
+        i.role.some((r) => r === userProfile.value?.role)
+    )
+})
 const items = ref<MenuItem[]>([
     {
         title: 'รายการสั่งผลิต',
         value: '/',
         icon: 'mdi-folder',
-        role: ['admin', 'user'],
+        role: ['admin', 'customer'],
     },
     {
         title: 'จัดการ User',

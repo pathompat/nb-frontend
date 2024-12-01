@@ -36,7 +36,7 @@
                         {{ item.school }}
                     </td>
 
-                    <td v-if="userProfile?.tier == TIER.ADMIN">
+                    <td v-if="userProfile?.role === 'admin'">
                         <v-icon> mdi-map-marker</v-icon> {{ item.shop }}
                     </td>
                     <td>

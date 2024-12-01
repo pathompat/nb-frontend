@@ -11,6 +11,7 @@ export const mockUsers: User[] = [
         password: '123445',
         active: true,
         role: 'admin',
+        tier: 1,
     },
     {
         id: 'U000002',
@@ -20,6 +21,7 @@ export const mockUsers: User[] = [
         password: '123445',
         active: true,
         role: 'admin',
+        tier: 1,
     },
     {
         id: 'U000003',
@@ -29,6 +31,7 @@ export const mockUsers: User[] = [
         password: '123445',
         active: true,
         role: 'admin',
+        tier: 1,
     },
     {
         id: 'U000004',
@@ -38,6 +41,7 @@ export const mockUsers: User[] = [
         password: 'admin',
         active: true,
         role: 'admin',
+        tier: 1,
     },
     {
         id: 'U000005',
@@ -47,6 +51,7 @@ export const mockUsers: User[] = [
         password: 'customer',
         active: true,
         role: 'customer',
+        tier: 1,
     },
 ]
 
