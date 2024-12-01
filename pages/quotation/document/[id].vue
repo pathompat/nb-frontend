@@ -7,7 +7,7 @@
             <div class="content">
                 <h1>
                     ใบเสนอราคา #QT-{{
-                        production?.id.toString().padStart(5, '0')
+                        quotation?.id.toString().padStart(5, '0')
                     }}
                 </h1>
                 <v-row class="w-100">
@@ -18,22 +18,22 @@
                         <p>โรงเรียน:</p>
                     </v-col>
                     <v-col cols="3" class="text-end">
-                        <p>{{ production?.date }}</p>
+                        <p>{{ quotation?.date }}</p>
                         <p>
                             PR-{{ new Date().getFullYear().toString() }}-{{
-                                production?.id.toString().padStart(4, '0')
+                                quotation?.id.toString().padStart(4, '0')
                             }}
                         </p>
-                        <p>{{ production?.shop }}</p>
-                        <p>{{ production?.school }}</p>
+                        <p>{{ quotation?.shop }}</p>
+                        <p>{{ quotation?.school }}</p>
                     </v-col>
                     <v-col cols="3" class="text-end">
                         <p>ส่ง:</p>
                         <p>กำหนดชำระ:</p>
                     </v-col>
                     <v-col cols="3" class="text-end">
-                        <p>{{ production?.estimateDate }}</p>
-                        <p>{{ production?.dueDate }}</p>
+                        <p>{{ quotation?.estimateDate }}</p>
+                        <p>{{ quotation?.dueDate }}</p>
                     </v-col>
                 </v-row>
                 <div class="w-100">
@@ -51,7 +51,7 @@
                         </thead>
                         <tbody>
                             <tr
-                                v-for="(item, index) in production?.items"
+                                v-for="(item, index) in quotation?.items"
                                 :key="index"
                             >
                                 <td>{{ index + 1 }}</td>
@@ -81,7 +81,7 @@
                                 <td colspan="5" class="text-end">รวม</td>
                                 <td>
                                     {{
-                                        production?.items.reduce(
+                                        quotation?.items.reduce(
                                             (acc, item) =>
                                                 acc + item.price * item.amount,
                                             0
@@ -97,22 +97,22 @@
     </html>
 </template>
 <script setup lang="ts">
-import useProductionApi, {
+import useQuotationApi, {
     lines,
     plates,
-    type Production,
-} from '~/composables/api/useProductionApi'
+} from '~/composables/api/useQuotationApi'
+import type { Quotation } from '~/models/quotation/quotation'
 
 const route = useRoute()
 const { id } = route.params
-const productionApi = useProductionApi()
+const quotationApi = useQuotationApi()
 
 definePageMeta({
     layout: false,
 })
-const production = ref<Production>()
+const quotation = ref<Quotation>()
 onMounted(async () => {
-    production.value = await productionApi.getOne(+id)
+    quotation.value = await quotationApi.getOne(+id)
 
     nextTick(() => {
         window.print()

@@ -36,7 +36,7 @@
                         {{ item.school }}
                     </td>
 
-                    <td v-if="userProfile?.role === 'admin'">
+                    <td v-if="profile?.role === 'admin'">
                         <v-icon> mdi-map-marker</v-icon> {{ item.shop }}
                     </td>
                     <td>
@@ -128,7 +128,8 @@ import useProductionApi, {
 import { contextPluginSymbol } from '@/plugins/context'
 import type { Production, ProductionItem } from '@/models/production/production'
 const tableState = ref<Production[]>([])
-const { userProfile } = inject(contextPluginSymbol)!
+// const { userProfile } = inject(contextPluginSymbol)!
+const { profile } = useProfileStore()
 const loading = ref(false)
 const productApi = useProductionApi()
 const headerItems = ref([
@@ -182,8 +183,6 @@ const headers = computed(() => {
         { title: 'สถานะ', key: 'status' },
         { title: '#', key: 'action' },
     ]
-    return header.filter(
-        (h) => userProfile.value?.role !== 'user' || h.key !== 'shop'
-    )
+    return header.filter((h) => profile?.role !== 'user' || h.key !== 'shop')
 })
 </script>

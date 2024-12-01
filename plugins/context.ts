@@ -1,6 +1,6 @@
-import type { User } from '@/composables/api/useUserApi'
 import useAuth from '@/composables/useAuth'
 import type { InjectionKey, Plugin } from 'vue'
+import type { User } from '~/models/user/user'
 
 export type PluginInstance = ReturnType<typeof context>
 export const contextPluginSymbol: InjectionKey<PluginInstance> =

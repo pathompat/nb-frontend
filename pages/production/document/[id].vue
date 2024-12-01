@@ -100,8 +100,8 @@
 import useProductionApi, {
     lines,
     plates,
-    type Production,
 } from '~/composables/api/useProductionApi'
+import type { Production } from '~/models/production/production'
 
 const route = useRoute()
 const { id } = route.params

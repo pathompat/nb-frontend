@@ -21,7 +21,7 @@
                         class="text-black bg-white mr-6"
                         size="small"
                     >
-                        {{ userProfile?.username }}
+                        {{ profile?.username }}
                     </v-btn>
                 </template>
 
@@ -61,7 +61,8 @@
 import useAuth from '@/composables/useAuth'
 import { contextPluginSymbol, type PluginInstance } from '@/plugins/context'
 import type { MenuItem } from '~/models/share/share'
-const { userProfile, refresh } = inject<PluginInstance>(contextPluginSymbol)!
+// const { refresh } = inject<PluginInstance>(contextPluginSymbol)!
+const { profile } = useProfileStore()
 const auth = useAuth()
 const drawer = ref(true)
 
@@ -69,9 +70,7 @@ const logout = () => {
     auth.logout()
 }
 const ItemByRole = computed(() => {
-    return items.value.filter((i) =>
-        i.role.some((r) => r === userProfile.value?.role)
-    )
+    return items.value.filter((i) => i.role.some((r) => r === profile?.role))
 })
 const items = ref<MenuItem[]>([
     {
@@ -88,6 +87,6 @@ const items = ref<MenuItem[]>([
     },
 ])
 onMounted(async () => {
-    await refresh()
+    // await refresh()
 })
 </script>

@@ -9,5 +9,5 @@ import context from './context'
 
 // Nuxt plugin format
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.vueApp.use(context)
+    // nuxtApp.vueApp.use(context)
 })

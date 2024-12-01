@@ -36,6 +36,7 @@
 import useAuth from '@/composables/useAuth'
 definePageMeta({
     layout: 'login',
+    middleware: undefined,
 })
 const userform = ref({
     username: '',
