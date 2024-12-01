@@ -18,8 +18,7 @@ export default defineNuxtConfig({
     nitro: {
         devProxy: {
             '/api': {
-                target:
-                    process.env.BASE_URL || 'https://test-nb.pathompat.me/api',
+                target: process.env.BASE_URL || 'https://test.tickbook.net/api',
                 changeOrigin: true,
             },
         },
