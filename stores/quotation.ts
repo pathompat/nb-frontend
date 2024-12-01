@@ -1,33 +1,9 @@
-import useBaseApi from '../useBaseApi'
-import { ref } from 'vue'
 import {
     type Quotation,
     type QuotationForm,
 } from '~/models/quotation/quotation'
 import { PRINTSTATUS, LINE, PLATE } from '~/models/enum/enum'
-export const statuses = ref([
-    { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
-    { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
-    { title: 'เย็บเข้าเล่ม', value: PRINTSTATUS.SEWING },
-    { title: 'แพ็ค', value: PRINTSTATUS.PACK },
-    { title: 'พร้อมจัดส่ง', value: PRINTSTATUS.READY },
-])
-export const statusColors = [
-    { id: PRINTSTATUS.PRINT, color: '#FF9800' },
-    { id: PRINTSTATUS.OUTBOUND, color: '#B0BEC5' },
-    { id: PRINTSTATUS.SEWING, color: '#2196F3' },
-    { id: PRINTSTATUS.PACK, color: '#9C27B0' },
-    { id: PRINTSTATUS.READY, color: '#4CAF50' },
-]
-export const lines = [
-    { title: 'เดี่ยว', value: LINE.SINGLE },
-    { title: 'ครึ่ง', value: LINE.HALF },
-]
-export const plates = [
-    { title: 'ใหญ่', value: PLATE.BIG },
-    { title: 'เล็ก', value: PLATE.SMALL },
-    { title: 'พิเศษ', value: PLATE.EXTRA },
-]
+
 const mockQuotations: Quotation[] = [
     {
         id: 1,
@@ -323,66 +299,84 @@ const mockQuotations: Quotation[] = [
         ],
     },
 ]
-export const getStatusTitle = (value: number) =>
-    statuses.value.find((status) => status.value === value)?.title ||
-    'ไม่ทราบสถานะ'
-export default function useQuotationApi() {
-    const controller = 'quotation'
+
+export const useQuotationStore = defineStore('quotation', () => {
     const { getRequest, postRequest } = useBaseApi()
-    return {
-        async getAll(): Promise<Quotation[]> {
-            try {
-                const response = await getRequest<Quotation[]>(controller)
-                return response
-            } catch (error) {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve(JSON.parse(JSON.stringify(mockQuotations)))
-                    }, 500)
-                })
-            }
-        },
-        async create(quotation: QuotationForm): Promise<Quotation> {
-            try {
-                const response = await postRequest<Quotation>(
-                    controller,
-                    quotation
-                )
-                return response
-            } catch (error) {
-                return new Promise((resolve) => {
-                    const newQuotation = {
-                        ...quotation,
-                        id: mockQuotations.length + 1,
-                        status: 'DRAFT',
-                    }
-                    mockQuotations.push(newQuotation)
-                    setTimeout(() => {
-                        resolve(newQuotation)
-                    }, 500)
-                })
-            }
-        },
-        async getOne(id: number): Promise<Quotation> {
-            try {
-                const response = await getRequest<Quotation>(
-                    `${controller}/${id}`
-                )
-                return response
-            } catch (error) {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve(mockQuotations.find((q) => q.id === id)!)
-                    }, 500)
-                })
-            }
-        },
-        async update(quotation: Quotation): Promise<Quotation> {
-            return quotation
-            // try {
-            //   const response = await putRequest<Production>(controller, production);
-            //   return response;
-            // }
-        },
+    const controller = 'quotation'
+
+    const quotations = ref<Quotation[]>([])
+    const statuses = ref([
+        { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
+        { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
+        { title: 'เย็บเข้าเล่ม', value: PRINTSTATUS.SEWING },
+        { title: 'แพ็ค', value: PRINTSTATUS.PACK },
+        { title: 'พร้อมจัดส่ง', value: PRINTSTATUS.READY },
+    ])
+
+    const statusColors = [
+        { id: PRINTSTATUS.PRINT, color: '#FF9800' },
+        { id: PRINTSTATUS.OUTBOUND, color: '#B0BEC5' },
+        { id: PRINTSTATUS.SEWING, color: '#2196F3' },
+        { id: PRINTSTATUS.PACK, color: '#9C27B0' },
+        { id: PRINTSTATUS.READY, color: '#4CAF50' },
+    ]
+
+    const getStatusTitle = computed(() => (value: number) => {
+        return (
+            statuses.value.find((status) => status.value === value)?.title ||
+            'ไม่ทราบสถานะ'
+        )
+    })
+
+    const fetchQuotations = async () => {
+        try {
+            const response = await getRequest<Quotation[]>(controller)
+            quotations.value = response
+        } catch (error) {
+            quotations.value = JSON.parse(JSON.stringify(mockQuotations))
+        }
     }
-}
+
+    const createQuotation = async (
+        quotation: QuotationForm
+    ): Promise<Quotation> => {
+        try {
+            const response = await postRequest<Quotation>(controller, quotation)
+            quotations.value.push(response)
+            return response
+        } catch (error) {
+            const newQuotation = {
+                ...quotation,
+                id: quotations.value.length + 1,
+                status: 'DRAFT',
+            }
+            quotations.value.push(newQuotation)
+            return newQuotation
+        }
+    }
+
+    const getQuotationById = (id: number): Quotation | undefined => {
+        return quotations.value.find((q) => q.id === id)
+    }
+
+    const updateQuotation = async (
+        quotation: Quotation
+    ): Promise<Quotation> => {
+        const index = quotations.value.findIndex((q) => q.id === quotation.id)
+        if (index !== -1) {
+            quotations.value[index] = quotation
+        }
+        return quotation
+    }
+
+    return {
+        quotations,
+        statuses,
+        statusColors,
+        getStatusTitle,
+        fetchQuotations,
+        createQuotation,
+        getQuotationById,
+        updateQuotation,
+    }
+})

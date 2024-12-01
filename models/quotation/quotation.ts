@@ -1,8 +1,11 @@
 import type { PRINTSTATUS, LINE, PLATE } from '../enum/enum'
+import type { Production } from '../production/production'
 
-export interface Quotation {
+export interface Quotation extends QuotationForm {
     id: number
-    name: string
+    status: string
+}
+export interface QuotationForm {
     date: string
     school: string
     shop: string
@@ -12,6 +15,9 @@ export interface Quotation {
     estimateDate: string
     items: QuotationItem[]
     remark?: string
+}
+export interface QuotationResultApi extends Quotation {
+    production?: Production
 }
 export interface QuotationItem {
     hasPlan: boolean

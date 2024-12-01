@@ -75,9 +75,9 @@
 <script lang="ts" setup>
 import useUserApi from '@/composables/api/useUserApi'
 import type { User } from '@/models/user/user'
-const tier = ref<[]>([])
+const tier = ref<{ id: number }[]>([])
 const dialogOpen = ref(false)
-const initFormEdit = ref<Partial<User>>({})
+const initFormEdit = ref<Partial<User & { tier: number | null }>>({})
 const userApi = useUserApi()
 const loading = ref(false)
 let resolveFn: ((user: Partial<User>) => void) | null = null

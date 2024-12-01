@@ -89,12 +89,12 @@
     </v-card>
 </template>
 <script setup lang="ts">
-import useProductionApi, {
+import useQuotationApi, {
     statusColors,
     getStatusTitle,
-} from '@/composables/api/useProductionApi'
-import type { Production } from '@/models/production/production'
-const tableState = ref<Production[]>([])
+} from '@/composables/api/useQuotationApi'
+import type { Quotation } from '~/models/quotation/quotation'
+const tableState = ref<Quotation[]>([])
 const headers = ref([
     { title: 'วันที่', key: 'date' },
     { title: 'โรงเรียน', key: 'school' },
@@ -110,11 +110,11 @@ const headerExpanded = ref([
     { title: 'สถานะงานพิมพ์', value: 'status' },
 ])
 const loading = ref(false)
-const productApi = useProductionApi()
+const quotationApi = useQuotationApi()
 onMounted(async () => {
     loading.value = true
     try {
-        const res = await productApi.getAll()
+        const res = await quotationApi.getAll()
         tableState.value = res
     } catch (error) {
         console.error(error)

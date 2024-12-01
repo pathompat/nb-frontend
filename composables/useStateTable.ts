@@ -1,4 +1,4 @@
-import type { Pagination } from './api/useBaseApi'
+import type { Pagination } from './useBaseApi'
 
 export default function useStateTable<T>() {
     const pagination = ref({

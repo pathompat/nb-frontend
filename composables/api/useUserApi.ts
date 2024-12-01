@@ -1,5 +1,5 @@
 import type { Pagination } from '~/models/api/api'
-import useBaseApi from './useBaseApi'
+import useBaseApi from '../useBaseApi'
 import { type User } from '@/models/user/user'
 
 export const mockUsers: User[] = [

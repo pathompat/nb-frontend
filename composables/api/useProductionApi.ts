@@ -1,4 +1,4 @@
-import useBaseApi from '@/composables/api/useBaseApi'
+import useBaseApi from '~/composables/useBaseApi'
 import { PRINTSTATUS, LINE, PLATE } from '~/models/enum/enum'
 import type { Production, ProductionItem } from '~/models/production/production'
 
@@ -28,7 +28,6 @@ export const plates = [
 const mockProductions: Production[] = [
     {
         id: 1,
-        name: 'สั่งผลิตที่ 1',
         date: new Date('10/10/2024').toLocaleDateString('th-TH'),
         school: 'โรงเรียนบ้านท่าช้าง',
         shop: 'คุณจรัญ',
@@ -76,7 +75,6 @@ const mockProductions: Production[] = [
     },
     {
         id: 2,
-        name: 'สั่งผลิตที่ 2',
         date: new Date('10/10/2024').toLocaleDateString('th-TH'),
         school: 'โรงเรียนบ้านท่าช้าง',
         shop: 'คุณจรัญ',
@@ -101,7 +99,6 @@ const mockProductions: Production[] = [
     },
     {
         id: 3,
-        name: 'สั่งผลิตที่ 3',
         date: new Date('10/10/2024').toLocaleDateString('th-TH'),
         school: 'โรงเรียนบ้านท่าช้าง',
         phone: '0812345678',

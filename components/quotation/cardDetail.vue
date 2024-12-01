@@ -287,7 +287,7 @@ import useQuotationApi, {
     lines,
     plates,
 } from '@/composables/api/useQuotationApi'
-import type { Quotation } from '@/models/quotation/quotation'
+import type { Quotation, QuotationForm } from '@/models/quotation/quotation'
 import { PLATE, LINE, PRINTSTATUS } from '@/models/enum/enum'
 import type { SaveRow } from '~/models/share/share'
 const quotationApi = useQuotationApi()
@@ -310,7 +310,7 @@ const headerItems = ref([
 const isSaved = ref<SaveRow[]>([])
 const quotation = ref<Quotation>({
     id: 0,
-    name: '',
+    status: 'DRAFT',
     date: '',
     school: '',
     shop: '',

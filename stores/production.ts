@@ -1,41 +1,15 @@
-import useBaseApi from '../useBaseApi'
-import { ref } from 'vue'
-import {
-    type Quotation,
-    type QuotationForm,
-} from '~/models/quotation/quotation'
+import useBaseApi from '~/composables/useBaseApi'
 import { PRINTSTATUS, LINE, PLATE } from '~/models/enum/enum'
-export const statuses = ref([
-    { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
-    { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
-    { title: 'เย็บเข้าเล่ม', value: PRINTSTATUS.SEWING },
-    { title: 'แพ็ค', value: PRINTSTATUS.PACK },
-    { title: 'พร้อมจัดส่ง', value: PRINTSTATUS.READY },
-])
-export const statusColors = [
-    { id: PRINTSTATUS.PRINT, color: '#FF9800' },
-    { id: PRINTSTATUS.OUTBOUND, color: '#B0BEC5' },
-    { id: PRINTSTATUS.SEWING, color: '#2196F3' },
-    { id: PRINTSTATUS.PACK, color: '#9C27B0' },
-    { id: PRINTSTATUS.READY, color: '#4CAF50' },
-]
-export const lines = [
-    { title: 'เดี่ยว', value: LINE.SINGLE },
-    { title: 'ครึ่ง', value: LINE.HALF },
-]
-export const plates = [
-    { title: 'ใหญ่', value: PLATE.BIG },
-    { title: 'เล็ก', value: PLATE.SMALL },
-    { title: 'พิเศษ', value: PLATE.EXTRA },
-]
-const mockQuotations: Quotation[] = [
+import type { Production, ProductionItem } from '~/models/production/production'
+
+const mockProductions: Production[] = [
     {
         id: 1,
         date: new Date('10/10/2024').toLocaleDateString('th-TH'),
         school: 'โรงเรียนบ้านท่าช้าง',
         shop: 'คุณจรัญ',
+        quotationId: 1,
         phone: '0812345678',
-        status: 'DRAFT',
         address: 'ถ.สุขุมวิท ต.ท่าช้าง อ.เมือง จ.สมุทรปราการ',
         dueDate: new Date('10/10/2024').toLocaleDateString('th-TH'),
         estimateDate: new Date('10/10/2024').toLocaleDateString('th-TH'),
@@ -85,7 +59,7 @@ const mockQuotations: Quotation[] = [
         address: 'ถ.สุขุมวิท ต.ท่าช้าง อ.เมือง จ.สมุทรปราการ',
         dueDate: new Date('10/10/2024').toLocaleDateString('th-TH'),
         estimateDate: new Date('10/10/2024').toLocaleDateString('th-TH'),
-        status: 'DRAFT',
+        quotationId: 2,
         items: [
             {
                 hasPlan: false,
@@ -109,7 +83,7 @@ const mockQuotations: Quotation[] = [
         dueDate: new Date('10/10/2024').toLocaleDateString('th-TH'),
         estimateDate: new Date('10/10/2024').toLocaleDateString('th-TH'),
         shop: 'คุณจรัญ',
-        status: 'DRAFT',
+        quotationId: 3,
         items: [
             {
                 hasPlan: true,
@@ -323,66 +297,81 @@ const mockQuotations: Quotation[] = [
         ],
     },
 ]
-export const getStatusTitle = (value: number) =>
-    statuses.value.find((status) => status.value === value)?.title ||
-    'ไม่ทราบสถานะ'
-export default function useQuotationApi() {
-    const controller = 'quotation'
-    const { getRequest, postRequest } = useBaseApi()
-    return {
-        async getAll(): Promise<Quotation[]> {
+
+export const useProductionStore = defineStore('production', {
+    state: () => ({
+        statuses: [
+            { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
+            { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
+            { title: 'เย็บเข้าเล่ม', value: PRINTSTATUS.SEWING },
+            { title: 'แพ็ค', value: PRINTSTATUS.PACK },
+            { title: 'พร้อมจัดส่ง', value: PRINTSTATUS.READY },
+        ],
+        statusColors: [
+            { id: PRINTSTATUS.PRINT, color: '#FF9800' },
+            { id: PRINTSTATUS.OUTBOUND, color: '#B0BEC5' },
+            { id: PRINTSTATUS.SEWING, color: '#2196F3' },
+            { id: PRINTSTATUS.PACK, color: '#9C27B0' },
+            { id: PRINTSTATUS.READY, color: '#4CAF50' },
+        ],
+        lines: [
+            { title: 'เดี่ยว', value: LINE.SINGLE },
+            { title: 'ครึ่ง', value: LINE.HALF },
+        ],
+        plates: [
+            { title: 'ใหญ่', value: PLATE.BIG },
+            { title: 'เล็ก', value: PLATE.SMALL },
+            { title: 'พิเศษ', value: PLATE.EXTRA },
+        ],
+        productions: mockProductions,
+    }),
+
+    getters: {
+        getStatusTitle: (state) => (value: number) =>
+            state.statuses.find((status) => status.value === value)?.title ||
+            'ไม่ทราบสถานะ',
+    },
+
+    actions: {
+        async fetchAllProductions() {
+            const { getRequest } = useBaseApi()
             try {
-                const response = await getRequest<Quotation[]>(controller)
-                return response
+                const response = await getRequest<Production[]>('production')
+                this.productions = response
             } catch (error) {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve(JSON.parse(JSON.stringify(mockQuotations)))
-                    }, 500)
-                })
+                this.productions = JSON.parse(JSON.stringify(mockProductions))
             }
         },
-        async create(quotation: QuotationForm): Promise<Quotation> {
+        async createProduction(production: Production) {
+            const { postRequest } = useBaseApi()
             try {
-                const response = await postRequest<Quotation>(
-                    controller,
-                    quotation
+                const response = await postRequest<Production>(
+                    'production',
+                    production
                 )
-                return response
+                this.productions.push(response)
             } catch (error) {
-                return new Promise((resolve) => {
-                    const newQuotation = {
-                        ...quotation,
-                        id: mockQuotations.length + 1,
-                        status: 'DRAFT',
-                    }
-                    mockQuotations.push(newQuotation)
-                    setTimeout(() => {
-                        resolve(newQuotation)
-                    }, 500)
-                })
+                production.id = this.productions.length + 1
+                this.productions.push(production)
             }
         },
-        async getOne(id: number): Promise<Quotation> {
+        async getProductionById(id: number) {
+            const { getRequest } = useBaseApi()
             try {
-                const response = await getRequest<Quotation>(
-                    `${controller}/${id}`
-                )
-                return response
+                return await getRequest<Production>(`production/${id}`)
             } catch (error) {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve(mockQuotations.find((q) => q.id === id)!)
-                    }, 500)
-                })
+                return this.productions.find((p) => p.id === id)!
             }
         },
-        async update(quotation: Quotation): Promise<Quotation> {
-            return quotation
-            // try {
-            //   const response = await putRequest<Production>(controller, production);
-            //   return response;
-            // }
+        async updateProduction(production: Production) {
+            // Implement update logic here
+            // Example:
+            const index = this.productions.findIndex(
+                (p) => p.id === production.id
+            )
+            if (index !== -1) {
+                this.productions[index] = production
+            }
         },
-    }
-}
+    },
+})

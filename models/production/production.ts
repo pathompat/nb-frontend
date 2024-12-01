@@ -2,7 +2,6 @@ import type { PRINTSTATUS, LINE, PLATE } from '../enum/enum'
 
 export interface Production {
     id: number
-    name: string
     date: string
     school: string
     shop: string
