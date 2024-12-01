@@ -1,54 +1,71 @@
 <template>
-  <v-container class="d-flex justify-center align-center" style="height: 100vh;">
-    <v-card class="pa-4" width="400">
-      <v-card-title class="text-h5 text-center" elevation="16">Log into your account</v-card-title>
-      <v-card-subtitle></v-card-subtitle>
-      <v-card-text>
-        <v-form>
-          <v-text-field
-            label="Email address"
-            variant="outlined"
-            class="mb-2"
-            clearable
-          ></v-text-field>
-          <v-text-field
-            label="Password"
-            type="password"
-            variant="outlined"
-            class="mb-2"
-            clearable
-          ></v-text-field>
-          <!-- <v-checkbox label="Remember me" class="mb-4"></v-checkbox> -->
-          <v-btn block size="large" color="primary" class="mb-4">Log In</v-btn>
-          <!-- <div class="text-center">
-            <a href="#" class="text-decoration-none">Forgot password?</a>
-          </div>
-          <div class="text-center mt-4">
-            <p>Or continue with</p>
-            <v-btn icon color="red">
-              <v-icon>mdi-google</v-icon>
-            </v-btn>
-            <v-btn icon color="blue">
-              <v-icon>mdi-facebook</v-icon>
-            </v-btn>
-          </div> -->
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-container>
+    <main class="d-flex h-100 flex-column justify-center align-center">
+        <div style="width: 400px">
+            <div class="d-flex justify-start">
+                <h1>เข้าสู่ระบบ</h1>
+            </div>
+            <form @submit.prevent="login">
+                <div class="d-flex flex-column">
+                    <div class="d-flex flex-column ga-4">
+                        <v-text-field
+                            v-model="userform.username"
+                            label="บัญชีผู้ใช้งาน"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="userform.password"
+                            label="รหัสผ่าน"
+                            @keyup.enter="login"
+                        ></v-text-field>
+                    </div>
+                    <div class="d-flex justify-end">
+                        <div class="d-flex align-center">
+                            <v-checkbox hide-details></v-checkbox>
+                            <div>จำรหัสผ่าน</div>
+                        </div>
+                    </div>
+                    <v-btn :loading="loading" variant="flat" type="submit">
+                        เข้าสู่ระบบ
+                    </v-btn>
+                </div>
+            </form>
+        </div>
+    </main>
 </template>
 
-<script setup lang="ts">
-  definePageMeta({
-    layout: 'custom' as globalThis.MaybeRef<false | "default">
-  })
+<script lang="ts" setup>
+import useAuth from '@/composables/useAuth'
+definePageMeta({
+    layout: 'login',
+    middleware: undefined,
+})
+const userform = ref({
+    username: '',
+    password: '',
+})
+const loading = ref(false)
+const router = useRouter()
+const auth = useAuth()
+const login = async () => {
+    loading.value = true
+    try {
+        const res = await auth.login(
+            userform.value.username,
+            userform.value.password
+        )
+        router.push({ path: '/' })
+    } catch (error) {
+        console.error(error)
+    } finally {
+        loading.value = false
+    }
+}
+onMounted(() => {
+    alert(
+        `
+    user admin 
+    user : admin | password : admin 
+    user customer 
+    user : customer | password : customer`
+    )
+})
 </script>
-
-<style scoped>
-  a {
-    color: #ffffff;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-</style>

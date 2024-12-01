@@ -1,59 +1,22 @@
 <template>
-  <v-card>
-    <template v-slot:title>
-      <h3>Hello world</h3>
-    </template>
-
-    <v-card-text class="pt-4">
-      <div v-if="!users || users.length === 0">No data</div>
-      <div v-else>
-        <v-table>
-          <thead>
-            <tr>
-              <th class="text-left">
-                ID
-              </th>
-              <th class="text-left">
-                Username
-              </th>
-              <th class="text-left">
-                Store
-              </th>
-              <th class="text-left">
-                Created Date
-              </th>
-              <th class="text-left">
-                Updated Date
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="user in users"
-              :key="user.id"
-            >
-              <td>{{ user.id }}</td>
-              <td>{{ user.username }}</td>
-              <td>{{ user.store }}</td>
-              <td>{{ useFormatDate(user.createdAt) }}</td>
-              <td>{{ useFormatDate(user.updatedAt) }}</td>
-            </tr>
-          </tbody>
-        </v-table>
-      </div>
-    </v-card-text>
-  </v-card>
+    <main>
+        <div class="d-flex justify-space-between">
+            <h1>รายการสั่งผลิต</h1>
+            <div class="d-flex ga-2">
+                <v-btn variant="flat" color="success" to="/quotation/create">
+                    เพิ่มรายการสั่งผลิต
+                </v-btn>
+            </div>
+        </div>
+        <section class="pa-8">
+            <List />
+        </section>
+        <section>
+            <Table />
+        </section>
+    </main>
 </template>
-
 <script setup lang="ts">
-  import { useUserStore } from '@/stores/user';
-  
-  // ref
-  const store = useUserStore();
-  const { users } = storeToRefs(store);
-
-  onMounted(() => {
-    store.fetchUsers()
-  })
-
+import List from '@/components/production/list.vue'
+import Table from '@/components/production/tableStatus.vue'
 </script>
