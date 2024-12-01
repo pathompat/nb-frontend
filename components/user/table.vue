@@ -57,9 +57,7 @@
         <v-card>
             <v-card-title
                 >ยืนยันปิดใช้งาน
-                {{
-                    tableState.find((v) => v.id == userId)?.username
-                }}
+                {{ tableState.find((v) => v.id == userId)?.username }}
                 ?</v-card-title
             >
             <v-card-text>

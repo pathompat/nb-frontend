@@ -53,9 +53,7 @@
         <v-card>
             <v-card-title
                 >ยืนยันปิดใช้งาน
-                {{
-                    users.find((v) => v.id == userId)?.username
-                }}
+                {{ users.find((v) => v.id == userId)?.username }}
                 ?</v-card-title
             >
             <v-card-text>
