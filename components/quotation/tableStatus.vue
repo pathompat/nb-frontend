@@ -6,13 +6,7 @@
       :items="tableState"
       :expand-on-click="true"
       show-expand
-      :headers="[
-        { title: 'วันที่', key: 'date' },
-        { title: 'โรงเรียน', key: 'school' },
-        { title: 'ร้านค้า', key: 'shop' },
-        { title: 'สถานะ', key: 'status' },
-        { title: '#', key: 'action' },
-      ]"
+      :headers="headers"
     >
       <template v-slot:item="{ internalItem, item, isExpanded, toggleExpand }">
         <tr>
@@ -61,13 +55,7 @@
                   index: index + 1,
                 }))
               "
-              :headers="[
-                { title: 'No.', value: 'index' },
-                { title: 'เพรท/แกรม/สี/แผ่น/เส้น', value: 'description' },
-                { title: 'มีเเบบ', value: 'hasPlan' },
-                { title: 'จำนวน', value: 'amount' },
-                { title: 'สถานะงานพิมพ์', value: 'status' },
-              ]"
+              :headers="headerExpanded"
             >
               <template #item.status="{ item }">
                 <v-chip
@@ -101,7 +89,20 @@ import useProductionApi, {
 } from "@/composables/api/useProductionApi";
 import useStateTable from "@/composables/useStateTable";
 const { tableState, pagination } = useStateTable<Production[]>();
-
+const headers = ref([
+  { title: "วันที่", key: "date" },
+  { title: "โรงเรียน", key: "school" },
+  { title: "ร้านค้า", key: "shop" },
+  { title: "สถานะ", key: "status" },
+  { title: "#", key: "action" },
+]);
+const headerExpanded = ref([
+  { title: "No.", value: "index" },
+  { title: "เพรท/แกรม/สี/แผ่น/เส้น", value: "description" },
+  { title: "มีเเบบ", value: "hasPlan" },
+  { title: "จำนวน", value: "amount" },
+  { title: "สถานะงานพิมพ์", value: "status" },
+]);
 const loading = ref(false);
 const productApi = useProductionApi();
 onMounted(async () => {

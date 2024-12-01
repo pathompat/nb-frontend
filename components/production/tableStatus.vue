@@ -66,33 +66,7 @@
                   index: index + 1,
                 }))
               "
-              :headers="[
-                {
-                  title: 'No.',
-                  value: 'index',
-                  headerProps: { style: { fontWeight: 'bold' } },
-                },
-                {
-                  title: 'เพรท/แกรม/สี/แผ่น/เส้น',
-                  value: 'description',
-                  headerProps: { style: { fontWeight: 'bold' } },
-                },
-                {
-                  title: 'มีเเบบ',
-                  value: 'hasPlan',
-                  headerProps: { style: { fontWeight: 'bold' } },
-                },
-                {
-                  title: 'จำนวน',
-                  value: 'amount',
-                  headerProps: { style: { fontWeight: 'bold' } },
-                },
-                {
-                  title: 'สถานะงานพิมพ์',
-                  value: 'status',
-                  headerProps: { style: { fontWeight: 'bold' } },
-                },
-              ]"
+              :headers="headerItems"
             >
               <template #item.status="{ item }">
                 <v-chip
@@ -141,6 +115,33 @@ const { tableState, pagination } = useStateTable<Production[]>();
 const { userProfile } = inject(contextPluginSymbol)!;
 const loading = ref(false);
 const productApi = useProductionApi();
+const headerItems = ref([
+  {
+    title: "No.",
+    value: "index",
+    headerProps: { style: { fontWeight: "bold" } },
+  },
+  {
+    title: "เพรท/แกรม/สี/แผ่น/เส้น",
+    value: "description",
+    headerProps: { style: { fontWeight: "bold" } },
+  },
+  {
+    title: "มีเเบบ",
+    value: "hasPlan",
+    headerProps: { style: { fontWeight: "bold" } },
+  },
+  {
+    title: "จำนวน",
+    value: "amount",
+    headerProps: { style: { fontWeight: "bold" } },
+  },
+  {
+    title: "สถานะงานพิมพ์",
+    value: "status",
+    headerProps: { style: { fontWeight: "bold" } },
+  },
+]);
 function getItemLowestStatus(items: ProductionItem[]) {
   return items.sort((a, b) => a.status - b.status)[0].status;
 }

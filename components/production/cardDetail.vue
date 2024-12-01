@@ -78,18 +78,7 @@
               class="my-4"
               hideDefaultFooter
               :items="production.items"
-              :headers="[
-                { title: 'ลำดับ', key: 'id' },
-                { title: 'เพลท', key: 'plate' },
-                { title: 'แกรม', key: 'gram' },
-                { title: 'สี', key: 'color' },
-                { title: 'แผ่น', key: 'page' },
-                { title: 'เส้น', key: 'line' },
-                { title: 'มีแบบ', key: 'hasPlan' },
-                { title: 'จำนวน', key: 'amount' },
-                { title: 'สถานะ', key: 'status' },
-                { title: 'อัพเดท', key: 'action' },
-              ]"
+              :headers="headers"
             >
               <template #item.id="{ index }"> {{ index + 1 }} </template>
               <template #item.hasPlan="{ item }">
@@ -149,11 +138,9 @@ import useProductionApi, {
 
 const productApi = useProductionApi();
 const loading = ref(false);
-const production = ref<Production>(defaultForm());
 const router = useRouter();
-function defaultForm() {
+function defaultForm(): Partial<Production> {
   return {
-    id: 0,
     name: "",
     date: "",
     school: "",
@@ -162,11 +149,22 @@ function defaultForm() {
     address: "",
     dueDate: "",
     estimateDate: "",
-    status: PRINTSTATUS.OUTBOUND,
     items: [],
   };
 }
-
+const production = ref<Partial<Production>>(defaultForm());
+const headers = ref([
+  { title: "ลำดับ", key: "id" },
+  { title: "เพลท", key: "plate" },
+  { title: "แกรม", key: "gram" },
+  { title: "สี", key: "color" },
+  { title: "แผ่น", key: "page" },
+  { title: "เส้น", key: "line" },
+  { title: "มีแบบ", key: "hasPlan" },
+  { title: "จำนวน", key: "amount" },
+  { title: "สถานะ", key: "status" },
+  { title: "อัพเดท", key: "action" },
+]);
 onMounted(async () => {
   defaultForm();
   if (props.id) {

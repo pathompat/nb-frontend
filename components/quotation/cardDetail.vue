@@ -73,19 +73,7 @@
               class="my-4"
               hideDefaultFooter
               :items="quotation.items"
-              :headers="[
-                { title: 'ลำดับ', key: 'id' },
-                { title: 'เพลท', key: 'plate' },
-                { title: 'แกรม', key: 'gram' },
-                { title: 'สี', key: 'color' },
-                { title: 'แผ่น', key: 'page' },
-                { title: 'เส้น', key: 'line' },
-                { title: 'มีแบบ', key: 'hasPlan' },
-                { title: 'จำนวน', key: 'amount' },
-                { title: 'ราคา', key: 'price' },
-                { title: 'รวม', key: 'sum' },
-                { title: 'ลบ', key: 'action' },
-              ]"
+              :headers="headerItems"
             >
               <template #body="{ items }">
                 <tr v-if="items.length === 0">
@@ -245,6 +233,19 @@ interface SaveRow {
   index: number;
   isSaved: boolean;
 }
+const headerItems = ref([
+  { title: "ลำดับ", key: "id" },
+  { title: "เพลท", key: "plate" },
+  { title: "แกรม", key: "gram" },
+  { title: "สี", key: "color" },
+  { title: "แผ่น", key: "page" },
+  { title: "เส้น", key: "line" },
+  { title: "มีแบบ", key: "hasPlan" },
+  { title: "จำนวน", key: "amount" },
+  { title: "ราคา", key: "price" },
+  { title: "รวม", key: "sum" },
+  { title: "ลบ", key: "action" },
+]);
 const isSaved = ref<SaveRow[]>([]);
 const quotation = ref<Quotation>({
   id: 0,
