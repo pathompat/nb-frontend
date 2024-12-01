@@ -1,5 +1,6 @@
 import useBaseApi from './useBaseApi'
-import { mockUsers, type User } from './useUserApi'
+import { mockUsers } from './useUserApi'
+import type { User } from '~/models/user/user'
 
 export default function useAuthApi() {
     const api = useBaseApi()

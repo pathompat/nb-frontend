@@ -90,13 +90,11 @@
 </template>
 <script setup lang="ts">
 import useProductionApi, {
-    statuses,
-    type Production,
     statusColors,
     getStatusTitle,
 } from '@/composables/api/useProductionApi'
-import useStateTable from '@/composables/useStateTable'
-const { tableState, pagination } = useStateTable<Production[]>()
+import type { Production } from '@/models/production/production'
+const tableState = ref<Production[]>([])
 const headers = ref([
     { title: 'วันที่', key: 'date' },
     { title: 'โรงเรียน', key: 'school' },
@@ -117,8 +115,7 @@ onMounted(async () => {
     loading.value = true
     try {
         const res = await productApi.getAll()
-        tableState.value = res.items
-        pagination.value = res
+        tableState.value = res
     } catch (error) {
         console.error(error)
     }

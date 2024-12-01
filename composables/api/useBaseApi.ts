@@ -1,10 +1,3 @@
-export interface Pagination<T> {
-    page: number
-    totalItems: number
-    itemsPerPage: number
-    items: T
-}
-
 export default function useBaseApi() {
     const createApi = <T = null>(
         url: string,

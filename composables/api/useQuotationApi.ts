@@ -1,45 +1,7 @@
-import useBaseApi, { type Pagination } from './useBaseApi'
+import useBaseApi from './useBaseApi'
 import { ref } from 'vue'
-export interface Quotation {
-    id: number
-    name: string
-    date: string
-    school: string
-    shop: string
-    phone: string
-    address: string
-    dueDate: string
-    estimateDate: string
-    items: QuotationItem[]
-    remark?: string
-}
-export interface QuotationItem {
-    hasPlan: boolean
-    amount: number
-    status: PRINTSTATUS
-    plate: PLATE
-    gram: number
-    price: number
-    color: number
-    line: LINE
-    page: number
-}
-export enum LINE {
-    SINGLE = 1,
-    HALF = 2,
-}
-export enum PLATE {
-    BIG = 1,
-    SMALL = 2,
-    EXTRA = 3,
-}
-export enum PRINTSTATUS {
-    OUTBOUND = 1,
-    PRINT = 2,
-    SEWING = 3,
-    PACK = 4,
-    READY = 5,
-}
+import { type Quotation } from '~/models/quotation/quotation'
+import { PRINTSTATUS, LINE, PLATE } from '~/models/enum/enum'
 export const statuses = ref([
     { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
     { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
@@ -365,21 +327,14 @@ export default function useQuotationApi() {
     const controller = 'quotation'
     const { getRequest, postRequest } = useBaseApi()
     return {
-        async getAll(): Promise<Pagination<Quotation[]>> {
+        async getAll(): Promise<Quotation[]> {
             try {
-                const response =
-                    await getRequest<Pagination<Quotation[]>>(controller)
+                const response = await getRequest<Quotation[]>(controller)
                 return response
             } catch (error) {
                 return new Promise((resolve) => {
                     setTimeout(() => {
-                        resolve({
-                            items: JSON.parse(JSON.stringify(mockQuotations)),
-                            total: mockQuotations.length,
-                            page: 1,
-                            totalItems: mockQuotations.length,
-                            itemsPerPage: 10,
-                        } as Pagination<Quotation[]>)
+                        resolve(JSON.parse(JSON.stringify(mockQuotations)))
                     }, 500)
                 })
             }

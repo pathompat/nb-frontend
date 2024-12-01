@@ -284,22 +284,16 @@
 </template>
 <script setup lang="ts">
 import useQuotationApi, {
-    getStatusTitle,
-    LINE,
     lines,
-    PLATE,
     plates,
-    PRINTSTATUS,
-    statusColors,
-    type Quotation,
 } from '@/composables/api/useQuotationApi'
+import type { Quotation } from '@/models/quotation/quotation'
+import { PLATE, LINE, PRINTSTATUS } from '@/models/enum/enum'
+import type { SaveRow } from '~/models/share/share'
 const quotationApi = useQuotationApi()
 
 const loading = ref(false)
-interface SaveRow {
-    index: number
-    isSaved: boolean
-}
+
 const headerItems = ref([
     { title: 'ลำดับ', key: 'id' },
     { title: 'เพลท', key: 'plate' },

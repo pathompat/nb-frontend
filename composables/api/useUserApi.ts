@@ -1,18 +1,7 @@
-import useBaseApi, { type Pagination } from './useBaseApi'
+import type { Pagination } from '~/models/api/api'
+import useBaseApi from './useBaseApi'
+import { type User } from '@/models/user/user'
 
-export interface User {
-    id: string
-    username: string
-    shop: string
-    createdDate: string
-    password?: string
-    tier: TIER | number
-    active: boolean
-}
-export interface Tier {
-    id: number
-    name: string
-}
 export const mockUsers: User[] = [
     {
         id: 'U000001',
@@ -20,8 +9,8 @@ export const mockUsers: User[] = [
         shop: 'ก่อกวี',
         username: 'kortawee',
         password: '123445',
-        tier: 1,
         active: true,
+        role: 'admin',
     },
     {
         id: 'U000002',
@@ -30,7 +19,7 @@ export const mockUsers: User[] = [
         username: 'jrgampang',
         password: '123445',
         active: true,
-        tier: 1,
+        role: 'admin',
     },
     {
         id: 'U000003',
@@ -39,7 +28,7 @@ export const mockUsers: User[] = [
         username: 'testuser1',
         password: '123445',
         active: true,
-        tier: 1,
+        role: 'admin',
     },
     {
         id: 'U000004',
@@ -48,7 +37,7 @@ export const mockUsers: User[] = [
         username: 'admin',
         password: 'admin',
         active: true,
-        tier: 1,
+        role: 'admin',
     },
     {
         id: 'U000005',
@@ -57,51 +46,35 @@ export const mockUsers: User[] = [
         username: 'customer',
         password: 'customer',
         active: true,
-        tier: 2,
+        role: 'customer',
     },
 ]
-export enum TIER {
-    ADMIN = 1,
-    CUSTOMER = 2,
-}
-const tier: Tier[] = [
-    { id: 1, name: 'admin' },
-    { id: 2, name: 'customer' },
-]
+
 export default function useUserApi() {
     const api = useBaseApi()
     const controller = 'users'
 
     return {
-        async getTierOptions(): Promise<Tier[]> {
+        // async getTierOptions(): Promise<Tier[]> {
+        //     try {
+        //         return await api.getRequest<Tier[]>(controller)
+        //     } catch (error) {
+        //         console.error(error)
+        //         return new Promise((resolve, reject) => {
+        //             setTimeout(() => {
+        //                 resolve(tier)
+        //             }, 500)
+        //         })
+        //     }
+        // },
+        async getAll(): Promise<User[]> {
             try {
-                return await api.getRequest<Tier[]>(controller)
+                return await api.getRequest<User[]>(controller)
             } catch (error) {
                 console.error(error)
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        resolve(tier)
-                    }, 500)
-                })
-            }
-        },
-        async getAll(): Promise<Pagination<User[]>> {
-            try {
-                return await api.getRequest<Pagination<User[]>>(controller)
-            } catch (error) {
-                console.error(error)
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve({
-                            items: JSON.parse(
-                                JSON.stringify(
-                                    mockUsers.filter((x) => x.active)
-                                )
-                            ),
-                            page: 1,
-                            itemsPerPage: 10,
-                            totalItems: 13,
-                        } as Pagination<User[]>)
+                        resolve(JSON.parse(JSON.stringify(mockUsers)))
                     }, 500)
                 })
             }

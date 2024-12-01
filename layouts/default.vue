@@ -45,7 +45,9 @@
                         <v-icon>{{ item.icon }}</v-icon>
                     </template>
 
-                    <v-list-item-title>
+                    <v-list-item-title
+                        v-if="item.role.includes(userProfile?.role || '')"
+                    >
                         <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item-title>
                 </v-list-item>
@@ -58,18 +60,13 @@
     </v-layout>
 </template>
 <script setup lang="ts">
-import { TIER } from '@/composables/api/useUserApi'
 import useAuth from '@/composables/useAuth'
 import { contextPluginSymbol, type PluginInstance } from '@/plugins/context'
+import type { MenuItem } from '~/models/share/share'
 const { userProfile, refresh } = inject<PluginInstance>(contextPluginSymbol)!
 const auth = useAuth()
 const drawer = ref(true)
-interface MenuItem {
-    title: string
-    value: string
-    icon: string
-    tier?: TIER
-}
+
 const logout = () => {
     auth.logout()
 }
@@ -78,12 +75,13 @@ const items = ref<MenuItem[]>([
         title: 'รายการสั่งผลิต',
         value: '/',
         icon: 'mdi-folder',
+        role: ['admin', 'user'],
     },
     {
         title: 'จัดการ User',
         value: '/user',
         icon: 'mdi-account-multiple',
-        tier: TIER.ADMIN,
+        role: ['admin'],
     },
 ])
 onMounted(async () => {

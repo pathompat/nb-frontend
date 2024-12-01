@@ -1,45 +1,7 @@
-import useBaseApi, { type Pagination } from '@/composables/api/useBaseApi'
-export interface Production {
-    id: number
-    name: string
-    date: string
-    school: string
-    shop: string
-    phone: string
-    address: string
-    quotationId: number
-    dueDate: string
-    estimateDate: string
-    items: ProductionItem[]
-    remark?: string
-}
-export interface ProductionItem {
-    hasPlan: boolean
-    amount: number
-    status: PRINTSTATUS
-    plate: PLATE
-    gram: number
-    price: number
-    color: number
-    line: LINE
-    page: number
-}
-export enum LINE {
-    SINGLE = 1,
-    HALF = 2,
-}
-export enum PLATE {
-    BIG = 1,
-    SMALL = 2,
-    EXTRA = 3,
-}
-export enum PRINTSTATUS {
-    OUTBOUND = 1,
-    PRINT = 2,
-    SEWING = 3,
-    PACK = 4,
-    READY = 5,
-}
+import useBaseApi from '@/composables/api/useBaseApi'
+import { PRINTSTATUS, LINE, PLATE } from '~/models/enum/enum'
+import type { Production, ProductionItem } from '~/models/production/production'
+
 export const statuses = ref([
     { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
     { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
@@ -368,21 +330,14 @@ export default function useProductionApi() {
     const controller = 'production'
     const { getRequest, postRequest } = useBaseApi()
     return {
-        async getAll(): Promise<Pagination<Production[]>> {
+        async getAll(): Promise<Production[]> {
             try {
-                const response =
-                    await getRequest<Pagination<Production[]>>(controller)
+                const response = await getRequest<Production[]>(controller)
                 return response
             } catch (error) {
                 return new Promise((resolve) => {
                     setTimeout(() => {
-                        resolve({
-                            items: JSON.parse(JSON.stringify(mockProductions)),
-                            total: mockProductions.length,
-                            page: 1,
-                            totalItems: mockProductions.length,
-                            itemsPerPage: 10,
-                        } as Pagination<Production[]>)
+                        resolve(JSON.parse(JSON.stringify(mockProductions)))
                     }, 500)
                 })
             }
