@@ -10,7 +10,7 @@
                         <v-text-field
                             v-model="userform.username"
                             label="บัญชีผู้ใช้งาน"
-                            placeholder="กรุณากรอกบัญชีผู้ใช้งาน"
+                            placeholder="กรุณากรอกบัญชีผู้ใช้งานs"
                             :error-messages="errors.username"
                             @blur="validateField('username')"
                         ></v-text-field>
