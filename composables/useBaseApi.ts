@@ -3,7 +3,7 @@ export default function useBaseApi() {
         url: string,
         option: RequestInit
     ): Promise<T> => {
-        return fetch(url, option) as Promise<T>
+        return fetch('/api/' + url, option) as Promise<T>
     }
     return {
         async postRequest<T>(url: string, body: any): Promise<T> {
