@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import useAuth from '@/composables/useAuth'
+import { toastPluginSymbol } from '~/plugins/toast'
 definePageMeta({
     layout: 'login',
     middleware: undefined,
@@ -44,28 +44,19 @@ const userform = ref({
 })
 const loading = ref(false)
 const router = useRouter()
-const auth = useAuth()
+const authStore = useAuthStore()
+const toast = inject(toastPluginSymbol)!
 const login = async () => {
     loading.value = true
     try {
-        const res = await auth.login(
-            userform.value.username,
-            userform.value.password
-        )
+        await authStore.login(userform.value.username, userform.value.password)
         router.push({ path: '/' })
     } catch (error) {
-        console.error(error)
+        console.log(toast)
+        toast.error(error as string)
     } finally {
         loading.value = false
+        router.push({ path: '/' })
     }
 }
-onMounted(() => {
-    alert(
-        `
-    user admin 
-    user : admin | password : admin 
-    user customer 
-    user : customer | password : customer`
-    )
-})
 </script>

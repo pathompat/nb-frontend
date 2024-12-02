@@ -18,14 +18,7 @@
                 >เพิ่มผู้ใช้งาน</v-btn
             >
         </v-card-title>
-        <v-data-table-server
-            :loading="loading"
-            :items-per-page="pagination.itemsPerPage"
-            :items="users"
-            :page="pagination.page"
-            :itemsLength="pagination.totalItems"
-            :headers="tableheader"
-        >
+        <v-data-table :loading="loading" :items="users" :headers="tableheader">
             <template #item.action="{ item }">
                 <div class="d-flex ga-4">
                     <v-btn
@@ -47,7 +40,7 @@
                     >
                 </div>
             </template>
-        </v-data-table-server>
+        </v-data-table>
     </v-card>
     <v-dialog width="400" v-model="dialogDisable">
         <v-card>
@@ -82,44 +75,32 @@
     <Modal ref="modal" />
 </template>
 <script setup lang="ts">
-import type { User } from '@/composables/api/useUserApi'
-import useUserApi from '@/composables/api/useUserApi'
+import type { User } from '@/models/user/user'
 import Modal from '@/components/user/dialogUser.vue'
+const { fetchAllUsers, updateUser, createUser, disableUser, users } =
+    useUserStore()
 const dialogDisable = ref(false)
 const userId = ref('')
 const modal = ref<typeof Modal | null>(null)
 const loading = ref(false)
-const userApi = useUserApi()
-const users = ref<User[]>([])
-const pagination = ref({
-    page: 1,
-    itemsPerPage: 10,
-    totalItems: 0,
-})
 async function onEdit(id: string) {
     const user = await modal.value?.openDialog(id)
-    await userApi.update(id, user)
+    await updateUser(id, user)
     modal.value?.closeDialog()
     await init()
 }
 async function onCreate() {
     const user = await modal.value?.openDialog()
-    await userApi.create(user)
+    await createUser(user)
     modal.value?.closeDialog()
     await init()
 }
-async function disableUser() {
+async function disabled() {
     loading.value = true
-    await userApi.disable(userId.value)
+    await disableUser(userId.value)
     dialogDisable.value = false
     userId.value = ''
-    const res = await userApi.getAll()
-    users.value = res.items
-    pagination.value = {
-        page: res.page,
-        itemsPerPage: res.itemsPerPage,
-        totalItems: res.totalItems,
-    }
+    await fetchAllUsers()
     loading.value = false
 }
 const tableheader = ref([
@@ -131,13 +112,7 @@ const tableheader = ref([
 ])
 async function init() {
     loading.value = true
-    const res = await userApi.getAll()
-    users.value = res.items
-    pagination.value = {
-        page: res.page,
-        itemsPerPage: res.itemsPerPage,
-        totalItems: res.totalItems,
-    }
+    await fetchAllUsers()
     loading.value = false
 }
 onMounted(async () => {

@@ -1,10 +1,7 @@
-import { useProfileStore } from '~/stores/profile'
-
 export default defineNuxtRouteMiddleware(async (to, from) => {
     if (to.path === '/login') return
 
-    const profile = useProfileStore()
-    const auth = useAuthStore()
+    const authStore = useAuthStore()
 
     const token = process.client ? localStorage.getItem('token') : null
 
@@ -13,14 +10,13 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }
 
     try {
-        const user = await auth.getProfile(token)
+        const user = await authStore.getProfile(token!)
         if (user) {
-            profile.setProfile(user)
+            //  profile.setProfile(user)
         } else {
             return navigateTo('/login')
         }
     } catch (error) {
-        console.error('Auth error:', error)
         return navigateTo('/login')
     }
 })

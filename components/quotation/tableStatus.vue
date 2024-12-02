@@ -117,7 +117,7 @@ onMounted(async () => {
         const res = await quotationApi.getAll()
         tableState.value = res
     } catch (error) {
-        console.error(error)
+        error(error)
     }
     loading.value = false
 })

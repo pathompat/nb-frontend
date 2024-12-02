@@ -21,7 +21,7 @@
                         class="text-black bg-white mr-6"
                         size="small"
                     >
-                        {{ profile?.username }}
+                        {{ userProfile?.username }}
                     </v-btn>
                 </template>
 
@@ -58,19 +58,16 @@
     </v-layout>
 </template>
 <script setup lang="ts">
-import useAuth from '@/composables/useAuth'
-import { contextPluginSymbol, type PluginInstance } from '@/plugins/context'
 import type { MenuItem } from '~/models/share/share'
+import { useAuthStore } from '@/stores/auth'
 // const { refresh } = inject<PluginInstance>(contextPluginSymbol)!
-const { profile } = useProfileStore()
-const auth = useAuth()
+const { userProfile, logout } = useAuthStore()
 const drawer = ref(true)
 
-const logout = () => {
-    auth.logout()
-}
 const ItemByRole = computed(() => {
-    return items.value.filter((i) => i.role.some((r) => r === profile?.role))
+    return items.value.filter((i) =>
+        i.role.some((r) => r === userProfile?.role)
+    )
 })
 const items = ref<MenuItem[]>([
     {

@@ -298,78 +298,49 @@ const mockProductions: Production[] = [
     },
 ]
 
-export const useProductionStore = defineStore('production', {
-    state: () => ({
-        statuses: [
-            { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
-            { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
-            { title: 'เย็บเข้าเล่ม', value: PRINTSTATUS.SEWING },
-            { title: 'แพ็ค', value: PRINTSTATUS.PACK },
-            { title: 'พร้อมจัดส่ง', value: PRINTSTATUS.READY },
-        ],
-        statusColors: [
-            { id: PRINTSTATUS.PRINT, color: '#FF9800' },
-            { id: PRINTSTATUS.OUTBOUND, color: '#B0BEC5' },
-            { id: PRINTSTATUS.SEWING, color: '#2196F3' },
-            { id: PRINTSTATUS.PACK, color: '#9C27B0' },
-            { id: PRINTSTATUS.READY, color: '#4CAF50' },
-        ],
-        lines: [
-            { title: 'เดี่ยว', value: LINE.SINGLE },
-            { title: 'ครึ่ง', value: LINE.HALF },
-        ],
-        plates: [
-            { title: 'ใหญ่', value: PLATE.BIG },
-            { title: 'เล็ก', value: PLATE.SMALL },
-            { title: 'พิเศษ', value: PLATE.EXTRA },
-        ],
-        productions: mockProductions,
-    }),
+export const useProductionStore = defineStore('production', () => {
+    const productions = ref<Production[]>([])
 
-    getters: {
-        getStatusTitle: (state) => (value: number) =>
-            state.statuses.find((status) => status.value === value)?.title ||
-            'ไม่ทราบสถานะ',
-    },
-
-    actions: {
-        async fetchAllProductions() {
-            const { getRequest } = useBaseApi()
-            try {
-                const response = await getRequest<Production[]>('production')
-                this.productions = response
-            } catch (error) {
-                this.productions = JSON.parse(JSON.stringify(mockProductions))
-            }
-        },
-        async createProduction(production: Production) {
-            const { postRequest } = useBaseApi()
-            try {
-                const response = await postRequest<Production>(
-                    'production',
-                    production
-                )
-                this.productions.push(response)
-            } catch (error) {
-                production.id = this.productions.length + 1
-                this.productions.push(production)
-            }
-        },
-        async getProductionById(id: number) {
-            const { getRequest } = useBaseApi()
-            try {
-                return await getRequest<Production>(`production/${id}`)
-            } catch (error) {
-                return this.productions.find((p) => p.id === id)!
-            }
-        },
-        async updateProduction(production: Production) {
-            const index = this.productions.findIndex(
-                (p) => p.id === production.id
+    async function fetchAllProductions() {
+        const { getRequest } = useBaseApi()
+        try {
+            const response = await getRequest<Production[]>('production')
+            productions.value = response
+        } catch (error) {
+            throw error
+        }
+    }
+    async function createProduction(production: Production) {
+        const { postRequest } = useBaseApi()
+        try {
+            const response = await postRequest<Production>(
+                'production',
+                production
             )
-            if (index !== -1) {
-                this.productions[index] = production
-            }
-        },
-    },
+            productions.value.push(response)
+        } catch (error) {
+            throw error
+        }
+    }
+    async function getProductionById(id: number) {
+        const { getRequest } = useBaseApi()
+        try {
+            return await getRequest<Production>(`production/${id}`)
+        } catch (error) {
+            throw error
+        }
+    }
+    async function updateProduction(production: Production) {
+        const index = productions.value.findIndex((p) => p.id === production.id)
+        if (index !== -1) {
+            productions.value[index] = production
+        }
+    }
+    return {
+        productions,
+        fetchAllProductions,
+        createProduction,
+        getProductionById,
+        updateProduction,
+    }
 })

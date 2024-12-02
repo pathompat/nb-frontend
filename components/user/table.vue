@@ -18,14 +18,7 @@
                 >เพิ่มผู้ใช้งาน</v-btn
             >
         </v-card-title>
-        <v-data-table-server
-            :loading="loading"
-            :items-per-page="pagination.itemsPerPage"
-            :items="tableState"
-            :page="pagination.page"
-            :itemsLength="pagination.totalItems"
-            :headers="tableheader"
-        >
+        <v-data-table :loading="loading" :items="users" :headers="tableheader">
             <template #item.action="{ item }">
                 <div class="d-flex ga-4">
                     <v-btn
@@ -47,22 +40,17 @@
                     >
                 </div>
             </template>
-        </v-data-table-server>
+        </v-data-table>
     </v-card>
-    <v-dialog
-        width="400"
-        v-model="dialogDisable"
-        v-if="tableState != undefined"
-    >
+    <v-dialog width="400" v-model="dialogDisable" v-if="users != undefined">
         <v-card>
             <v-card-title
                 >ยืนยันปิดใช้งาน
-                {{ tableState.find((v) => v.id == userId)?.username }}
+                {{ users.find((v) => v.id == userId)?.username }}
                 ?</v-card-title
             >
             <v-card-text>
-                user
-                {{ tableState.find((v) => v.id == userId)?.username }}
+                {{ users.find((v) => v.id == userId)?.username }}
                 จะไม่สามารถทำรายการใดๆได้อีก
             </v-card-text>
             <v-card-actions>
@@ -86,40 +74,33 @@
     <Modal ref="modal" />
 </template>
 <script setup lang="ts">
-import type { User } from '@/composables/api/useUserApi'
-import useUserApi from '@/composables/api/useUserApi'
+import type { User } from '@/models/user/user'
+import { useUserStore } from '@/stores/user'
 import Modal from '@/components/user/dialogUser.vue'
-import useStateTable from '@/composables/useStateTable'
 const dialogDisable = ref(false)
 const userId = ref('')
 const modal = ref<typeof Modal | null>(null)
 const loading = ref(false)
-const userApi = useUserApi()
-const { tableState, pagination } = useStateTable<User[]>()
+const { updateUser, createUser, disableUser, fetchAllUsers, users } =
+    useUserStore()
 async function onEdit(id: string) {
     const user = await modal.value?.openDialog(id)
-    await userApi.update(id, user)
+    await updateUser(id, user)
     modal.value?.closeDialog()
     await init()
 }
 async function onCreate() {
     const user = await modal.value?.openDialog()
-    await userApi.create(user)
+    await createUser(user)
     modal.value?.closeDialog()
     await init()
 }
-async function disableUser() {
+async function disabled() {
     loading.value = true
-    await userApi.disable(userId.value)
+    await disableUser(userId.value)
     dialogDisable.value = false
     userId.value = ''
-    const res = await userApi.getAll()
-    tableState.value = res.items
-    pagination.value = {
-        page: res.page,
-        itemsPerPage: res.itemsPerPage,
-        totalItems: res.totalItems,
-    }
+    await init()
     loading.value = false
 }
 const tableheader = ref([
@@ -131,13 +112,7 @@ const tableheader = ref([
 ])
 async function init() {
     loading.value = true
-    const res = await userApi.getAll()
-    tableState.value = res.items
-    pagination.value = {
-        page: res.page,
-        itemsPerPage: res.itemsPerPage,
-        totalItems: res.totalItems,
-    }
+    await fetchAllUsers()
     loading.value = false
 }
 onMounted(async () => {
