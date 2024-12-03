@@ -1,9 +1,11 @@
 export default function useBaseApi() {
-    const createApi = <T = null>(
+    const createApi = async <T = null>(
         url: string,
         option: RequestInit
     ): Promise<T> => {
-        return fetch('/api/' + url, option) as Promise<T>
+        const result = await fetch('/api/' + url, option)
+        const data = await result.json()
+        return data as T
     }
     return {
         async postRequest<T>(url: string, body: any): Promise<T> {

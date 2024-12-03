@@ -1,3 +1,5 @@
+import { number, string } from 'yup'
+
 export interface User {
     id: string
     username: string
@@ -12,4 +14,14 @@ export interface CreateUser {
     tierId: number
     storeName: string
     password: string
+}
+export interface LoginResult {
+    token: string
+    expiredIn: number
+}
+export interface UserJwt {
+    exp: number
+    role: string
+    userId: string
+    username: string
 }

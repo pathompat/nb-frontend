@@ -10,7 +10,6 @@
                 </v-app-bar-nav-icon>
             </template>
             <!-- <v-app-bar-nav-icon variant="text" icon="mdi-menu"></v-app-bar-nav-icon> -->
-
             <v-toolbar-title>ระบบ Typography</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-menu>
@@ -74,16 +73,17 @@ const items = ref<MenuItem[]>([
         title: 'รายการสั่งผลิต',
         value: '/',
         icon: 'mdi-folder',
-        role: ['admin', 'customer'],
+        role: ['ADMIN', 'CUSTOMER'],
     },
     {
         title: 'จัดการ User',
         value: '/user',
         icon: 'mdi-account-multiple',
-        role: ['admin'],
+        role: ['ADMIN'],
     },
 ])
 onMounted(async () => {
     // await refresh()
+    console.log(userProfile?.role)
 })
 </script>

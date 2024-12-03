@@ -1,30 +1,31 @@
-import type { User } from '~/models/user/user'
+import type { set } from 'nuxt/dist/app/compat/capi'
+import { LOCALSTORAGE_KEY } from '~/models/object/object'
+import type { LoginResult, User, UserJwt } from '~/models/user/user'
 
 export const useAuthStore = defineStore('auth', () => {
-    const userProfile = ref<User | null>(null)
-    async function login(
-        username: string,
-        password: string
-    ): Promise<User | null> {
+    const { parseJwt } = useUtil()
+    const router = useRouter()
+    const userProfile = ref<UserJwt | null>(null)
+    async function login(username: string, password: string): Promise<UserJwt> {
         const api = useBaseApi()
         try {
-            const loggedInUser = await api.postRequest<User>('login', {
+            const loggedInUser = await api.postRequest<LoginResult>('login', {
                 username,
                 password,
             })
-            return loggedInUser
+            localStorage.setItem(
+                LOCALSTORAGE_KEY.AUTH_TOKEN,
+                loggedInUser.token
+            )
+            localStorage.setItem(
+                LOCALSTORAGE_KEY.AUTH_TOKEN_EXPIRE,
+                loggedInUser.expiredIn.toString()
+            )
+            const jwtObject = parseJwt<UserJwt>(loggedInUser.token)
+            userProfile.value = jwtObject
+            return jwtObject
         } catch (error) {
             throw error
-        } finally {
-            userProfile.value = {
-                id: '',
-                username: '',
-                storeName: '',
-                tierId: 0,
-                role: 'ADMIN',
-                createdAt: '',
-                updatedAt: '',
-            }
         }
     }
     async function getProfile(id: string): Promise<User> {
@@ -38,9 +39,15 @@ export const useAuthStore = defineStore('auth', () => {
     }
     async function logout() {
         userProfile.value = null
+        localStorage.removeItem(LOCALSTORAGE_KEY.AUTH_TOKEN)
+        localStorage.removeItem(LOCALSTORAGE_KEY.AUTH_TOKEN_EXPIRE)
+        router.push('/login')
     }
     return {
-        userProfile,
+        userProfile: computed(() => userProfile.value),
+        setProfile: (profile: UserJwt) => {
+            userProfile.value = profile
+        },
         login,
         getProfile,
         logout,
