@@ -145,21 +145,15 @@
     </main>
 </template>
 <script setup lang="ts">
-import useProductionApi, {
-    getStatusTitle,
-    lines,
-    plates,
-    PRINTSTATUS,
-    statusColors,
-    type Production,
-} from '@/composables/api/useProductionApi'
-
-const productApi = useProductionApi()
+import { type Production } from '@/models/production/production'
+import { useProductionStore } from '@/stores/production'
+import { useShare } from '@/composables/share'
+const { lines, plates, getStatusTitle, statusColors } = useShare()
+const { getProductionById } = useProductionStore()
 const loading = ref(false)
 const router = useRouter()
 function defaultForm(): Partial<Production> {
     return {
-        name: '',
         date: '',
         school: '',
         shop: '',
@@ -188,9 +182,8 @@ onMounted(async () => {
     if (props.id) {
         loading.value = true
         try {
-            production.value = await productApi.getOne(props.id)
+            production.value = await getProductionById(props.id)
         } catch (error) {
-            console.error(error)
         } finally {
             loading.value = false
         }

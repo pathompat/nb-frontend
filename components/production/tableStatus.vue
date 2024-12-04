@@ -8,7 +8,11 @@
                 </div>
             </div>
         </v-card-title>
-        <v-data-table :loading="loading" :items="tableState" :headers="headers">
+        <v-data-table
+            :loading="loading"
+            :items="productions"
+            :headers="headers"
+        >
             <template
                 v-slot:item="{ internalItem, item, isExpanded, toggleExpand }"
             >
@@ -36,7 +40,7 @@
                         {{ item.school }}
                     </td>
 
-                    <td v-if="profile?.role === 'admin'">
+                    <td v-if="userProfile?.role === 'admin'">
                         <v-icon> mdi-map-marker</v-icon> {{ item.shop }}
                     </td>
                     <td>
@@ -119,19 +123,13 @@
     </v-card>
 </template>
 <script setup lang="ts">
-import useProductionApi, {
-    statusColors,
-    getStatusTitle,
-    plates,
-    lines,
-} from '@/composables/api/useProductionApi'
-import { contextPluginSymbol } from '@/plugins/context'
+import { useAuthStore } from '@/stores/auth'
 import type { Production, ProductionItem } from '@/models/production/production'
-const tableState = ref<Production[]>([])
-// const { userProfile } = inject(contextPluginSymbol)!
-const { profile } = useProfileStore()
+const { productions, fetchAllProductions } = useProductionStore()
+const { statusColors, getStatusTitle, lines, plates } = useShare()
+const { userProfile } = useAuthStore()
 const loading = ref(false)
-const productApi = useProductionApi()
+
 const headerItems = ref([
     {
         title: 'No.',
@@ -165,11 +163,8 @@ function getItemLowestStatus(items: ProductionItem[]) {
 onMounted(async () => {
     loading.value = true
     try {
-        const res = await productApi.getAll()
-        tableState.value = res
-    } catch (error) {
-        console.error(error)
-    }
+        await fetchAllProductions()
+    } catch (error) {}
     loading.value = false
 })
 const headers = computed(() => {
@@ -183,6 +178,8 @@ const headers = computed(() => {
         { title: 'สถานะ', key: 'status' },
         { title: '#', key: 'action' },
     ]
-    return header.filter((h) => profile?.role !== 'user' || h.key !== 'shop')
+    return header.filter(
+        (h) => userProfile?.role !== 'user' || h.key !== 'shop'
+    )
 })
 </script>

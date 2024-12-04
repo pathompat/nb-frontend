@@ -283,15 +283,11 @@
     </main>
 </template>
 <script setup lang="ts">
-import useQuotationApi, {
-    lines,
-    plates,
-} from '@/composables/api/useQuotationApi'
-import type { Quotation, QuotationForm } from '@/models/quotation/quotation'
 import { PLATE, LINE, PRINTSTATUS } from '@/models/enum/enum'
 import type { SaveRow } from '~/models/share/share'
-const quotationApi = useQuotationApi()
-
+import { useQuotationStore } from '@/stores/quotation'
+const { getQuotationById, createQuotation, quotation } = useQuotationStore()
+const { plates, lines } = useShare()
 const loading = ref(false)
 
 const headerItems = ref([
@@ -308,32 +304,20 @@ const headerItems = ref([
     { title: 'ลบ', key: 'action' },
 ])
 const isSaved = ref<SaveRow[]>([])
-const quotation = ref<Quotation>({
-    id: 0,
-    status: 'DRAFT',
-    date: '',
-    school: '',
-    shop: '',
-    phone: '',
-    address: '',
-    dueDate: '',
-    estimateDate: '',
-    items: [],
-})
+
 const router = useRouter()
 async function create() {
-    console.log('create')
-    const { id } = await quotationApi.create(quotation.value)
+    const { id } = await createQuotation(quotation)
     router.push({
         path: `/quotation/${id}`,
     })
 }
 function addItem() {
     isSaved.value.push({
-        index: quotation.value.items.length,
+        index: quotation.items.length,
         isSaved: false,
     })
-    quotation.value.items.push({
+    quotation.items.push({
         plate: PLATE.BIG,
         gram: 0,
         color: 0,
@@ -347,32 +331,25 @@ function addItem() {
 }
 function deleteItem(index: number) {
     isSaved.value = isSaved.value.filter((i) => i.index !== index)
-    quotation.value.items = quotation.value.items.filter((_, i) => i !== index)
+    quotation.items = quotation.items.filter((_, i) => i !== index)
 }
 function saveItem(index: number) {
     const item = isSaved.value.find((i) => i.index === index)
     if (item) item.isSaved = true
 }
 async function approve() {
-    console.log('approve')
     // const { id } = await quotationApi.approve(props.id);
     router.push(`/production/${props.id}`)
     // await productApi.approve(props.id);
 }
-async function reset() {
-    console.log('reset')
-}
-async function cancel() {
-    console.log('cancel')
-    // await productApi.cancel(props.id);
-}
+async function reset() {}
+async function cancel() {}
 onMounted(async () => {
     if (!props.id) return
     loading.value = true
     try {
-        quotation.value = await quotationApi.getOne(props.id)
+        await getQuotationById(props.id)
     } catch (error) {
-        console.error(error)
     } finally {
         loading.value = false
     }

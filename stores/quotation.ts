@@ -305,6 +305,18 @@ export const useQuotationStore = defineStore('quotation', () => {
     const controller = 'quotation'
 
     const quotations = ref<Quotation[]>([])
+    const quotation = ref<Quotation>({
+        id: 0,
+        status: 'DRAFT',
+        date: '',
+        school: '',
+        shop: '',
+        phone: '',
+        address: '',
+        dueDate: '',
+        estimateDate: '',
+        items: [],
+    } as Quotation)
     const statuses = ref([
         { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
         { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
@@ -355,8 +367,8 @@ export const useQuotationStore = defineStore('quotation', () => {
         }
     }
 
-    const getQuotationById = (id: number): Quotation | undefined => {
-        return quotations.value.find((q) => q.id === id)
+    const getQuotationById = (id: number) => {
+        quotation.value = quotations.value.find((q) => q.id === id)!
     }
 
     const updateQuotation = async (
@@ -378,5 +390,6 @@ export const useQuotationStore = defineStore('quotation', () => {
         createQuotation,
         getQuotationById,
         updateQuotation,
+        quotation,
     }
 })

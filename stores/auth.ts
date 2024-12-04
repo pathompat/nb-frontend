@@ -1,54 +1,50 @@
-import type { User } from '~/models/user/user'
-import { mockUsers } from './user'
+import type { ApiResult } from '~/models/api/api'
+import { LOCALSTORAGE_KEY } from '~/models/object/object'
+import type { LoginResult, User, UserJwt } from '~/models/user/user'
 
-export const useAuthStore = defineStore('auth', {
-    state: () => ({
-        user: null as User | null,
-    }),
-    actions: {
-        async login(username: string, password: string): Promise<User | null> {
-            const api = useBaseApi()
-            try {
-                const loggedInUser = await api.postRequest<User>('login', {
-                    username,
-                    password,
-                })
-                this.user = loggedInUser
-                return loggedInUser
-            } catch (error) {
-                console.error(error)
-                return new Promise((resolve) =>
-                    setTimeout(() => {
-                        const mockUser =
-                            mockUsers.find(
-                                (user) =>
-                                    user.username === username &&
-                                    user.password === password
-                            ) ?? null
-                        this.user = mockUser
-                        resolve(mockUser)
-                    }, 500)
-                )
-            }
+export const useAuthStore = defineStore('auth', () => {
+    const { parseJwt } = useUtil()
+    const router = useRouter()
+    const userProfile = ref<User | null>(null)
+    async function login(username: string, password: string) {
+        const api = useBaseApi()
+        try {
+            const loggedInUser = await api.postRequest<LoginResult>('login', {
+                username,
+                password,
+            })
+            localStorage.setItem(
+                LOCALSTORAGE_KEY.AUTH_TOKEN,
+                loggedInUser.token
+            )
+        } catch (error) {
+            throw error
+        }
+    }
+    async function getProfile(): Promise<User> {
+        const api = useBaseApi()
+        try {
+            const profile = (await api.getRequest<ApiResult<User>>('user/info'))
+                .data
+            userProfile.value = profile
+            return profile
+        } catch (error) {
+            throw error
+        }
+    }
+    async function logout() {
+        userProfile.value = null
+        localStorage.removeItem(LOCALSTORAGE_KEY.AUTH_TOKEN)
+        localStorage.removeItem(LOCALSTORAGE_KEY.AUTH_TOKEN_EXPIRE)
+        router.push('/login')
+    }
+    return {
+        userProfile: computed(() => userProfile.value),
+        setProfile: (profile: User) => {
+            userProfile.value = profile
         },
-        async getProfile(id: string): Promise<User | null> {
-            const api = useBaseApi()
-            try {
-                const profile = await api.getRequest<User>('profile/' + id)
-                return profile
-            } catch (error) {
-                console.error(error)
-                return new Promise((resolve) =>
-                    setTimeout(() => {
-                        const mockProfile =
-                            mockUsers.find((user) => user.id === id) ?? null
-                        resolve(mockProfile)
-                    }, 500)
-                )
-            }
-        },
-        logout() {
-            this.user = null
-        },
-    },
+        login,
+        getProfile,
+        logout,
+    }
 })

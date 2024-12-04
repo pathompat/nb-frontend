@@ -1,26 +1,22 @@
-import { useProfileStore } from '~/stores/profile'
+import { LOCALSTORAGE_KEY } from '~/models/object/object'
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-    if (to.path === '/login') return
-
-    const profile = useProfileStore()
-    const auth = useAuthStore()
-
-    const token = process.client ? localStorage.getItem('token') : null
-
+    if (to.path === '/login') {
+        if (localStorage.getItem(LOCALSTORAGE_KEY.AUTH_TOKEN)) {
+            return navigateTo('/')
+        }
+        return
+    }
+    const authStore = useAuthStore()
+    const { setProfile } = useAuthStore()
+    const token = localStorage.getItem(LOCALSTORAGE_KEY.AUTH_TOKEN)
     if (!token) {
         return navigateTo('/login')
     }
-
     try {
-        const user = await auth.getProfile(token)
-        if (user) {
-            profile.setProfile(user)
-        } else {
-            return navigateTo('/login')
-        }
+        const user = await authStore.getProfile()
+        if (!user) return navigateTo('/login')
     } catch (error) {
-        console.error('Auth error:', error)
         return navigateTo('/login')
     }
 })

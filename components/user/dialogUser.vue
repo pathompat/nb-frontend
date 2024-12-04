@@ -2,9 +2,7 @@
     <v-dialog v-model="dialogOpen" width="800">
         <v-card :loading="loading">
             <v-card-title>{{
-                !initFormEdit.id
-                    ? 'เพิ่ม User'
-                    : `แก้ไข User #${initFormEdit.id}`
+                !userId ? 'เพิ่ม User' : `แก้ไข User #${userId}`
             }}</v-card-title>
             <v-divider></v-divider>
             <v-card-text>
@@ -14,7 +12,7 @@
                             <v-text-field
                                 v-model="initFormEdit.username"
                                 label="Username"
-                                :disabled="loading || !!initFormEdit.id"
+                                :disabled="loading || !!userId"
                                 :loading="loading"
                                 required
                             ></v-text-field>
@@ -33,7 +31,7 @@
                     <v-row class="py-1 px-1">
                         <v-col class="py-1 px-1">
                             <v-text-field
-                                v-model="initFormEdit.shop"
+                                v-model="initFormEdit.storeName"
                                 :disabled="loading"
                                 :loading="loading"
                                 hide-details
@@ -45,7 +43,7 @@
                     <v-row class="py-1 px-1">
                         <v-col class="py-1 px-1">
                             <v-select
-                                v-model="initFormEdit.tier"
+                                v-model="initFormEdit.tierId"
                                 :items="tier"
                                 item-title="id"
                                 item-value="id"
@@ -73,12 +71,19 @@
     >
 </template>
 <script lang="ts" setup>
-import useUserApi from '@/composables/api/useUserApi'
-import type { User } from '@/models/user/user'
+import type { CreateUser, User } from '@/models/user/user'
+import { useUserStore } from '@/stores/user'
 const tier = ref<{ id: number }[]>([])
 const dialogOpen = ref(false)
-const initFormEdit = ref<Partial<User & { tier: number | null }>>({})
-const userApi = useUserApi()
+const initFormEdit = ref<CreateUser>({
+    username: '',
+    password: '',
+    storeName: '',
+    tierId: 0,
+})
+const userId = ref('')
+const { fetchAllUsers, updateUser, createUser, fetchUserById, user } =
+    useUserStore()
 const loading = ref(false)
 let resolveFn: ((user: Partial<User>) => void) | null = null
 function action() {
@@ -87,16 +92,24 @@ function action() {
     resolveFn(initFormEdit.value)
 }
 const openDialog = async (id?: string): Promise<Partial<User>> => {
+    userId.value = id || ''
     initFormEdit.value = {
         username: '',
         password: '',
-        shop: '',
+        storeName: '',
+        tierId: 0,
     }
     loading.value = true
     dialogOpen.value = true
     tier.value = []
     if (id) {
-        initFormEdit.value = await userApi.getOne(id)
+        await fetchUserById(id)
+        initFormEdit.value = {
+            username: user.username,
+            password: '',
+            storeName: user.storeName,
+            tierId: user.tierId,
+        }
     }
     loading.value = false
 
