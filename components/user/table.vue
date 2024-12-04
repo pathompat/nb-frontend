@@ -5,6 +5,7 @@
                 <v-text-field
                     :loading="loading"
                     :disabled="loading"
+                    v-model="search"
                     label="ค้นหา"
                     placeholder="username,ร้านค้า"
                 ></v-text-field>
@@ -18,7 +19,11 @@
                 >เพิ่มผู้ใช้งาน</v-btn
             >
         </v-card-title>
-        <v-data-table :loading="loading" :items="users" :headers="tableheader">
+        <v-data-table
+            :loading="loading"
+            :items="userFilter"
+            :headers="tableheader"
+        >
             <template #item.action="{ item }">
                 <div class="d-flex ga-4">
                     <v-btn
@@ -39,6 +44,9 @@
                         >ยกเลิก</v-btn
                     >
                 </div>
+            </template>
+            <template #item.createdAt="{ item }">
+                {{ formatDate.formatDate(new Date(item.createdAt)) }}
             </template>
         </v-data-table>
     </v-card>
@@ -81,6 +89,8 @@ const userId = ref('')
 const modal = ref<typeof Modal | null>(null)
 const loading = ref(false)
 const userStore = useUserStore()
+const formatDate = useFormatDate()
+const search = ref('')
 const { updateUser, createUser, disableUser, fetchAllUsers } = userStore
 const { users } = storeToRefs(userStore)
 async function onEdit(id: string) {
@@ -115,6 +125,14 @@ async function init() {
     await fetchAllUsers()
     loading.value = false
 }
+const userFilter = computed(() => {
+    return users.value?.filter((v) => {
+        return (
+            v.username.toLowerCase().includes(search.value.toLowerCase()) ||
+            v.storeName.toLowerCase().includes(search.value.toLowerCase())
+        )
+    })
+})
 onMounted(() => {
     init()
 })
