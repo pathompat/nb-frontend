@@ -23,6 +23,6 @@ export function useRules() {
         (value: string) =>
             /\d/.test(value) || 'รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว',
     ]
-
-    return { userNameRule, passwordRule }
+    const emtpyRule = [(value: string) => !!value || 'กรุณากรอกข้อมูล']
+    return { userNameRule, passwordRule, emtpyRule }
 }

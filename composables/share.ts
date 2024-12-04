@@ -29,8 +29,10 @@ export function useShare() {
             statuses.value.find((status) => status.value === value)?.title ||
             'ไม่ทราบสถานะ'
     )
+    const tiers = ref([1, 2, 3])
     return {
         statuses,
+        tiers,
         statusColors,
         lines,
         plates,

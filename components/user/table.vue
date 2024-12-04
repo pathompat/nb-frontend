@@ -5,6 +5,7 @@
                 <v-text-field
                     :loading="loading"
                     :disabled="loading"
+                    v-model="search"
                     label="ค้นหา"
                     placeholder="username,ร้านค้า"
                 ></v-text-field>
@@ -18,7 +19,11 @@
                 >เพิ่มผู้ใช้งาน</v-btn
             >
         </v-card-title>
-        <v-data-table :loading="loading" :items="users" :headers="tableheader">
+        <v-data-table
+            :loading="loading"
+            :items="userFilter"
+            :headers="tableheader"
+        >
             <template #item.action="{ item }">
                 <div class="d-flex ga-4">
                     <v-btn
@@ -40,6 +45,9 @@
                     >
                 </div>
             </template>
+            <template #item.createdAt="{ item }">
+                {{ formatDate.formatDate(new Date(item.createdAt)) }}
+            </template>
         </v-data-table>
     </v-card>
     <v-dialog width="400" v-model="dialogDisable" v-if="users != undefined">
@@ -54,7 +62,7 @@
                 จะไม่สามารถทำรายการใดๆได้อีก
             </v-card-text>
             <v-card-actions>
-                <v-btn variant="flat" color="success" @click="disableUser"
+                <v-btn variant="flat" color="success" @click="deleteUser"
                     >ยืนยัน</v-btn
                 >
                 <v-btn
@@ -74,15 +82,19 @@
     <Modal ref="modal" />
 </template>
 <script setup lang="ts">
-import type { User } from '@/models/user/user'
 import { useUserStore } from '@/stores/user'
 import Modal from '@/components/user/dialogUser.vue'
+import { toastPluginSymbol } from '~/plugins/toast'
+const toast = inject(toastPluginSymbol)!
 const dialogDisable = ref(false)
 const userId = ref('')
 const modal = ref<typeof Modal | null>(null)
 const loading = ref(false)
-const { updateUser, createUser, disableUser, fetchAllUsers, users } =
-    useUserStore()
+const userStore = useUserStore()
+const formatDate = useFormatDate()
+const search = ref('')
+const { updateUser, createUser, disableUser, fetchAllUsers } = userStore
+const { users } = storeToRefs(userStore)
 async function onEdit(id: string) {
     const user = await modal.value?.openDialog(id)
     await updateUser(id, user)
@@ -90,17 +102,30 @@ async function onEdit(id: string) {
     await init()
 }
 async function onCreate() {
-    const user = await modal.value?.openDialog()
-    await createUser(user)
-    modal.value?.closeDialog()
-    await init()
+    try {
+        const user = await modal.value?.openDialog()
+        const res = await createUser(user)
+        console.log(res)
+        modal.value?.closeDialog()
+        toast.success('สร้างสำเร็จ')
+        await init()
+    } catch (e) {
+        toast.error(`${e}`)
+    } finally {
+        modal.value?.setLoadingOff()
+    }
 }
-async function disabled() {
+async function deleteUser() {
     loading.value = true
-    await disableUser(userId.value)
-    dialogDisable.value = false
-    userId.value = ''
-    await init()
+    try {
+        await disableUser(userId.value)
+        dialogDisable.value = false
+        userId.value = ''
+        toast.success('ยกเลิกใช้งานสำเร็จ')
+        await init()
+    } catch (e) {
+        toast.error(`${e}`)
+    }
     loading.value = false
 }
 const tableheader = ref([
@@ -115,7 +140,15 @@ async function init() {
     await fetchAllUsers()
     loading.value = false
 }
-onMounted(async () => {
-    await init()
+const userFilter = computed(() => {
+    return users.value?.filter((v) => {
+        return (
+            v.username.toLowerCase().includes(search.value.toLowerCase()) ||
+            v.storeName.toLowerCase().includes(search.value.toLowerCase())
+        )
+    })
+})
+onMounted(() => {
+    init()
 })
 </script>

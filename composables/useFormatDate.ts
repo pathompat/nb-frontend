@@ -1,17 +1,14 @@
-export const useFormatDate = (date: string) => {
-    const formatDate = (isoString: string): string => {
-        if (!isoString) return ''
-
-        const date = new Date(isoString)
-        return date.toLocaleString('th-TH', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-        })
+export default function useFormatDate() {
+    const formatDate = (date: Date): string => {
+        const day = String(date.getDate()).padStart(2, '0')
+        const month = String(date.getMonth() + 1).padStart(2, '0') // เดือนเริ่มจาก 0
+        const year = date.getFullYear()
+        const hours = String(date.getHours()).padStart(2, '0')
+        const minutes = String(date.getMinutes()).padStart(2, '0')
+        const seconds = String(date.getSeconds()).padStart(2, '0')
+        return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`
     }
-    return useState('date', () => formatDate(date))
+    return {
+        formatDate,
+    }
 }

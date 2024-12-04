@@ -42,23 +42,21 @@ export const useUserStore = defineStore('users', () => {
             throw error
         }
     }
-    async function disableUser(id: string): Promise<boolean> {
+    async function deleteUser(id: string): Promise<boolean> {
         const api = useBaseApi()
         try {
-            return await api.postRequest<boolean>(`${controller}/disable`, {
-                id,
-            })
+            return await api.deleteRequest<boolean>(`${controller}/${id}`)
         } catch (error) {
             throw error
         }
     }
     return {
-        users: computed(() => users.value),
+        users,
         fetchAllUsers,
         fetchUserById,
         createUser,
         updateUser,
         user,
-        disableUser,
+        disableUser: deleteUser,
     }
 })

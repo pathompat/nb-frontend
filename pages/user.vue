@@ -2,7 +2,7 @@
     <main>
         <h1>จัดการ User</h1>
 
-        <section class="mt-12">
+        <section class="mt-8">
             <Table />
         </section>
     </main>
