@@ -62,7 +62,7 @@
                 จะไม่สามารถทำรายการใดๆได้อีก
             </v-card-text>
             <v-card-actions>
-                <v-btn variant="flat" color="success" @click="disableUser"
+                <v-btn variant="flat" color="success" @click="deleteUser"
                     >ยืนยัน</v-btn
                 >
                 <v-btn
@@ -84,6 +84,8 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import Modal from '@/components/user/dialogUser.vue'
+import { toastPluginSymbol } from '~/plugins/toast'
+const toast = inject(toastPluginSymbol)!
 const dialogDisable = ref(false)
 const userId = ref('')
 const modal = ref<typeof Modal | null>(null)
@@ -100,12 +102,20 @@ async function onEdit(id: string) {
     await init()
 }
 async function onCreate() {
-    const user = await modal.value?.openDialog()
-    await createUser(user)
-    modal.value?.closeDialog()
-    await init()
+    try {
+        const user = await modal.value?.openDialog()
+        const res = await createUser(user)
+        console.log(res)
+        modal.value?.closeDialog()
+        toast.success('สร้างสำเร็จ')
+        await init()
+    } catch (e) {
+        toast.error(`${e}`)
+    } finally {
+        modal.value?.setLoadingOff()
+    }
 }
-async function disabled() {
+async function deleteUser() {
     loading.value = true
     await disableUser(userId.value)
     dialogDisable.value = false

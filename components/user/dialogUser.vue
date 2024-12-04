@@ -6,45 +6,50 @@
             }}</v-card-title>
             <v-divider></v-divider>
             <v-card-text>
-                <v-form class="my-2">
-                    <v-row class="py-1 px-1">
-                        <v-col class="py-1 px-1">
+                <v-form class="ma-4" v-model="valid">
+                    <v-row>
+                        <v-col>
                             <v-text-field
                                 v-model="initFormEdit.username"
                                 label="Username"
+                                :rules="userNameRule"
+                                :hide-details="false"
                                 :disabled="loading || !!userId"
                                 :loading="loading"
                                 required
                             ></v-text-field>
                         </v-col>
-                        <v-col class="py-1 px-1">
+                        <v-col>
                             <v-text-field
                                 type="password"
                                 v-model="initFormEdit.password"
                                 :disabled="loading"
                                 :loading="loading"
+                                :rules="passwordRule"
+                                :hide-details="false"
                                 label="Password"
                                 required
                             ></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row class="py-1 px-1">
-                        <v-col class="py-1 px-1">
+                    <v-row>
+                        <v-col>
                             <v-text-field
                                 v-model="initFormEdit.storeName"
                                 :disabled="loading"
                                 :loading="loading"
-                                hide-details
+                                :rules="emtpyRule"
+                                :hide-details="false"
                                 label="ร้านค้า"
                                 required
                             ></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row class="py-1 px-1">
-                        <v-col class="py-1 px-1">
+                    <v-row>
+                        <v-col>
                             <v-select
                                 v-model="initFormEdit.tierId"
-                                :items="tier"
+                                :items="tiers"
                                 item-title="id"
                                 item-value="id"
                                 :disabled="loading"
@@ -60,7 +65,7 @@
 
             <v-card-actions
                 ><v-btn
-                    :disabled="loading"
+                    :disabled="!valid || loading"
                     :loading="loading"
                     variant="flat"
                     @click="action"
@@ -74,16 +79,18 @@
 import type { CreateUser, User } from '@/models/user/user'
 import { useUserStore } from '@/stores/user'
 const tier = ref<{ id: number }[]>([])
+const { tiers } = useShare()
+const { passwordRule, userNameRule, emtpyRule } = useRules()
 const dialogOpen = ref(false)
 const initFormEdit = ref<CreateUser>({
     username: '',
     password: '',
     storeName: '',
-    tierId: 0,
+    tierId: 1,
 })
+const valid = ref(false)
 const userId = ref('')
-const { fetchAllUsers, updateUser, createUser, fetchUserById, user } =
-    useUserStore()
+const { fetchUserById, user } = useUserStore()
 const loading = ref(false)
 let resolveFn: ((user: Partial<User>) => void) | null = null
 function action() {
@@ -97,7 +104,7 @@ const openDialog = async (id?: string): Promise<Partial<User>> => {
         username: '',
         password: '',
         storeName: '',
-        tierId: 0,
+        tierId: 1,
     }
     loading.value = true
     dialogOpen.value = true
@@ -121,6 +128,9 @@ defineExpose({
     openDialog,
     closeDialog: () => {
         dialogOpen.value = false
+    },
+    setLoadingOff: () => {
+        loading.value = false
     },
 })
 </script>
