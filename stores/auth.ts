@@ -1,4 +1,4 @@
-import type { set } from 'nuxt/dist/app/compat/capi'
+import type { ApiResult } from '~/models/api/api'
 import { LOCALSTORAGE_KEY } from '~/models/object/object'
 import type { LoginResult, User, UserJwt } from '~/models/user/user'
 
@@ -28,10 +28,11 @@ export const useAuthStore = defineStore('auth', () => {
             throw error
         }
     }
-    async function getProfile(id: string): Promise<User> {
+    async function getProfile(): Promise<User> {
         const api = useBaseApi()
         try {
-            const profile = await api.getRequest<User>('profile/' + id)
+            const profile = (await api.getRequest<ApiResult<User>>('user/info'))
+                .data
             return profile
         } catch (error) {
             throw error

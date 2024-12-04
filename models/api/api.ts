@@ -4,3 +4,8 @@ export interface Pagination<T> {
     itemsPerPage: number
     items: T
 }
+export interface ApiResult<T> {
+    data: T
+    code: number
+    message: string
+}

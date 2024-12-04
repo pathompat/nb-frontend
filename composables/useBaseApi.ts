@@ -3,7 +3,12 @@ export default function useBaseApi() {
         url: string,
         option: RequestInit
     ): Promise<T> => {
-        const result = await fetch('/api/' + url, option)
+        const result = await fetch('/api/' + url, {
+            headers: {
+                authorization: 'Bearer ' + localStorage.getItem('auth_token'),
+            },
+            ...option,
+        })
         const data = await result.json()
         return data as T
     }

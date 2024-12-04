@@ -106,8 +106,8 @@ async function disabled() {
 const tableheader = ref([
     { sortable: false, title: 'ID', key: 'id' },
     { sortable: false, title: 'Username', key: 'username' },
-    { sortable: false, title: 'ร้านค้า', key: 'shop' },
-    { sortable: false, title: 'วันที่สร้าง', key: 'createdDate' },
+    { sortable: false, title: 'ร้านค้า', key: 'storeName' },
+    { sortable: false, title: 'วันที่สร้าง', key: 'createdAt' },
     { sortable: false, title: 'แก่ไข/ยกเลิกใช้งาน', key: 'action' },
 ])
 async function init() {
@@ -116,6 +116,6 @@ async function init() {
     loading.value = false
 }
 onMounted(async () => {
-    init()
+    await init()
 })
 </script>
