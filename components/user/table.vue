@@ -117,10 +117,15 @@ async function onCreate() {
 }
 async function deleteUser() {
     loading.value = true
-    await disableUser(userId.value)
-    dialogDisable.value = false
-    userId.value = ''
-    await init()
+    try {
+        await disableUser(userId.value)
+        dialogDisable.value = false
+        userId.value = ''
+        toast.success('ยกเลิกใช้งานสำเร็จ')
+        await init()
+    } catch (e) {
+        toast.error(`${e}`)
+    }
     loading.value = false
 }
 const tableheader = ref([
