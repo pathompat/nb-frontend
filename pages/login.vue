@@ -1,7 +1,7 @@
 <template>
     <main class="d-flex h-100 flex-column justify-center align-center">
         <div style="width: 400px">
-            <div class="d-flex justify-start">
+            <div class="d-flex justify-start my-2">
                 <h1>เข้าสู่ระบบ</h1>
             </div>
             <v-form ref="form" v-model="valid" class="d-flex flex-column ga-4">
@@ -13,6 +13,7 @@
                         id="username"
                         name="username"
                         autocomplete="on"
+                        :hide-details="false"
                         :rules="userNameRule"
                         placeholder="กรุณากรอกบัญชีผู้ใช้งานs"
                     ></v-text-field>
@@ -21,18 +22,14 @@
                         label="รหัสผ่าน"
                         autocomplete="on"
                         id="password"
+                        :hide-details="false"
                         name="password"
                         type="password"
                         :rules="passwordRule"
                         placeholder="กรุณากรอกรหัสผ่าน"
                     ></v-text-field>
                 </div>
-                <!-- <div class="d-flex justify-end">
-                    <div class="d-flex align-center">
-                        <v-checkbox hide-details></v-checkbox>
-                        <div>จำรหัสผ่าน</div>
-                    </div>
-                </div> -->
+
                 <v-btn
                     :disabled="!valid"
                     :loading="loading"

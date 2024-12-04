@@ -5,8 +5,8 @@ import type { LoginResult, User, UserJwt } from '~/models/user/user'
 export const useAuthStore = defineStore('auth', () => {
     const { parseJwt } = useUtil()
     const router = useRouter()
-    const userProfile = ref<UserJwt | null>(null)
-    async function login(username: string, password: string): Promise<UserJwt> {
+    const userProfile = ref<User | null>(null)
+    async function login(username: string, password: string) {
         const api = useBaseApi()
         try {
             const loggedInUser = await api.postRequest<LoginResult>('login', {
@@ -17,13 +17,6 @@ export const useAuthStore = defineStore('auth', () => {
                 LOCALSTORAGE_KEY.AUTH_TOKEN,
                 loggedInUser.token
             )
-            localStorage.setItem(
-                LOCALSTORAGE_KEY.AUTH_TOKEN_EXPIRE,
-                loggedInUser.expiredIn.toString()
-            )
-            const jwtObject = parseJwt<UserJwt>(loggedInUser.token)
-            userProfile.value = jwtObject
-            return jwtObject
         } catch (error) {
             throw error
         }
@@ -33,6 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             const profile = (await api.getRequest<ApiResult<User>>('user/info'))
                 .data
+            userProfile.value = profile
             return profile
         } catch (error) {
             throw error
@@ -46,7 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
     return {
         userProfile: computed(() => userProfile.value),
-        setProfile: (profile: UserJwt) => {
+        setProfile: (profile: User) => {
             userProfile.value = profile
         },
         login,

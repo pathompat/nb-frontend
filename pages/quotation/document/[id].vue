@@ -97,23 +97,16 @@
     </html>
 </template>
 <script setup lang="ts">
-import useQuotationApi, {
-    lines,
-    plates,
-} from '~/composables/api/useQuotationApi'
-import type { Quotation } from '~/models/quotation/quotation'
-
+const { lines, plates } = useShare()
 const route = useRoute()
 const { id } = route.params
-const quotationApi = useQuotationApi()
+const { getQuotationById, quotation } = useQuotationStore()
 
 definePageMeta({
     layout: false,
 })
-const quotation = ref<Quotation>()
 onMounted(async () => {
-    quotation.value = await quotationApi.getOne(+id)
-
+    await getQuotationById(+id)
     nextTick(() => {
         window.print()
     })
