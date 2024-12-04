@@ -74,15 +74,15 @@
     <Modal ref="modal" />
 </template>
 <script setup lang="ts">
-import type { User } from '@/models/user/user'
 import { useUserStore } from '@/stores/user'
 import Modal from '@/components/user/dialogUser.vue'
 const dialogDisable = ref(false)
 const userId = ref('')
 const modal = ref<typeof Modal | null>(null)
 const loading = ref(false)
-const { updateUser, createUser, disableUser, fetchAllUsers, users } =
-    useUserStore()
+const userStore = useUserStore()
+const { updateUser, createUser, disableUser, fetchAllUsers } = userStore
+const { users } = storeToRefs(userStore)
 async function onEdit(id: string) {
     const user = await modal.value?.openDialog(id)
     await updateUser(id, user)
@@ -115,7 +115,7 @@ async function init() {
     await fetchAllUsers()
     loading.value = false
 }
-onMounted(async () => {
-    await init()
+onMounted(() => {
+    init()
 })
 </script>

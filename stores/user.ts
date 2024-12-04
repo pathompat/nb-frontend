@@ -53,7 +53,7 @@ export const useUserStore = defineStore('users', () => {
         }
     }
     return {
-        users: computed(() => users.value),
+        users,
         fetchAllUsers,
         fetchUserById,
         createUser,
