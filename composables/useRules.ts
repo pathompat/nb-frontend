@@ -24,5 +24,16 @@ export function useRules() {
             /\d/.test(value) || 'รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว',
     ]
     const emtpyRule = [(value: string) => !!value || 'กรุณากรอกข้อมูล']
-    return { userNameRule, passwordRule, emtpyRule }
+    const phoneNumberRule = [
+        (value: string) => {
+            const thaiPhoneRegex = /^(06|08|09)\d{8}$/
+            if (!value) {
+                return 'กรุณากรอกเบอร์มือถือ'
+            } else if (!thaiPhoneRegex.test(value)) {
+                return 'กรุณากรอกเบอร์มือถือที่ถูกต้อง (เช่น 08xxxxxxxx)'
+            }
+            return true
+        },
+    ]
+    return { userNameRule, passwordRule, emtpyRule, phoneNumberRule }
 }

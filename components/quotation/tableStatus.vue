@@ -3,7 +3,7 @@
         <v-card-title> s </v-card-title>
         <v-data-table
             :loading="loading"
-            :items="tableState"
+            :items="quotations"
             :expand-on-click="true"
             show-expand
             :headers="headers"
@@ -20,10 +20,12 @@
                                     : 'mdi-chevron-down'
                             }}</v-icon>
                         </v-btn>
-                        {{ item.date }}
+                        <!-- {{ item.date }} -->
                     </td>
-                    <td>{{ item.school }}</td>
-                    <td><v-icon> mdi-map-marker</v-icon> {{ item.shop }}</td>
+                    <td>{{ item.schoolId }}</td>
+                    <td>
+                        <v-icon> mdi-map-marker</v-icon> {{ item.storeName }}
+                    </td>
                     <td>
                         <v-chip
                             density="compact"
@@ -31,11 +33,11 @@
                             :style="{
                                 backgroundColor:
                                     statusColors.find(
-                                        (s) => s.id === item.status
+                                        (s) => s.id == +item.status
                                     )?.color || 'gray',
                             }"
                         >
-                            {{ getStatusTitle(item.status) }}
+                            {{ getStatusTitle(+item.status) }}
                         </v-chip>
                     </td>
                     <td>
@@ -89,12 +91,8 @@
     </v-card>
 </template>
 <script setup lang="ts">
-import useQuotationApi, {
-    statusColors,
-    getStatusTitle,
-} from '@/composables/api/useQuotationApi'
-import type { Quotation } from '~/models/quotation/quotation'
-const tableState = ref<Quotation[]>([])
+import { toastPluginSymbol } from '~/plugins/toast'
+const { getStatusTitle, statusColors } = useShare()
 const headers = ref([
     { title: 'วันที่', key: 'date' },
     { title: 'โรงเรียน', key: 'school' },
@@ -110,14 +108,16 @@ const headerExpanded = ref([
     { title: 'สถานะงานพิมพ์', value: 'status' },
 ])
 const loading = ref(false)
-const quotationApi = useQuotationApi()
+const quotationStore = useQuotationStore()
+const toast = inject(toastPluginSymbol)!
+const { fetchQuotations } = quotationStore
+const { quotations } = storeToRefs(quotationStore)
 onMounted(async () => {
     loading.value = true
     try {
-        const res = await quotationApi.getAll()
-        tableState.value = res
+        // await fetchQuotations()
     } catch (error) {
-        error(error)
+        toast.error(`${error}`)
     }
     loading.value = false
 })

@@ -40,7 +40,7 @@
                         {{ item.school }}
                     </td>
 
-                    <td v-if="userProfile?.role === 'admin'">
+                    <td v-if="userProfile?.role === SYSTEM_ROLE.ADMIN">
                         <v-icon> mdi-map-marker</v-icon> {{ item.shop }}
                     </td>
                     <td>
@@ -125,6 +125,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import type { Production, ProductionItem } from '@/models/production/production'
+import { SYSTEM_ROLE } from '~/models/object/object'
 const { productions, fetchAllProductions } = useProductionStore()
 const { statusColors, getStatusTitle, lines, plates } = useShare()
 const { userProfile } = useAuthStore()

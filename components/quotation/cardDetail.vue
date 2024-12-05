@@ -12,7 +12,7 @@
                     v-if="props.id"
                     variant="flat"
                     color="success"
-                    :to="`/quotation/document/${props.id}`"
+                    @click="download"
                     >ดาวน์โหลดเอกสาร</v-btn
                 >
             </div>
@@ -23,53 +23,72 @@
                     ><v-layout class="pt-4"
                         ><v-row>
                             <v-col cols="4">
-                                <v-text-field
+                                <v-select
+                                    item-title="username"
+                                    item-value="id"
                                     label="User"
-                                    disabled
-                                    v-model="quotation.id"
-                                ></v-text-field>
+                                    :disabled="
+                                        userProfile?.role != SYSTEM_ROLE.ADMIN
+                                    "
+                                    v-model="quotation.userId"
+                                    :items="users"
+                                ></v-select>
                             </v-col>
                             <v-col cols="4">
                                 <v-text-field
                                     label="ร้าน *"
                                     disabled
-                                    v-model="quotation.shop"
+                                    v-model="quotation.storeName"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="4">
-                                <v-select
+                                <v-autocomplete
                                     label="โรงเรียน *"
-                                    disabled
-                                    v-model="quotation.school"
-                                ></v-select>
+                                    :items="['โรงเรียน 1', 'โรงเรียน 2']"
+                                    v-model="quotation.schoolId"
+                                >
+                                    <template v-slot:prepend-item>
+                                        <v-list-item @click="createNewSchool">
+                                            <template v-slot:prepend>
+                                                <v-icon>mdi-plus </v-icon>
+                                            </template>
+
+                                            <v-list-item-title>
+                                                เพิ่มโรงเรียนใหม่
+                                            </v-list-item-title>
+                                        </v-list-item>
+                                        <v-divider class="mt-2"></v-divider>
+                                    </template>
+                                </v-autocomplete>
                             </v-col>
                             <v-col cols="3">
                                 <v-date-input
-                                    disabled
-                                    label="Select a date"
+                                    v-model="quotation.appointmentAt"
+                                    label="วัยที่พร้อมรับสินค้า"
                                 ></v-date-input>
                             </v-col>
                             <v-col cols="3">
                                 <v-date-input
-                                    disabled
-                                    label="Select a date"
+                                    v-model="quotation.duedateAt"
+                                    label="วันที่ต้องส่ง"
                                 ></v-date-input
                             ></v-col>
                             <v-col cols="3">
-                                <v-select
+                                <!-- <v-select
                                     label="ที่อยู่ *"
                                     disabled
                                     v-model="quotation.address"
-                                ></v-select>
+                                ></v-select> -->
                             </v-col>
                             <v-col cols="3">
-                                <v-select
+                                <!-- <v-select
                                     label="เบอร์ติดต่อ *"
                                     disabled
                                     v-model="quotation.phone"
-                                ></v-select>
-                            </v-col> </v-row
-                    ></v-layout>
+                                ></v-select> -->
+                            </v-col>
+                        </v-row></v-layout
+                    >
                     <div class="mt-4">
                         <div class="d-flex justify-space-between align-center">
                             <h2>รายการสินค้า</h2>
@@ -281,15 +300,30 @@
             </v-card>
         </section>
     </main>
+    <SchoolDialogSchool></SchoolDialogSchool>
 </template>
 <script setup lang="ts">
 import { PLATE, LINE, PRINTSTATUS } from '@/models/enum/enum'
 import type { SaveRow } from '~/models/share/share'
 import { useQuotationStore } from '@/stores/quotation'
+import { SYSTEM_ROLE } from '~/models/object/object'
+import { customerSellOrderPdf } from '~/pdfForm/customerInvoice'
+import dialogSchoolState, {
+    dialogSchoolStateSymbol,
+} from '@/components/school/dialog/state'
+import { toastPluginSymbol } from '~/plugins/toast'
+import { useSchoolStore } from '~/stores/school'
+const stateDialogCreateNewSchool = dialogSchoolState()
+provide(dialogSchoolStateSymbol, stateDialogCreateNewSchool)
+const pdf = customerSellOrderPdf()
 const { getQuotationById, createQuotation, quotation } = useQuotationStore()
 const { plates, lines } = useShare()
 const loading = ref(false)
+const userStore = useUserStore()
+const schoolStore = useSchoolStore()
 
+const { users } = storeToRefs(userStore)
+const { userProfile } = useAuthStore()
 const headerItems = ref([
     { title: 'ลำดับ', key: 'id' },
     { title: 'เพลท', key: 'plate' },
@@ -304,13 +338,35 @@ const headerItems = ref([
     { title: 'ลบ', key: 'action' },
 ])
 const isSaved = ref<SaveRow[]>([])
-
+const toast = inject(toastPluginSymbol)!
 const router = useRouter()
 async function create() {
-    const { id } = await createQuotation(quotation)
-    router.push({
-        path: `/quotation/${id}`,
-    })
+    try {
+        const { id } = await createQuotation({
+            ...quotation,
+            appointmentAt: new Date(quotation.appointmentAt!),
+            duedateAt: new Date(quotation.duedateAt!),
+        })
+        toast.success('บันทึกสำเร็จ')
+        router.push({
+            path: `/quotation/${id}`,
+        })
+    } catch (ex) {
+        toast.error(`${ex}`)
+    }
+}
+async function createNewSchool() {
+    try {
+        const newSchool = await stateDialogCreateNewSchool.openDialog()
+        console.log(newSchool)
+        await schoolStore.createSchool(newSchool)
+        stateDialogCreateNewSchool.closeDialog()
+        toast.success('เพิ่มโรงเรียนสำเร็จ')
+        await schoolStore.fetchAllSchools()
+    } catch (e) {
+        toast.error(`${e}`)
+    }
+    stateDialogCreateNewSchool.closeLoading()
 }
 function addItem() {
     isSaved.value.push({
@@ -329,6 +385,9 @@ function addItem() {
         status: PRINTSTATUS.OUTBOUND,
     })
 }
+async function download() {
+    await pdf.download()
+}
 function deleteItem(index: number) {
     isSaved.value = isSaved.value.filter((i) => i.index !== index)
     quotation.items = quotation.items.filter((_, i) => i !== index)
@@ -345,9 +404,11 @@ async function approve() {
 async function reset() {}
 async function cancel() {}
 onMounted(async () => {
+    quotation.userId = userProfile!.id
     if (!props.id) return
     loading.value = true
     try {
+        await userStore.fetchAllUsers()
         await getQuotationById(props.id)
     } catch (error) {
     } finally {

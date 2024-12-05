@@ -24,7 +24,7 @@
                                 quotation?.id.toString().padStart(4, '0')
                             }}
                         </p>
-                        <p>{{ quotation?.shop }}</p>
+                        <p>{{ quotation?.storename }}</p>
                         <p>{{ quotation?.school }}</p>
                     </v-col>
                     <v-col cols="3" class="text-end">
