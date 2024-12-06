@@ -8,11 +8,7 @@
                 }}
             </h1>
             <div class="d-flex ga-2">
-                <v-btn
-                    v-if="props.id"
-                    variant="flat"
-                    color="success"
-                    @click="download"
+                <v-btn variant="flat" color="success" @click="download"
                     >ดาวน์โหลดเอกสาร</v-btn
                 >
             </div>
@@ -307,7 +303,7 @@ import { PLATE, LINE, PRINTSTATUS } from '@/models/enum/enum'
 import type { SaveRow } from '~/models/share/share'
 import { useQuotationStore } from '@/stores/quotation'
 import { SYSTEM_ROLE } from '~/models/object/object'
-import { customerSellOrderPdf } from '~/pdfForm/customerInvoice'
+import { transferPdf } from '~/pdfForm/customerInvoice'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -315,7 +311,7 @@ import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
 const stateDialogCreateNewSchool = dialogSchoolState()
 provide(dialogSchoolStateSymbol, stateDialogCreateNewSchool)
-const pdf = customerSellOrderPdf()
+const pdf = transferPdf()
 const { getQuotationById, createQuotation, quotation } = useQuotationStore()
 const { plates, lines } = useShare()
 const loading = ref(false)

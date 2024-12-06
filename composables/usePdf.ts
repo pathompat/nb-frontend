@@ -1,6 +1,6 @@
 import pdfMake from 'pdfmake/build/pdfmake'
 import type { Content, TDocumentDefinitions } from 'pdfmake/interfaces'
-import { pdfFont } from '~/assets/font'
+import { pdfFont } from '~/assets/font.js'
 export function usePdf() {
     pdfMake.vfs = pdfFont.vfs
     pdfMake.fonts = {
@@ -31,15 +31,17 @@ export function usePdf() {
         setContent(content: TDocumentDefinitions) {
             docDefinition.value = { ...docDefinition.value, ...content }
         },
-        download: async (fileName: string) => {
+        download: async () => {
             try {
-                const pdfDocGenerator = await pdfMake.createPdf(
-                    docDefinition.value
-                )
-                pdfDocGenerator.getBlob((blob: Blob) => {
-                    const url = URL.createObjectURL(blob)
-                    window.open(url, '_blank')
-                })
+                const result = (await $fetch('/pdf', {
+                    body: JSON.stringify(docDefinition.value),
+                    method: 'post',
+                    responseType: 'blob',
+                })) as Blob
+
+                const pdfUrl = URL.createObjectURL(result)
+
+                window.open(pdfUrl, '_blank')
             } catch (ex) {
                 console.log(ex)
                 throw ex

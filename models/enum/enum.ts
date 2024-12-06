@@ -14,3 +14,7 @@ export enum PRINTSTATUS {
     PACK = 4,
     READY = 5,
 }
+export enum HEADER {
+    QUOTATION,
+    PRODUCTION,
+}

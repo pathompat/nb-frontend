@@ -2,6 +2,7 @@ import pdfMake from 'pdfmake'
 import type { TDocumentDefinitions } from 'pdfmake/interfaces'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { HEADER } from '~/models/enum/enum'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -62,8 +63,15 @@ async function createPdfBinary(pdfDoc: TDocumentDefinitions): Promise<Buffer> {
     })
 }
 
+function getHeader(header: HEADER, currentPage?: number, pageCount?: number) {
+    if (header === HEADER.QUOTATION) {
+        return
+    } else if (header === HEADER.PRODUCTION) {
+    } else {
+        return ''
+    }
+}
 export default defineEventHandler(async (event) => {
-    console.log('s')
     const body = (await readBody(event)) as any
     const selectedFooter = footers.defaultFooter
 
@@ -73,8 +81,16 @@ export default defineEventHandler(async (event) => {
         pageSize: body.pageSize,
         pageMargins: body.pageMargins,
         styles: body.styles,
+        header: getHeader(HEADER.QUOTATION)(
+            '123',
+            'shopname',
+            '1',
+            '2022-01-01',
+            'schoolname'
+        ),
         footer: selectedFooter,
     } as any
+    console.log(docDefinition)
 
     try {
         const pdfBuffer = await createPdfBinary(docDefinition)
