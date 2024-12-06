@@ -147,7 +147,7 @@
 <script setup lang="ts">
 import { type Production } from '@/models/production/production'
 import { useProductionStore } from '@/stores/production'
-import { useShare } from '@/composables/share'
+import { useShare } from '~/composables/useShare'
 const { lines, plates, getStatusTitle, statusColors } = useShare()
 const { getProductionById } = useProductionStore()
 const loading = ref(false)

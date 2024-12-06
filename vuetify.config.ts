@@ -52,6 +52,17 @@ export default defineVuetifyConfiguration({
             variant: 'outlined',
             hideDetails: true,
         },
+        VSwitch: {
+            color: 'primary',
+            density: 'compact',
+            variant: 'outlined',
+            hideDetails: true,
+        },
+
+        VRadioGroup: {
+            color: 'primary',
+            hideDetails: true,
+        },
     },
     /* other vuetify options */
 })

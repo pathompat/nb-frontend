@@ -16,6 +16,20 @@ export const useSchoolStore = defineStore('schools', () => {
             throw error
         }
     }
+    async function fetchAllSchoolsWithCustomer(
+        customerId: string
+    ): Promise<School[]> {
+        const api = useBaseApi()
+        try {
+            const allschools = await api.getRequest<ApiResult<School[]>>(
+                `${controller}?userId=${customerId}`
+            )
+            schools.value = allschools.data
+            return allschools.data
+        } catch (error) {
+            throw error
+        }
+    }
     async function fetchSchoolById(id: string) {
         const api = useBaseApi()
         try {
@@ -24,10 +38,16 @@ export const useSchoolStore = defineStore('schools', () => {
             throw error
         }
     }
-    async function createSchool(school: CraeteSchool): Promise<School> {
+    async function createSchool(
+        customerId: string,
+        school: CraeteSchool
+    ): Promise<School> {
         const api = useBaseApi()
         try {
-            return await api.postRequest<School>(controller, school)
+            return await api.postRequest<School>(controller, {
+                ...school,
+                userId: customerId,
+            })
         } catch (error) {
             throw error
         }
@@ -59,5 +79,6 @@ export const useSchoolStore = defineStore('schools', () => {
         updateSchool,
         school,
         deleteSchool,
+        fetchAllSchoolsWithCustomer,
     }
 })

@@ -12,16 +12,14 @@ export const useQuotationStore = defineStore('quotation', () => {
     const quotation = ref<Quotation>({
         schoolId: '',
         createdAt: '',
-        storeName: '',
-        duedateAt: null,
-        appointmentAt: null,
         items: [],
         id: 0,
-        status: '',
         isInstant: false,
         updatedAt: '',
         userId: '',
         remark: '',
+        appointmentAt: null,
+        dueDateAt: null,
     } as Quotation)
     const statuses = ref([
         { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },

@@ -31,9 +31,9 @@ export function usePdf() {
         setContent(content: TDocumentDefinitions) {
             docDefinition.value = { ...docDefinition.value, ...content }
         },
-        download: async () => {
+        download: async (controller: string) => {
             try {
-                const result = (await $fetch('/pdf', {
+                const result = (await $fetch(`/${controller}`, {
                     body: JSON.stringify(docDefinition.value),
                     method: 'post',
                     responseType: 'blob',

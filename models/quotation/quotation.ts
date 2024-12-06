@@ -2,21 +2,19 @@ import type { PRINTSTATUS, LINE, PLATE } from '../enum/enum'
 import type { Production } from '../production/production'
 
 export interface Quotation
-    extends Omit<QuotationForm, 'duedateAt' | 'appointmentAt'> {
+    extends Omit<QuotationForm, 'dueDateAt' | 'appointmentAt'> {
     id: number
-    status: string
     createdAt: string
     updatedAt: string
-    duedateAt: string | null
+    dueDateAt: string | null
+    isInstant: boolean
     appointmentAt: string | null
 }
 export interface QuotationForm {
     userId: string
     schoolId: string
-    storeName: string
-    isInstant: boolean
-    duedateAt: Date
-    appointmentAt: Date
+    dueDateAt: Date | null
+    appointmentAt: Date | null
     items: QuotationItem[]
     remark?: string
 }
@@ -31,6 +29,6 @@ export interface QuotationItem {
     gram: number
     price: number
     color: number
-    line: LINE
+    line: string
     page: number
 }

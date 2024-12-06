@@ -1,7 +1,7 @@
 import logo from '@/public/logo.png'
 import type { TableLayout, TDocumentDefinitions } from 'pdfmake/interfaces'
 
-export function transferPdf() {
+export function quotationPdf() {
     const pdf = usePdf()
     const layoutTable: TableLayout = {
         hLineWidth: () => 0.5,
@@ -72,7 +72,7 @@ export function transferPdf() {
                     },
                 },
             })
-            pdf.download()
+            pdf.download('quotation-pdf')
         },
     }
 }

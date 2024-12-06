@@ -26,7 +26,8 @@
                                     :disabled="
                                         userProfile?.role != SYSTEM_ROLE.ADMIN
                                     "
-                                    v-model="quotation.userId"
+                                    :model-value="quotationForm.userId"
+                                    @update:model-value="updateCustomerSelect"
                                     :items="users"
                                 ></v-select>
                             </v-col>
@@ -34,14 +35,17 @@
                                 <v-text-field
                                     label="ร้าน *"
                                     disabled
-                                    v-model="quotation.storeName"
+                                    :model-value="storeSelect"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="4">
                                 <v-autocomplete
                                     label="โรงเรียน *"
-                                    :items="['โรงเรียน 1', 'โรงเรียน 2']"
-                                    v-model="quotation.schoolId"
+                                    :loading="loadingSchool"
+                                    item-title="name"
+                                    :items="schools"
+                                    :disabled="quotationForm.userId === ''"
+                                    v-model="quotationForm.schoolId"
                                 >
                                     <template v-slot:prepend-item>
                                         <v-list-item @click="createNewSchool">
@@ -57,34 +61,58 @@
                                     </template>
                                 </v-autocomplete>
                             </v-col>
-                            <v-col cols="3">
-                                <v-date-input
-                                    v-model="quotation.appointmentAt"
-                                    label="วัยที่พร้อมรับสินค้า"
-                                ></v-date-input>
+                            <v-col cols="2">
+                                <div>
+                                    <!-- <v-switch
+                                        v-model="isCustomDate"
+                                        size="small"
+                                        label="กำหนดส่ง"
+                                    ></v-switch> -->
+                                    <v-radio-group
+                                        inline
+                                        :model-value="isCustomDate"
+                                        @update:model-value="updateCustomDate"
+                                    >
+                                        <v-radio
+                                            label="ส่งทันที"
+                                            :value="false"
+                                        ></v-radio>
+                                        <v-radio
+                                            label="กำหนดส่ง"
+                                            :value="true"
+                                        ></v-radio>
+                                    </v-radio-group>
+                                </div>
                             </v-col>
-                            <v-col cols="3">
+
+                            <v-col cols="2">
                                 <v-date-input
-                                    v-model="quotation.duedateAt"
+                                    v-if="isCustomDate"
+                                    v-model="quotationForm.dueDateAt"
                                     label="วันที่ต้องส่ง"
                                 ></v-date-input
                             ></v-col>
+                            <v-col cols="2">
+                                <v-date-input
+                                    v-model="quotationForm.appointmentAt"
+                                    label="วันที่พร้อมรับสินค้า"
+                                ></v-date-input>
+                            </v-col>
                             <v-col cols="3">
-                                <!-- <v-select
+                                <v-select
                                     label="ที่อยู่ *"
                                     disabled
-                                    v-model="quotation.address"
-                                ></v-select> -->
+                                    :model-value="schoolSelect?.address"
+                                ></v-select>
                             </v-col>
                             <v-col cols="3">
-                                <!-- <v-select
+                                <v-select
                                     label="เบอร์ติดต่อ *"
                                     disabled
-                                    v-model="quotation.phone"
-                                ></v-select> -->
-                            </v-col>
-                        </v-row></v-layout
-                    >
+                                    :model-value="schoolSelect?.telephone"
+                                ></v-select>
+                            </v-col> </v-row
+                    ></v-layout>
                     <div class="mt-4">
                         <div class="d-flex justify-space-between align-center">
                             <h2>รายการสินค้า</h2>
@@ -100,7 +128,7 @@
                         <v-data-table
                             class="my-4"
                             hideDefaultFooter
-                            :items="quotation.items"
+                            :items="quotationForm.items"
                             :headers="headerItems"
                         >
                             <template #body="{ items }">
@@ -175,9 +203,8 @@
                                                     {{
                                                         lines.find(
                                                             (l) =>
-                                                                l.value ===
-                                                                item.line
-                                                        )?.title
+                                                                l == item.line
+                                                        )
                                                     }}
                                                 </div>
                                             </td>
@@ -247,7 +274,7 @@
                             <p>รวม :</p>
                             <p>
                                 {{
-                                    quotation.items.reduce(
+                                    quotationForm.items.reduce(
                                         (sum, item) =>
                                             sum + item.price * item.amount,
                                         0
@@ -258,12 +285,20 @@
                         <v-divider class="my-4"></v-divider>
                         <v-textarea
                             label="หมายเหตุ"
-                            v-model="quotation.remark"
+                            v-model="quotationForm.remark"
                         ></v-textarea>
                     </div>
                 </v-card-text>
                 <v-card-actions>
+                    <v-btn variant="flat" to="/"> หน้าแรก </v-btn>
                     <v-spacer></v-spacer>
+                    <v-btn
+                        variant="flat"
+                        v-if="!props.id"
+                        @click="reset"
+                        color="warning"
+                        >รีเซ็ต</v-btn
+                    >
                     <v-btn
                         variant="flat"
                         v-if="!props.id"
@@ -278,13 +313,7 @@
                         color="success"
                         >อนุมัติ</v-btn
                     >
-                    <v-btn
-                        variant="flat"
-                        v-if="!props.id"
-                        @click="reset"
-                        color="warning"
-                        >รีเซ็ต</v-btn
-                    >
+
                     <v-btn
                         variant="flat"
                         v-if="props.id"
@@ -303,23 +332,33 @@ import { PLATE, LINE, PRINTSTATUS } from '@/models/enum/enum'
 import type { SaveRow } from '~/models/share/share'
 import { useQuotationStore } from '@/stores/quotation'
 import { SYSTEM_ROLE } from '~/models/object/object'
-import { transferPdf } from '~/pdfForm/customerInvoice'
+import { quotationPdf } from '~/pdfForm/quotationForm'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
+import type { QuotationForm } from '~/models/quotation/quotation'
 const stateDialogCreateNewSchool = dialogSchoolState()
 provide(dialogSchoolStateSymbol, stateDialogCreateNewSchool)
-const pdf = transferPdf()
-const { getQuotationById, createQuotation, quotation } = useQuotationStore()
+const pdf = quotationPdf()
+const { getQuotationById, createQuotation } = useQuotationStore()
+const quotationForm = ref<QuotationForm>({
+    userId: '',
+    schoolId: '',
+    appointmentAt: null,
+    dueDateAt: null,
+    items: [],
+    remark: '',
+})
 const { plates, lines } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
-
 const { users } = storeToRefs(userStore)
+const { schools } = storeToRefs(schoolStore)
 const { userProfile } = useAuthStore()
+const isCustomDate = ref(false)
 const headerItems = ref([
     { title: 'ลำดับ', key: 'id' },
     { title: 'เพลท', key: 'plate' },
@@ -336,12 +375,43 @@ const headerItems = ref([
 const isSaved = ref<SaveRow[]>([])
 const toast = inject(toastPluginSymbol)!
 const router = useRouter()
+const loadingSchool = ref(false)
+const storeSelect = computed(() => {
+    return users.value.find((user) => user.id === quotationForm.value.userId)
+        ?.storeName
+})
+const schoolSelect = computed(() => {
+    return schools.value.find(
+        (school) => school.name === quotationForm.value.schoolId
+    )
+})
+const updateCustomDate = (value: boolean | null) => {
+    isCustomDate.value = value!
+    if (!value) quotationForm.value.dueDateAt = null
+}
+const updateCustomerSelect = async (value: string) => {
+    quotationForm.value.userId = value
+    await getSchools()
+    quotationForm.value.schoolId = ''
+}
+async function getSchools() {
+    loadingSchool.value = true
+    try {
+        await schoolStore.fetchAllSchoolsWithCustomer(
+            quotationForm.value.userId
+        )
+    } catch (e) {
+        toast.error(`${e}`)
+    }
+    loadingSchool.value = false
+}
 async function create() {
     try {
         const { id } = await createQuotation({
-            ...quotation,
-            appointmentAt: new Date(quotation.appointmentAt!),
-            duedateAt: new Date(quotation.duedateAt!),
+            ...quotationForm.value,
+            appointmentAt: new Date(quotationForm.value.appointmentAt!),
+
+            dueDateAt: new Date(quotationForm.value.dueDateAt!),
         })
         toast.success('บันทึกสำเร็จ')
         router.push({
@@ -355,10 +425,10 @@ async function createNewSchool() {
     try {
         const newSchool = await stateDialogCreateNewSchool.openDialog()
         console.log(newSchool)
-        await schoolStore.createSchool(newSchool)
+        await schoolStore.createSchool(quotationForm.value.userId, newSchool)
         stateDialogCreateNewSchool.closeDialog()
         toast.success('เพิ่มโรงเรียนสำเร็จ')
-        await schoolStore.fetchAllSchools()
+        await getSchools()
     } catch (e) {
         toast.error(`${e}`)
     }
@@ -366,15 +436,15 @@ async function createNewSchool() {
 }
 function addItem() {
     isSaved.value.push({
-        index: quotation.items.length,
+        index: quotationForm.value.items.length,
         isSaved: false,
     })
-    quotation.items.push({
+    quotationForm.value.items.push({
         plate: PLATE.BIG,
         gram: 0,
         color: 0,
         page: 0,
-        line: LINE.SINGLE,
+        line: '',
         hasPlan: false,
         amount: 0,
         price: 0,
@@ -386,7 +456,9 @@ async function download() {
 }
 function deleteItem(index: number) {
     isSaved.value = isSaved.value.filter((i) => i.index !== index)
-    quotation.items = quotation.items.filter((_, i) => i !== index)
+    quotationForm.value.items = quotationForm.value.items.filter(
+        (_, i) => i !== index
+    )
 }
 function saveItem(index: number) {
     const item = isSaved.value.find((i) => i.index === index)
@@ -400,11 +472,15 @@ async function approve() {
 async function reset() {}
 async function cancel() {}
 onMounted(async () => {
-    quotation.userId = userProfile!.id
-    if (!props.id) return
+    if (userProfile?.role !== SYSTEM_ROLE.ADMIN) {
+        quotationForm.value.userId = userProfile!.id
+        getSchools()
+    }
+
     loading.value = true
     try {
         await userStore.fetchAllUsers()
+        if (!props.id) return
         await getQuotationById(props.id)
     } catch (error) {
     } finally {
