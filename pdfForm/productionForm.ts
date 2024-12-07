@@ -1,5 +1,5 @@
-import logo from '@/public/logo.png'
 import type { TableLayout, TDocumentDefinitions } from 'pdfmake/interfaces'
+import { toastPluginSymbol } from '~/plugins/toast'
 
 export function productionPdf() {
     const pdf = usePdf()
@@ -13,7 +13,11 @@ export function productionPdf() {
     }
     return {
         async setItem(id: string) {
-            await productionStore.getProductionById(id)
+            try {
+                await productionStore.getProductionById(id)
+            } catch (error) {
+                throw error
+            }
         },
         async download() {
             pdf.setContent(

@@ -65,8 +65,15 @@ export const useQuotationStore = defineStore('quotation', () => {
         }
     }
 
-    const getQuotationById = (id: number) => {
-        quotation.value = quotations.value.find((q) => q.id === id)!
+    const getQuotationById = async (id: number) => {
+        try {
+            const response = await getRequest<Quotation[]>(
+                `${controller}/${id}`
+            )
+            quotations.value = response
+        } catch (error) {
+            throw error
+        }
     }
 
     const updateQuotation = async (

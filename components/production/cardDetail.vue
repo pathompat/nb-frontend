@@ -92,19 +92,13 @@
                                 {{ index + 1 }}
                             </template>
                             <template #item.hasPlan="{ item }">
-                                <v-checkbox v-model="item.hasPlan"></v-checkbox>
+                                <v-checkbox v-model="item.hasRef"></v-checkbox>
                             </template>
                             <template #item.plate="{ item }">
-                                {{
-                                    plates.find((p) => p.value === item.plate)
-                                        ?.title
-                                }}
+                                {{ plates.find((p) => p === item.plate) }}
                             </template>
                             <template #item.line="{ item }">
-                                {{
-                                    lines.find((l) => l.value === item.line)
-                                        ?.title
-                                }}
+                                {{ lines.find((l) => l === item.line) }}
                             </template>
                             <template #item.status="{ item }">
                                 <v-chip
@@ -154,13 +148,10 @@ const loading = ref(false)
 const router = useRouter()
 function defaultForm(): Partial<Production> {
     return {
-        date: '',
         school: '',
         storeName: '',
         phone: '',
         address: '',
-        dueDate: '',
-        estimateDate: '',
         items: [],
     }
 }
@@ -182,7 +173,7 @@ onMounted(async () => {
     if (props.id) {
         loading.value = true
         try {
-            production.value = await getProductionById(props.id)
+            production.value = await getProductionById(`${props.id}`)
         } catch (error) {
         } finally {
             loading.value = false

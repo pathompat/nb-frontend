@@ -7,11 +7,11 @@
     </div>
 </template>
 <script setup lang="ts">
-import { quotationPdf } from '~/pdfForm/quotationForm'
+import { productionPdf } from '~/pdfForm/productionForm'
 import { toastPluginSymbol } from '~/plugins/toast'
 const route = useRoute()
 const { id } = route.params
-const pdf = quotationPdf()
+const pdf = productionPdf()
 const toast = inject(toastPluginSymbol)!
 
 onMounted(async () => {

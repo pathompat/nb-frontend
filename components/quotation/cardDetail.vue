@@ -1,10 +1,12 @@
 <template>
     <main>
-        <div class="d-flex justify-space-between mx-8">
+        <div class="d-flex justify-space-between" v-if="false">
             <h1>
                 แบบฟอร์มเสนอราคา
                 {{
-                    props.id ? `#QT${props.id.toString().padStart(5, '0')}` : ''
+                    props.id
+                        ? `#QT${props.id!.toString().padStart(5, '0')}`
+                        : ''
                 }}
             </h1>
             <div class="d-flex ga-2">
@@ -12,12 +14,12 @@
                     variant="flat"
                     v-if="props.id"
                     color="success"
-                    @click="download"
+                    :to="`/quotation/document/${props.id}`"
                     >ดาวน์โหลดเอกสาร</v-btn
                 >
             </div>
         </div>
-        <section class="pa-8">
+        <section class="py-8">
             <v-card :loading="loading">
                 <v-card-text>
                     <v-form v-model="valid">
@@ -53,6 +55,7 @@
                                         label="โรงเรียน *"
                                         :loading="loadingSchool"
                                         item-title="name"
+                                        item-value="id"
                                         :items="schools"
                                         :rules="emtpyRule"
                                         :hide-details="false"
@@ -138,14 +141,14 @@
                                 class="d-flex justify-space-between align-center"
                             >
                                 <h2>รายการสินค้า</h2>
-                                <v-btn
+                                <!-- <v-btn
                                     variant="text"
                                     @click="addItem"
                                     icon
                                     color="primary"
                                 >
                                     <v-icon>mdi-plus</v-icon>
-                                </v-btn>
+                                </v-btn> -->
                             </div>
                             <v-data-table
                                 class="my-4"
@@ -179,7 +182,11 @@
                                                         "
                                                     >
                                                         <v-select
+                                                            :rules="emtpyRule"
                                                             :items="plates"
+                                                            :hide-details="
+                                                                false
+                                                            "
                                                             v-model="item.plate"
                                                         ></v-select>
                                                     </div>
@@ -200,7 +207,11 @@
                                                         "
                                                     >
                                                         <v-select
+                                                            :rules="emtpyRule"
                                                             :items="grams"
+                                                            :hide-details="
+                                                                false
+                                                            "
                                                             v-model="item.gram"
                                                         ></v-select>
                                                     </div>
@@ -215,7 +226,11 @@
                                                         "
                                                     >
                                                         <v-select
+                                                            :rules="emtpyRule"
                                                             :items="colors"
+                                                            :hide-details="
+                                                                false
+                                                            "
                                                             v-model="item.color"
                                                         ></v-select>
                                                     </div>
@@ -230,8 +245,12 @@
                                                         "
                                                     >
                                                         <v-select
+                                                            :rules="emtpyRule"
                                                             :items="pages"
                                                             v-model="item.page"
+                                                            :hide-details="
+                                                                false
+                                                            "
                                                         ></v-select>
                                                     </div>
                                                     <div v-else>
@@ -245,7 +264,11 @@
                                                         "
                                                     >
                                                         <v-select
+                                                            :rules="emtpyRule"
                                                             :items="lines"
+                                                            :hide-details="
+                                                                false
+                                                            "
                                                             v-model="item.line"
                                                         ></v-select>
                                                     </div>
@@ -271,8 +294,12 @@
                                                         "
                                                     >
                                                         <v-text-field
+                                                            :rules="emtpyRule"
                                                             type="number"
                                                             label="จำนวน"
+                                                            :hide-details="
+                                                                false
+                                                            "
                                                             v-model="
                                                                 item.amount
                                                             "
@@ -289,6 +316,10 @@
                                                         "
                                                     >
                                                         <v-text-field
+                                                            :rules="emtpyRule"
+                                                            :hide-details="
+                                                                false
+                                                            "
                                                             type="number"
                                                             :disabled="
                                                                 userProfile?.role !=
@@ -368,20 +399,24 @@
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
-                    <v-btn variant="flat" to="/"> หน้าแรก </v-btn>
+                    <!-- <v-btn variant="flat" to="/"> หน้าแรก </v-btn> -->
                     <v-spacer></v-spacer>
-                    <v-btn
+                    <!-- <v-btn
                         variant="flat"
                         v-if="!props.id"
                         @click="reset"
                         color="warning"
                         >รีเซ็ต</v-btn
-                    >
+                    > -->
                     <v-btn
                         variant="flat"
                         v-if="!props.id"
                         @click="create"
-                        :disabled="!valid"
+                        :disabled="
+                            !valid ||
+                            quotationForm.items.length === 0 ||
+                            isSaved.filter((x) => x.isSaved).length === 0
+                        "
                         color="success"
                         >บันทึก</v-btn
                     >
@@ -407,11 +442,10 @@
     <SchoolDialogSchool></SchoolDialogSchool>
 </template>
 <script setup lang="ts">
-import { PLATE, LINE, PRINTSTATUS } from '@/models/enum/enum'
+import { PRINTSTATUS } from '@/models/enum/enum'
 import type { SaveRow } from '~/models/share/share'
 import { useQuotationStore } from '@/stores/quotation'
 import { SYSTEM_ROLE } from '~/models/object/object'
-import { quotationPdf } from '~/pdfForm/quotationForm'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -421,7 +455,6 @@ import type { QuotationForm } from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
 const stateDialogCreateNewSchool = dialogSchoolState()
 provide(dialogSchoolStateSymbol, stateDialogCreateNewSchool)
-const pdf = quotationPdf()
 const valid = ref(false)
 const { getQuotationById, createQuotation } = useQuotationStore()
 const quotationForm = ref<QuotationForm>({
@@ -455,7 +488,7 @@ const headerItems = ref([
     { title: 'จำนวน', key: 'amount' },
     { title: 'ราคา', key: 'price' },
     { title: 'รวม', key: 'sum' },
-    { title: 'ลบ', key: 'action' },
+    { title: 'ดำเนินการ', key: 'action' },
 ])
 const isSaved = ref<SaveRow[]>([])
 const toast = inject(toastPluginSymbol)!
@@ -533,8 +566,12 @@ async function getSchools() {
 }
 async function create() {
     try {
+        const items = quotationForm.value.items.filter((item, index) => {
+            return isSaved.value.find((i) => i.index === index)?.isSaved
+        })
         const { id } = await createQuotation({
             ...quotationForm.value,
+            items,
             appointmentAt: new Date(quotationForm.value.appointmentAt!),
 
             dueDateAt: new Date(quotationForm.value.dueDateAt!),
@@ -577,18 +614,24 @@ function addItem() {
         status: PRINTSTATUS.OUTBOUND,
     })
 }
-async function download() {
-    await pdf.download()
-}
+
 function deleteItem(index: number) {
-    isSaved.value = isSaved.value.filter((i) => i.index !== index)
-    quotationForm.value.items = quotationForm.value.items.filter(
-        (_, i) => i !== index
-    )
+    isSaved.value = isSaved.value.filter((_, i) => i !== index)
+
+    quotationForm.value.items = quotationForm.value.items
+        .filter((_, i) => i !== index)
+        .map((item, newIndex) => {
+            return { ...item, index: newIndex }
+        })
+
+    isSaved.value = isSaved.value.map((item, newIndex) => {
+        return { ...item, index: newIndex }
+    })
 }
 function saveItem(index: number) {
     const item = isSaved.value.find((i) => i.index === index)
     if (item) item.isSaved = true
+    addItem()
 }
 async function approve() {
     // const { id } = await quotationApi.approve(props.id);
@@ -605,6 +648,7 @@ onMounted(async () => {
     loading.value = true
     try {
         await userStore.fetchAllUsers()
+        addItem()
         if (!props.id) return
         await getQuotationById(props.id)
     } catch (error) {

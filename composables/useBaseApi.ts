@@ -18,11 +18,15 @@ export default function useBaseApi() {
                     localStorage.removeItem(LOCALSTORAGE_KEY.AUTH_TOKEN)
                     navigateTo('/login')
                 }
+                if (result.status === 404) {
+                    throw 'Not Found'
+                }
                 throw (await result.json()).message
             }
             const data = await result.json()
             return data as T
         } catch (error) {
+            console.log(error)
             throw error
         }
     }

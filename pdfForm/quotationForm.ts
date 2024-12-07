@@ -1,8 +1,10 @@
-import logo from '@/public/logo.png'
-import type { TableLayout, TDocumentDefinitions } from 'pdfmake/interfaces'
+import type { TableLayout } from 'pdfmake/interfaces'
+import { toastPluginSymbol } from '~/plugins/toast'
 
 export function quotationPdf() {
     const pdf = usePdf()
+    const quotationStore = useQuotationStore()
+    const { quotation } = storeToRefs(quotationStore)
     const layoutTable: TableLayout = {
         hLineWidth: () => 0.5,
         vLineWidth: () => 0.5,
@@ -10,7 +12,13 @@ export function quotationPdf() {
         paddingBottom: () => 2,
     }
     return {
-        async setItem(id: string) {},
+        async setItem(id: string) {
+            try {
+                await quotationStore.getQuotationById(+id)
+            } catch (error) {
+                throw error
+            }
+        },
         async download() {
             pdf.setContent(
                 {
