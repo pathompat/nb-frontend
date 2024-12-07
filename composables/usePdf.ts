@@ -1,7 +1,11 @@
 import pdfMake from 'pdfmake/build/pdfmake'
 import type { Content, TDocumentDefinitions } from 'pdfmake/interfaces'
 import { pdfFont } from '~/assets/font.js'
-import type { PdfBaseRequest, QuotationPdfRequest } from '~/models/api/api'
+import type {
+    PdfBaseRequest,
+    PdfHeder,
+    QuotationPdfRequest,
+} from '~/models/api/api'
 export function usePdf() {
     pdfMake.vfs = pdfFont.vfs
     pdfMake.fonts = {
@@ -28,7 +32,7 @@ export function usePdf() {
         pageSize: 'A5',
         pageMargins: [40, 20, 40, 60],
     })
-    const header = ref<QuotationPdfRequest>({
+    const header = ref<PdfHeder>({
         appointmentDate: '',
         duedate: '',
         quotationId: '',
@@ -36,10 +40,7 @@ export function usePdf() {
         shopname: '',
     })
     return {
-        setContent(
-            content: TDocumentDefinitions,
-            pdfHeader: QuotationPdfRequest
-        ) {
+        setContent<T>(content: TDocumentDefinitions, pdfHeader: PdfHeder) {
             docDefinition.value = { ...docDefinition.value, ...content }
             header.value = pdfHeader
         },
@@ -49,7 +50,7 @@ export function usePdf() {
                     body: JSON.stringify({
                         pdf: docDefinition.value,
                         header: header.value,
-                    } as PdfBaseRequest<QuotationPdfRequest>),
+                    } as PdfBaseRequest<PdfHeder>),
                     method: 'post',
                     responseType: 'blob',
                 })) as Blob

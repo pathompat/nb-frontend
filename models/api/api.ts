@@ -25,7 +25,8 @@ export interface ProductionPdfRequest {
     duedate: string
     schoolname: string
 }
-export interface PdfBaseRequest<T> {
+export type PdfHeder = QuotationPdfRequest | ProductionPdfRequest
+export interface PdfBaseRequest<T = PdfHeder> {
     pdf: TDocumentDefinitions
     header: T
 }

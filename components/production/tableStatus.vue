@@ -41,7 +41,7 @@
                     </td>
 
                     <td v-if="userProfile?.role === SYSTEM_ROLE.ADMIN">
-                        <v-icon> mdi-map-marker</v-icon> {{ item.shop }}
+                        <v-icon> mdi-map-marker</v-icon> {{ item.storeName }}
                     </td>
                     <td>
                         <v-chip

@@ -38,7 +38,7 @@
                                 <v-text-field
                                     label="ร้าน *"
                                     disabled
-                                    v-model="production.shop"
+                                    v-model="production.storeName"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="4">
@@ -156,7 +156,7 @@ function defaultForm(): Partial<Production> {
     return {
         date: '',
         school: '',
-        shop: '',
+        storeName: '',
         phone: '',
         address: '',
         dueDate: '',
