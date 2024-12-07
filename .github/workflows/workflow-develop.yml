@@ -105,6 +105,7 @@ jobs:
           uses: appleboy/ssh-action@v1.2.0
           with:
               host: ${{ secrets.TEMP_SSH_HOST }}
+              username: ${{ secrets.TEMP_SSH_USERNAME }}
               key: ${{ secrets.TEMP_SSH_KEY }}
               script: |
                     sudo docker pull $IMAGE_URL:$IMAGE_TAG &&
