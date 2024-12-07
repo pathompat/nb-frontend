@@ -107,9 +107,9 @@ jobs:
               host: ${{ secrets.TEMP_SSH_HOST }}
               username: ${{ secrets.TEMP_SSH_USERNAME }}
               key: ${{ secrets.TEMP_SSH_KEY }}
-              command_timeout: 30m
+              envs: IMAGE_URL,IMAGE_TAG
               script: |
-                echo "ssh to temp server"
+                echo "update docker image: $IMAGE_URL:$IMAGE_TAG"
                 sudo docker pull $IMAGE_URL:$IMAGE_TAG
                 sudo docker stop nb-frontend
                 sudo docker rm nb-frontend
