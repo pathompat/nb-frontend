@@ -17,6 +17,6 @@
     </main>
 </template>
 <script setup lang="ts">
-import List from '@/components/production/list.vue'
+import List from '@/components/quotation/list.vue'
 import Table from '@/components/quotation/tableStatus.vue'
 </script>
