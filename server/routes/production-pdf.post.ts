@@ -1,17 +1,17 @@
 import { TDocumentDefinitions } from 'pdfmake/interfaces'
-import { PdfBaseRequest, QuotationPdfRequest } from '~/models/api/api'
+import { PdfBaseRequest, ProductionPdfRequest } from '~/models/api/api'
 import { pdfServer } from '~/server/basePdfServer'
 function getHeader({
-    quotationId,
+    productionId,
     shopname,
     appointmentDate,
     duedate,
     schoolname,
-}: QuotationPdfRequest) {
+}: ProductionPdfRequest) {
     return {
         stack: [
             {
-                text: `แบบฟอร์มสั่งผลิต #PR-${quotationId.padStart(5, '0')}`,
+                text: `แบบฟอร์มสั่งผลิต #PR-${productionId.padStart(5, '0')}`,
                 style: 'headerTitle',
             },
             {
@@ -22,7 +22,7 @@ function getHeader({
                             style: 'headerSub',
                         },
                         {
-                            text: `Job No.: PR-${new Date().getFullYear()}-${quotationId.padStart(5, '0')}`,
+                            text: `Job No.: PR-${new Date().getFullYear()}-${productionId.padStart(5, '0')}`,
                             style: 'headerSub',
                         },
                         {
@@ -55,7 +55,7 @@ function getHeader({
 export default defineEventHandler(async (event) => {
     const { pdf, header } = (await readBody(
         event
-    )) as PdfBaseRequest<QuotationPdfRequest>
+    )) as PdfBaseRequest<ProductionPdfRequest>
     const docDefinition = {
         content: pdf.content,
         defaultStyle: pdf.defaultStyle,
@@ -63,7 +63,7 @@ export default defineEventHandler(async (event) => {
         pageMargins: pdf.pageMargins,
         styles: pdf.styles,
         header: getHeader({
-            quotationId: header.quotationId,
+            productionId: header.productionId,
             shopname: header.shopname,
             appointmentDate: header.appointmentDate,
             duedate: header.duedate,

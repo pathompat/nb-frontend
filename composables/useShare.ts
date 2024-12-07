@@ -1,4 +1,4 @@
-import { LINE, PLATE, PRINTSTATUS } from '~/models/enum/enum'
+import { PRINTSTATUS } from '~/models/enum/enum'
 
 export function useShare() {
     const statuses = ref([
@@ -16,11 +16,7 @@ export function useShare() {
         { id: PRINTSTATUS.READY, color: '#4CAF50' },
     ])
 
-    const plates = ref([
-        { title: 'ใหญ่', value: PLATE.BIG },
-        { title: 'เล็ก', value: PLATE.SMALL },
-        { title: 'พิเศษ', value: PLATE.EXTRA },
-    ])
+    const plates = ref(['เล็ก', 'ใหญ่'])
     const getStatusTitle = computed(
         () => (value: number) =>
             statuses.value.find((status) => status.value === value)?.title ||
@@ -69,6 +65,9 @@ export function useShare() {
         tiers,
         statusColors,
         lines,
+        pages,
+        grams,
+        colors,
         plates,
         getStatusTitle,
     }

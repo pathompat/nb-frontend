@@ -1,6 +1,7 @@
 import pdfMake from 'pdfmake/build/pdfmake'
 import type { Content, TDocumentDefinitions } from 'pdfmake/interfaces'
 import { pdfFont } from '~/assets/font.js'
+import type { PdfBaseRequest, QuotationPdfRequest } from '~/models/api/api'
 export function usePdf() {
     pdfMake.vfs = pdfFont.vfs
     pdfMake.fonts = {
@@ -27,14 +28,28 @@ export function usePdf() {
         pageSize: 'A5',
         pageMargins: [40, 20, 40, 60],
     })
+    const header = ref<QuotationPdfRequest>({
+        appointmentDate: '',
+        duedate: '',
+        quotationId: '',
+        schoolname: '',
+        shopname: '',
+    })
     return {
-        setContent(content: TDocumentDefinitions) {
+        setContent(
+            content: TDocumentDefinitions,
+            pdfHeader: QuotationPdfRequest
+        ) {
             docDefinition.value = { ...docDefinition.value, ...content }
+            header.value = pdfHeader
         },
         download: async (controller: string) => {
             try {
                 const result = (await $fetch(`/${controller}`, {
-                    body: JSON.stringify(docDefinition.value),
+                    body: JSON.stringify({
+                        pdf: docDefinition.value,
+                        header: header.value,
+                    } as PdfBaseRequest<QuotationPdfRequest>),
                     method: 'post',
                     responseType: 'blob',
                 })) as Blob

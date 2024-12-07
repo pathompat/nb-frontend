@@ -25,10 +25,10 @@ export interface QuotationItem {
     hasPlan: boolean
     amount: number
     status: PRINTSTATUS
-    plate: PLATE
+    plate: string
     gram: number
     price: number
-    color: number
+    color: string
     line: string
     page: number
 }

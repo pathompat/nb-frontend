@@ -1,5 +1,3 @@
-import { number, string } from 'yup'
-
 export interface User {
     id: string
     username: string
