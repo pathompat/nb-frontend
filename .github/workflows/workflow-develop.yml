@@ -101,15 +101,15 @@ jobs:
         needs: image-upload
         environment: develop
         steps:
-        - name: executing remote ssh commands using ssh key
-          uses: appleboy/ssh-action@v1.2.0
-          with:
-            host: ${{ secrets.TEMP_SSH_HOST }}
-            username: ${{ secrets.TEMP_SSH_USERNAME }}
-            key: ${{ secrets.TEMP_SSH_KEY }}
-            port: ${{ vars.SSH_PORT }}
-            script: |
-                  sudo docker pull $IMAGE_URL:$IMAGE_TAG &&
-                  sudo docker stop nb-frontend || true &&
-                  sudo docker rm nb-frontend || true &&
-                  sudo docker run -d --name nb-frontend -p 3000:3000 $IMAGE_URL:$IMAGE_TAG
+          - name: executing remote ssh commands using ssh key
+            uses: appleboy/ssh-action@v1.2.0
+            with:
+              host: ${{ secrets.TEMP_SSH_HOST }}
+              username: ${{ secrets.TEMP_SSH_USERNAME }}
+              key: ${{ secrets.TEMP_SSH_KEY }}
+              command_timeout: 30m
+              script: |
+                    sudo docker pull $IMAGE_URL:$IMAGE_TAG &&
+                    sudo docker stop nb-frontend || true &&
+                    sudo docker rm nb-frontend || true &&
+                    sudo docker run -d --name nb-frontend -p 3000:3000 $IMAGE_URL:$IMAGE_TAG
