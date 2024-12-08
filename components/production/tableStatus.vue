@@ -1,5 +1,5 @@
 <template>
-    <v-card :loading="loading">
+    <!-- <v-card :loading="loading">
         <v-card-title>
             <div class="d-flex justify-end">
                 <div class="d-flex ga-4">
@@ -120,67 +120,67 @@
                 </tr>
             </template>
         </v-data-table>
-    </v-card>
+    </v-card> -->
 </template>
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
-import type { Production, ProductionItem } from '@/models/production/production'
-import { SYSTEM_ROLE } from '~/models/object/object'
-const { productions, fetchAllProductions } = useProductionStore()
-const { statusColors, getStatusTitle, lines, plates } = useShare()
-const { userProfile } = useAuthStore()
-const loading = ref(false)
+// import { useAuthStore } from '@/stores/auth'
+// import type { Production, ProductionItem } from '@/models/production/production'
+// import { SYSTEM_ROLE } from '~/models/object/object'
+// const { productions, fetchAllProductions } = useProductionStore()
+// const { statusColors, getStatusTitle, lines, plates } = useShare()
+// const { userProfile } = useAuthStore()
+// const loading = ref(false)
 
-const headerItems = ref([
-    {
-        title: 'No.',
-        value: 'index',
-        headerProps: { style: { fontWeight: 'bold' } },
-    },
-    {
-        title: 'เพรท/แกรม/สี/แผ่น/เส้น',
-        value: 'description',
-        headerProps: { style: { fontWeight: 'bold' } },
-    },
-    {
-        title: 'มีเเบบ',
-        value: 'hasPlan',
-        headerProps: { style: { fontWeight: 'bold' } },
-    },
-    {
-        title: 'จำนวน',
-        value: 'amount',
-        headerProps: { style: { fontWeight: 'bold' } },
-    },
-    {
-        title: 'สถานะงานพิมพ์',
-        value: 'status',
-        headerProps: { style: { fontWeight: 'bold' } },
-    },
-])
-function getItemLowestStatus(items: ProductionItem[]) {
-    return items.sort((a, b) => a.status - b.status)[0].status
-}
-onMounted(async () => {
-    loading.value = true
-    try {
-        await fetchAllProductions()
-    } catch (error) {}
-    loading.value = false
-})
-const headers = computed(() => {
-    const header = [
-        { title: 'วันที่', key: 'date' },
-        { title: 'โรงเรียน', key: 'school' },
-        {
-            title: 'ร้านค้า',
-            key: 'shop',
-        },
-        { title: 'สถานะ', key: 'status' },
-        { title: '#', key: 'action' },
-    ]
-    return header.filter(
-        (h) => userProfile?.role !== 'user' || h.key !== 'shop'
-    )
-})
+// const headerItems = ref([
+//     {
+//         title: 'No.',
+//         value: 'index',
+//         headerProps: { style: { fontWeight: 'bold' } },
+//     },
+//     {
+//         title: 'เพรท/แกรม/สี/แผ่น/เส้น',
+//         value: 'description',
+//         headerProps: { style: { fontWeight: 'bold' } },
+//     },
+//     {
+//         title: 'มีเเบบ',
+//         value: 'hasPlan',
+//         headerProps: { style: { fontWeight: 'bold' } },
+//     },
+//     {
+//         title: 'จำนวน',
+//         value: 'amount',
+//         headerProps: { style: { fontWeight: 'bold' } },
+//     },
+//     {
+//         title: 'สถานะงานพิมพ์',
+//         value: 'status',
+//         headerProps: { style: { fontWeight: 'bold' } },
+//     },
+// ])
+// function getItemLowestStatus(items: ProductionItem[]) {
+//     return items.sort((a, b) => a.status - b.status)[0].status
+// }
+// onMounted(async () => {
+//     loading.value = true
+//     try {
+//         await fetchAllProductions()
+//     } catch (error) {}
+//     loading.value = false
+// })
+// const headers = computed(() => {
+//     const header = [
+//         { title: 'วันที่', key: 'date' },
+//         { title: 'โรงเรียน', key: 'school' },
+//         {
+//             title: 'ร้านค้า',
+//             key: 'shop',
+//         },
+//         { title: 'สถานะ', key: 'status' },
+//         { title: '#', key: 'action' },
+//     ]
+//     return header.filter(
+//         (h) => userProfile?.role !== 'user' || h.key !== 'shop'
+//     )
+// })
 </script>

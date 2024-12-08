@@ -2,7 +2,6 @@ import pdfMake from 'pdfmake'
 import type { TDocumentDefinitions } from 'pdfmake/interfaces'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { doc } from 'prettier'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -13,28 +12,28 @@ const fontPaths = {
             __dirname,
             '../',
             '../',
-            'assets',
+            'public',
             '/fonts/THSarabunNew.ttf'
         ),
         bold: path.join(
             __dirname,
             '../',
             '../',
-            'assets',
+            'public',
             '/fonts/THSarabunNew Bold.ttf'
         ),
         bolditalics: path.join(
             __dirname,
             '../',
             '../',
-            'assets',
+            'public',
             '/fonts/THSarabunNew BoldItalic.ttf'
         ),
         italics: path.join(
             __dirname,
             '../',
             '../',
-            'assets',
+            'public',
             '/fonts/THSarabunNew Italic.ttf'
         ),
     },
