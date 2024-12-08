@@ -33,7 +33,7 @@
                                 : 'mdi-chevron-down'
                         }}</v-icon>
                         <span>
-                            {{ item.date }}
+                            {{ item.createdAt }}
                         </span>
                     </td>
                     <td>

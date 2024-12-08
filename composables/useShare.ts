@@ -1,19 +1,35 @@
-import { PRINTSTATUS } from '~/models/enum/enum'
-
 export function useShare() {
+    const STATUS = {
+        REVIEWED: 'REVIEWED',
+        APPROVED: 'APPROVED',
+        CANCELED: 'CANCELED',
+        OUTBOUND: 'OUTBOUND',
+        PRINT: 'PRINT',
+        SEWING: 'SEWING',
+        PACK: 'PACK',
+        READY: 'READY',
+    }
     const statuses = ref([
-        { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
-        { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
-        { title: 'เย็บเข้าเล่ม', value: PRINTSTATUS.SEWING },
-        { title: 'แพ็ค', value: PRINTSTATUS.PACK },
-        { title: 'พร้อมจัดส่ง', value: PRINTSTATUS.READY },
+        { title: 'รออนุมัติ', value: STATUS.REVIEWED },
+        { title: 'อนุมัติแล้ว', value: STATUS.APPROVED },
+        { title: 'ยกเลิก', value: STATUS.CANCELED },
+
+        { title: 'ออกเเบบ', value: STATUS.OUTBOUND },
+        { title: 'พิมพ์', value: STATUS.PRINT },
+        { title: 'เย็บเข้าเล่ม', value: STATUS.SEWING },
+        { title: 'แพ็ค', value: STATUS.PACK },
+        { title: 'พร้อมจัดส่ง', value: STATUS.READY },
     ])
     const statusColors = ref([
-        { id: PRINTSTATUS.PRINT, color: '#FF9800' },
-        { id: PRINTSTATUS.OUTBOUND, color: '#B0BEC5' },
-        { id: PRINTSTATUS.SEWING, color: '#2196F3' },
-        { id: PRINTSTATUS.PACK, color: '#9C27B0' },
-        { id: PRINTSTATUS.READY, color: '#4CAF50' },
+        { id: STATUS.REVIEWED, color: '#FF9800' },
+        { id: STATUS.APPROVED, color: '#00b300' },
+        { id: STATUS.CANCELED, color: '#b30000' },
+
+        { id: STATUS.PRINT, color: '#FF9800' },
+        { id: STATUS.OUTBOUND, color: '#B0BEC5' },
+        { id: STATUS.SEWING, color: '#2196F3' },
+        { id: STATUS.PACK, color: '#9C27B0' },
+        { id: STATUS.READY, color: '#4CAF50' },
     ])
     const quotationStatuses = ref([
         {
@@ -34,7 +50,7 @@ export function useShare() {
         { title: 'ใหญ่', value: 'LARGE' },
     ])
     const getStatusTitle = computed(
-        () => (value: number) =>
+        () => (value: string) =>
             statuses.value.find((status) => status.value === value)?.title ||
             'ไม่ทราบสถานะ'
     )
@@ -176,6 +192,7 @@ export function useShare() {
     return {
         statuses,
         tiers,
+        STATUS,
         statusColors,
         lines,
         pages,

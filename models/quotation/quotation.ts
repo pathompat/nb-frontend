@@ -4,10 +4,14 @@ import type { Production } from '../production/production'
 export interface Quotation
     extends Omit<CreateQuotation, 'dueDateAt' | 'appointmentAt'> {
     id: number
+    storeName: string
+    schoolName: string
+    schoolAddress: string
+    schoolTelephone: string
     createdAt: string
     updatedAt: string
     dueDateAt: string | null
-    isInstant: boolean
+    status: string
     appointmentAt: string | null
 }
 export interface QuotationForm extends Omit<CreateQuotation, 'items'> {
@@ -26,13 +30,13 @@ export interface QuotationResultApi extends Quotation {
 }
 export interface QuotationItem {
     hasReference: boolean
-    amount: number
+    quantity: number
     status: string
     plate: string
     gram: number
     price: number
     color: string
-    line: string
+    pattern: string
     page: number
 }
 export interface CreateQuotationItem extends Omit<QuotationItem, 'status'> {

@@ -253,14 +253,15 @@
                                                     :rules="emtpyRule"
                                                     :items="lines"
                                                     :hide-details="false"
-                                                    v-model="item.line"
+                                                    v-model="item.pattern"
                                                 ></v-select>
                                             </div>
                                             <div v-else>
                                                 {{
                                                     lines.find(
                                                         (l) =>
-                                                            l.value == item.line
+                                                            l.value ==
+                                                            item.pattern
                                                     )?.title
                                                 }}
                                             </div>
@@ -295,11 +296,11 @@
                                                     :rules="morethanZeroRule"
                                                     label="จำนวน"
                                                     :hide-details="false"
-                                                    v-model="item.amount"
+                                                    v-model="item.quantity"
                                                 ></v-text-field>
                                             </div>
                                             <div v-else>
-                                                {{ item.amount }}
+                                                {{ item.quantity }}
                                             </div>
                                         </td>
                                         <td>
@@ -327,7 +328,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            {{ item.price * item.amount }}
+                                            {{ item.price * item.quantity }}
                                         </td>
                                         <td>
                                             <div
@@ -368,7 +369,8 @@
                                     {{
                                         quotationForm.items.reduce(
                                             (sum, item) =>
-                                                sum + item.price * item.amount,
+                                                sum +
+                                                item.price * item.quantity,
                                             0
                                         )
                                     }}
@@ -515,11 +517,11 @@ watch(
                 !item.gram ||
                 !item.color ||
                 !item.page ||
-                !item.line
+                !item.pattern
             ) {
                 return
             }
-            if (item.amount <= 0 || item.price <= 0) {
+            if (item.quantity <= 0 || item.price <= 0) {
                 item.isValid = false
             } else {
                 item.isValid = true
@@ -531,9 +533,9 @@ watch(
                     item.gram == oldItem.gram &&
                     item.color == oldItem.color &&
                     item.page == oldItem.page &&
-                    item.line == oldItem.line &&
+                    item.pattern == oldItem.line &&
                     item.hasReference == oldItem.hasReference &&
-                    item.amount == oldItem.amount
+                    item.quantity == oldItem.amount
                 ) {
                     return
                 }
@@ -544,7 +546,7 @@ watch(
                     price.gram == item.gram &&
                     price.color == item.color &&
                     price.page == item.page &&
-                    price.pattern == item.line &&
+                    price.pattern == item.pattern &&
                     price.hasReference == item.hasReference
             )
             if (!priceRef) {
@@ -579,9 +581,9 @@ async function create() {
                     gram: item.gram,
                     color: item.color,
                     page: item.page,
-                    line: item.line,
+                    pattern: item.pattern,
                     hasReference: item.hasReference,
-                    amount: item.amount,
+                    quantity: item.quantity,
                     price: item.price,
                     status: '',
                 }
@@ -625,9 +627,9 @@ function addItem() {
         gram: 0,
         color: '',
         page: 0,
-        line: '',
+        pattern: '',
         hasReference: false,
-        amount: 0,
+        quantity: 0,
         price: 0,
     })
 }

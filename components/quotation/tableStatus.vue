@@ -57,18 +57,25 @@
             <template
                 v-slot:item="{ internalItem, item, isExpanded, toggleExpand }"
             >
-                <tr>
-                    <td>
-                        <v-btn icon @click.stop="toggleExpand(item as any)">
-                            <v-icon>{{
-                                isExpanded(internalItem)
-                                    ? 'mdi-chevron-up'
-                                    : 'mdi-chevron-down'
-                            }}</v-icon>
-                        </v-btn>
+                <tr
+                    :style="{
+                        backgroundColor: isExpanded(internalItem)
+                            ? '#f0f0f0'
+                            : 'white',
+                    }"
+                >
+                    <td
+                        @click="toggleExpand(internalItem)"
+                        class="cursor-pointer"
+                    >
+                        <v-icon class="mr-4">{{
+                            isExpanded(internalItem)
+                                ? 'mdi-chevron-up'
+                                : 'mdi-chevron-down'
+                        }}</v-icon>
                         <!-- {{ item.date }} -->
                     </td>
-                    <td>{{ item.schoolId }}</td>
+                    <td>{{ item.schoolName }}</td>
                     <td>
                         <v-icon> mdi-map-marker</v-icon> {{ item.storeName }}
                     </td>
@@ -79,11 +86,11 @@
                             :style="{
                                 backgroundColor:
                                     statusColors.find(
-                                        (s) => s.id == +item.status
+                                        (s) => s.id == item.status
                                     )?.color || 'gray',
                             }"
                         >
-                            {{ getStatusTitle(+item.status) }}
+                            {{ getStatusTitle(item.status) }}
                         </v-chip>
                     </td>
                     <td>
@@ -124,7 +131,18 @@
                                     {{ getStatusTitle(item.status) }}
                                 </v-chip>
                             </template>
-                            <template #item.hasPlan="{ item }">
+                            <template #item.description="{ item }">
+                                {{
+                                    plates.find((p) => p.value === item.plate)
+                                        ?.title || ''
+                                }}/{{ item.gram }}/{{ item.color }}/{{
+                                    item.page
+                                }}/{{
+                                    lines.find((l) => l.value === item.pattern)
+                                        ?.title || ''
+                                }}
+                            </template>
+                            <template #item.hasReference="{ item }">
                                 <v-icon v-if="item.hasReference">
                                     mdi-check-circle</v-icon
                                 >
@@ -139,18 +157,19 @@
 <script setup lang="ts">
 import { toastPluginSymbol } from '~/plugins/toast'
 const { getStatusTitle, statusColors } = useShare()
+const { plates, lines } = useShare()
 const headers = ref([
-    { title: 'วันที่', key: 'date' },
-    { title: 'โรงเรียน', key: 'school' },
-    { title: 'ร้านค้า', key: 'shop' },
+    { title: 'วันที่', key: 'dueDateAt' },
+    { title: 'โรงเรียน', key: 'schoolName' },
+    { title: 'ร้านค้า', key: 'storeName' },
     { title: 'สถานะ', key: 'status' },
     { title: '#', key: 'action' },
 ])
 const headerExpanded = ref([
     { title: 'No.', value: 'index' },
     { title: 'เพรท/แกรม/สี/แผ่น/เส้น', value: 'description' },
-    { title: 'มีเเบบ', value: 'hasPlan' },
-    { title: 'จำนวน', value: 'amount' },
+    { title: 'มีเเบบ', value: 'hasReference' },
+    { title: 'จำนวน', value: 'quantity' },
     { title: 'สถานะงานพิมพ์', value: 'status' },
 ])
 const loading = ref(false)
@@ -161,7 +180,7 @@ const { quotations } = storeToRefs(quotationStore)
 onMounted(async () => {
     loading.value = true
     try {
-        // await fetchQuotations()
+        await fetchQuotations()
     } catch (error) {
         toast.error(`${error}`)
     }

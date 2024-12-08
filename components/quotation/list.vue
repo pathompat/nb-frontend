@@ -1,7 +1,10 @@
 <template>
     <v-row>
         <v-col v-for="(sectionProduct, index) in sectionProducts" :key="index">
-            <v-card elevation="2" class="pa-4 rounded-card hover-card">
+            <v-card
+                elevation="2"
+                class="pa-4 rounded-card hover-card h-100 align-center"
+            >
                 <v-card-text class="d-flex align-center justify-space-between">
                     <div class="d-flex flex-column justify-start ga-1">
                         <v-icon

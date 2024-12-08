@@ -2,7 +2,8 @@ import {
     type Quotation,
     type CreateQuotation,
 } from '~/models/quotation/quotation'
-import { PRINTSTATUS, LINE, PLATE } from '~/models/enum/enum'
+import { PRINTSTATUS } from '~/models/enum/enum'
+import type { ApiResult } from '~/models/api/api'
 
 export const useQuotationStore = defineStore('quotation', () => {
     const { getRequest, postRequest } = useBaseApi()
@@ -20,34 +21,13 @@ export const useQuotationStore = defineStore('quotation', () => {
         remark: '',
         appointmentAt: null,
         dueDateAt: null,
-    } as Quotation)
-    const statuses = ref([
-        { title: 'ออกเเบบ', value: PRINTSTATUS.OUTBOUND },
-        { title: 'พิมพ์', value: PRINTSTATUS.PRINT },
-        { title: 'เย็บเข้าเล่ม', value: PRINTSTATUS.SEWING },
-        { title: 'แพ็ค', value: PRINTSTATUS.PACK },
-        { title: 'พร้อมจัดส่ง', value: PRINTSTATUS.READY },
-    ])
-
-    const statusColors = [
-        { id: PRINTSTATUS.PRINT, color: '#FF9800' },
-        { id: PRINTSTATUS.OUTBOUND, color: '#B0BEC5' },
-        { id: PRINTSTATUS.SEWING, color: '#2196F3' },
-        { id: PRINTSTATUS.PACK, color: '#9C27B0' },
-        { id: PRINTSTATUS.READY, color: '#4CAF50' },
-    ]
-
-    const getStatusTitle = computed(() => (value: number) => {
-        return (
-            statuses.value.find((status) => status.value === value)?.title ||
-            'ไม่ทราบสถานะ'
-        )
-    })
+    } as any)
 
     const fetchQuotations = async () => {
         try {
-            const response = await getRequest<Quotation[]>(controller)
-            quotations.value = response
+            const response =
+                await getRequest<ApiResult<Quotation[]>>(controller)
+            quotations.value = response.data
         } catch (error) {
             throw error
         }
@@ -88,9 +68,6 @@ export const useQuotationStore = defineStore('quotation', () => {
 
     return {
         quotations,
-        statuses,
-        statusColors,
-        getStatusTitle,
         fetchQuotations,
         createQuotation,
         getQuotationById,
