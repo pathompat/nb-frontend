@@ -159,7 +159,7 @@
 
                                     <tr
                                         :style="{
-                                            height: `${!item.isSaved && !props.id ? '90px' : '50px'}`,
+                                            height: `${!item.isSaved && !props.id ? '120px' : '50px'}`,
                                         }"
                                         v-for="(item, index) in items"
                                         :key="index"
@@ -290,7 +290,7 @@
                                                 "
                                             >
                                                 <v-text-field
-                                                    style="width: 80px"
+                                                    style="width: 120px"
                                                     type="number"
                                                     min="1"
                                                     :rules="morethanZeroRule"
@@ -311,7 +311,7 @@
                                             >
                                                 <v-text-field
                                                     min="1"
-                                                    style="width: 80px"
+                                                    style="width: 120px"
                                                     :hide-details="false"
                                                     :rules="morethanZeroRule"
                                                     type="number"
@@ -431,8 +431,6 @@
     <SchoolDialogSchool></SchoolDialogSchool>
 </template>
 <script setup lang="ts">
-import { PRINTSTATUS } from '@/models/enum/enum'
-import type { SaveRow } from '~/models/share/share'
 import { useQuotationStore } from '@/stores/quotation'
 import { SYSTEM_ROLE } from '~/models/object/object'
 import dialogSchoolState, {
@@ -511,54 +509,63 @@ let oldItems = JSON.parse(JSON.stringify(quotationForm.value.items))
 watch(
     quotationForm.value.items,
     (newValue) => {
-        newValue.forEach((item, index) => {
-            if (
-                !item.plate ||
-                !item.gram ||
-                !item.color ||
-                !item.page ||
-                !item.pattern
-            ) {
-                return
-            }
-            if (item.quantity <= 0 || item.price <= 0) {
-                item.isValid = false
-            } else {
-                item.isValid = true
-            }
-            const oldItem = oldItems[index]
-            if (oldItem) {
-                if (
-                    item.plate == oldItem.plate &&
-                    item.gram == oldItem.gram &&
-                    item.color == oldItem.color &&
-                    item.page == oldItem.page &&
-                    item.pattern == oldItem.line &&
-                    item.hasReference == oldItem.hasReference &&
-                    item.quantity == oldItem.amount
-                ) {
-                    return
-                }
-            }
-            const priceRef = prices.value.find(
-                (price) =>
-                    price.plate == item.plate &&
-                    price.gram == item.gram &&
-                    price.color == item.color &&
-                    price.page == item.page &&
-                    price.pattern == item.pattern &&
-                    price.hasReference == item.hasReference
-            )
-            if (!priceRef) {
-                // item.price = 0
-                return
-            }
-            item.price = priceRef.priceRef
-        })
-        oldItems = JSON.parse(JSON.stringify(newValue))
+        handlerPriceRef(newValue)
     },
     { deep: true }
 )
+watch(
+    () => prices.value,
+    async (newValue) => {
+        handlerPriceRef(quotationForm.value.items)
+    }
+)
+function handlerPriceRef(newValue: CreateQuotationItem[]) {
+    newValue.forEach((item, index) => {
+        if (
+            !item.plate ||
+            !item.gram ||
+            !item.color ||
+            !item.page ||
+            !item.pattern
+        ) {
+            return
+        }
+        if (item.quantity <= 0 || item.price <= 0) {
+            item.isValid = false
+        } else {
+            item.isValid = true
+        }
+        const oldItem = oldItems[index]
+        if (oldItem) {
+            if (
+                item.plate == oldItem.plate &&
+                item.gram == oldItem.gram &&
+                item.color == oldItem.color &&
+                item.page == oldItem.page &&
+                item.pattern == oldItem.line &&
+                item.hasReference == oldItem.hasReference &&
+                item.quantity == oldItem.amount
+            ) {
+                return
+            }
+        }
+        const priceRef = prices.value.find(
+            (price) =>
+                price.plate == item.plate &&
+                price.gram == item.gram &&
+                price.color == item.color &&
+                price.page == item.page &&
+                price.pattern == item.pattern &&
+                price.hasReference == item.hasReference
+        )
+        if (!priceRef) {
+            // item.price = 0
+            return
+        }
+        item.price = priceRef.priceRef
+    })
+    oldItems = JSON.parse(JSON.stringify(newValue))
+}
 
 async function getSchools() {
     loadingSchool.value = true
