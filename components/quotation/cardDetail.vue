@@ -1,14 +1,6 @@
 <template>
     <main>
         <div class="d-flex justify-space-between" v-if="false">
-            <h1>
-                แบบฟอร์มเสนอราคา
-                {{
-                    props.id
-                        ? `#QT${props.id!.toString().padStart(5, '0')}`
-                        : ''
-                }}
-            </h1>
             <div class="d-flex ga-2">
                 <v-btn
                     variant="flat"
@@ -106,9 +98,9 @@
 
                                 <v-col cols="2">
                                     <v-date-input
-                                        v-if="isCustomDate"
                                         :rules="emtpyRule"
                                         :hide-details="false"
+                                        :disabled="!isCustomDate"
                                         v-model="quotationForm.dueDateAt"
                                         label="วันที่ต้องส่ง"
                                     ></v-date-input
@@ -163,6 +155,9 @@
                                         </td>
                                     </tr>
                                     <tr
+                                        :style="{
+                                            height: `${!isSaved.find((x) => x.index == index)?.isSaved && !props.id ? '90px' : '50px'}`,
+                                        }"
                                         v-for="(item, index) in items"
                                         :key="index"
                                     >
@@ -174,7 +169,9 @@
                                             "
                                         >
                                             <template #default="{ data }">
-                                                <td>{{ index + 1 }}</td>
+                                                <td>
+                                                    {{ index + 1 }}
+                                                </td>
                                                 <td>
                                                     <div
                                                         v-if="
@@ -284,6 +281,12 @@
                                                 </td>
                                                 <td>
                                                     <v-checkbox
+                                                        :hide-details="
+                                                            !(
+                                                                !data &&
+                                                                !props.id
+                                                            )
+                                                        "
                                                         v-model="item.hasPlan"
                                                     ></v-checkbox>
                                                 </td>
@@ -500,7 +503,7 @@ const storeSelect = computed(() => {
 })
 const schoolSelect = computed(() => {
     return schools.value.find(
-        (school) => school.name === quotationForm.value.schoolId
+        (school) => school.id === quotationForm.value.schoolId
     )
 })
 const updateCustomDate = (value: boolean | null) => {

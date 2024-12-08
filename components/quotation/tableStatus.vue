@@ -1,6 +1,52 @@
 <template>
     <v-card :loading="loading">
-        <v-card-title> s </v-card-title>
+        <v-card-title>
+            <v-menu :close-on-content-click="false">
+                <template v-slot:activator="{ props }">
+                    <div class="d-flex justify-end">
+                        <v-btn color="primary" v-bind="props" variant="flat">
+                            กรองข้อมูลเพิ่มเติม
+                        </v-btn>
+                    </div>
+                </template>
+                <v-card width="400">
+                    <v-card-title>กรองข้อมูลเพิ่มเติม</v-card-title>
+                    <v-card-text class="d-flex flex-column ga-4">
+                        <v-container>
+                            <v-row dense>
+                                <v-col class="d-flex align-center">
+                                    <v-label>โรงเรียน</v-label>
+                                </v-col>
+                                <v-col cols="9" class="d-flex align-center">
+                                    <v-select label="เลือกโรงเรียน"></v-select
+                                ></v-col>
+                            </v-row>
+                            <v-row dense>
+                                <v-col class="d-flex align-center">
+                                    <v-label>ร้านค้า</v-label></v-col
+                                >
+                                <v-col cols="9" class="d-flex align-center">
+                                    <v-select label="เลือกร้านค้า"></v-select
+                                ></v-col>
+                            </v-row>
+                            <v-row dense>
+                                <v-col class="d-flex align-center">
+                                    <v-label>เลือกสถานะ</v-label></v-col
+                                >
+                                <v-col cols="9" class="d-flex align-center">
+                                    <v-select label="เลือกสถานะ"></v-select
+                                ></v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="error" variant="plain">ล้างข้อมูล</v-btn>
+                        <v-btn color="primary" variant="flat">ค้นหา</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-menu>
+        </v-card-title>
         <v-data-table
             :loading="loading"
             :items="quotations"

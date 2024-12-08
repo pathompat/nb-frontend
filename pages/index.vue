@@ -8,7 +8,7 @@
                 </v-btn>
             </div>
         </div>
-        <section class="pa-8">
+        <section class="py-8" v-if="userProfile?.role == SYSTEM_ROLE.ADMIN">
             <List />
         </section>
         <section>
@@ -19,4 +19,6 @@
 <script setup lang="ts">
 import List from '@/components/quotation/list.vue'
 import Table from '@/components/quotation/tableStatus.vue'
+import { SYSTEM_ROLE } from '~/models/object/object'
+const { userProfile } = useAuthStore()
 </script>

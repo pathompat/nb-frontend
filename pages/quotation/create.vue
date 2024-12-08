@@ -1,5 +1,5 @@
 <template>
-    <UtilsBasePage title="รายละเอียดรายการสั่งผลิต">
+    <UtilsBasePage title="สร้างใบเสนอราคา" path="/">
         <CardDetail />
     </UtilsBasePage>
 </template>
