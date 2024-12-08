@@ -7,6 +7,9 @@ export function useRules() {
         (value: string) =>
             /^[A-Za-z]+$/.test(value) ||
             'บัญชีผู้ใช้งานต้องเป็นตัวอักษรภาษาอังกฤษเท่านั้น',
+        (value: string) =>
+            /^[a-z]+$/.test(value) ||
+            'บัญชีผู้ใช้งานต้องเป็นตัวอักษรภาษาอังกฤษพิมพ์เล็กเท่านั้น',
     ]
     const morethanZeroRule = [
         (value: string) => !!value || 'กรุณากรอกข้อมูล',

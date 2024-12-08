@@ -139,6 +139,7 @@
                                     variant="flat"
                                     @click="addItem"
                                     color="primary"
+                                    v-if="!props.id"
                                 >
                                     เพิ่มรายการสินค้าใหม่
                                 </v-btn>
