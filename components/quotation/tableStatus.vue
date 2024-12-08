@@ -125,7 +125,7 @@
                                 </v-chip>
                             </template>
                             <template #item.hasPlan="{ item }">
-                                <v-icon v-if="item.hasPlan">
+                                <v-icon v-if="item.hasReference">
                                     mdi-check-circle</v-icon
                                 >
                             </template>

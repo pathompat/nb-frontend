@@ -1,6 +1,6 @@
 import {
     type Quotation,
-    type QuotationForm,
+    type CreateQuotation,
 } from '~/models/quotation/quotation'
 import { PRINTSTATUS, LINE, PLATE } from '~/models/enum/enum'
 
@@ -54,7 +54,7 @@ export const useQuotationStore = defineStore('quotation', () => {
     }
 
     const createQuotation = async (
-        quotation: QuotationForm
+        quotation: CreateQuotation
     ): Promise<Quotation> => {
         try {
             const response = await postRequest<Quotation>(controller, quotation)

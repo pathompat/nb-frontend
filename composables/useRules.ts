@@ -8,7 +8,10 @@ export function useRules() {
             /^[A-Za-z]+$/.test(value) ||
             'บัญชีผู้ใช้งานต้องเป็นตัวอักษรภาษาอังกฤษเท่านั้น',
     ]
-
+    const morethanZeroRule = [
+        (value: string) => !!value || 'กรุณากรอกข้อมูล',
+        (value: string) => +value > 0 || 'กรุณากรอกข้อมูลที่มากกว่า 0',
+    ]
     const passwordRule = [
         (value: string) => !!value || 'กรุณากรอกรหัสผ่าน',
         (value: string) =>
@@ -35,5 +38,11 @@ export function useRules() {
             return true
         },
     ]
-    return { userNameRule, passwordRule, emtpyRule, phoneNumberRule }
+    return {
+        userNameRule,
+        passwordRule,
+        emtpyRule,
+        phoneNumberRule,
+        morethanZeroRule,
+    }
 }

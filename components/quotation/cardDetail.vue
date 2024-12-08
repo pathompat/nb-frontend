@@ -98,7 +98,9 @@
 
                                 <v-col cols="2">
                                     <v-date-input
-                                        :rules="emtpyRule"
+                                        :rules="
+                                            isCustomDate ? emtpyRule : [true]
+                                        "
                                         :hide-details="false"
                                         :disabled="!isCustomDate"
                                         v-model="quotationForm.dueDateAt"
@@ -133,14 +135,13 @@
                                 class="d-flex justify-space-between align-center"
                             >
                                 <h2>รายการสินค้า</h2>
-                                <!-- <v-btn
-                                    variant="text"
+                                <v-btn
+                                    variant="flat"
                                     @click="addItem"
-                                    icon
                                     color="primary"
                                 >
-                                    <v-icon>mdi-plus</v-icon>
-                                </v-btn> -->
+                                    เพิ่มรายการสินค้าใหม่
+                                </v-btn>
                             </div>
                             <v-data-table
                                 class="my-4"
@@ -154,228 +155,207 @@
                                             ไม่มีรายการ
                                         </td>
                                     </tr>
+
                                     <tr
                                         :style="{
-                                            height: `${!isSaved.find((x) => x.index == index)?.isSaved && !props.id ? '90px' : '50px'}`,
+                                            height: `${!item.isSaved && !props.id ? '90px' : '50px'}`,
                                         }"
                                         v-for="(item, index) in items"
                                         :key="index"
                                     >
-                                        <UtilsReturnDataSlot
-                                            :data="
-                                                isSaved.find(
-                                                    (i) => i.index === index
-                                                )?.isSaved
-                                            "
-                                        >
-                                            <template #default="{ data }">
-                                                <td>
-                                                    {{ index + 1 }}
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        v-if="
-                                                            !data && !props.id
-                                                        "
-                                                    >
-                                                        <v-select
-                                                            :rules="emtpyRule"
-                                                            :items="plates"
-                                                            :hide-details="
-                                                                false
-                                                            "
-                                                            v-model="item.plate"
-                                                        ></v-select>
-                                                    </div>
-                                                    <div v-else>
-                                                        {{
-                                                            plates.find(
-                                                                (p) =>
-                                                                    p ==
-                                                                    item.plate
-                                                            )
-                                                        }}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        v-if="
-                                                            !data && !props.id
-                                                        "
-                                                    >
-                                                        <v-select
-                                                            :rules="emtpyRule"
-                                                            :items="grams"
-                                                            :hide-details="
-                                                                false
-                                                            "
-                                                            v-model="item.gram"
-                                                        ></v-select>
-                                                    </div>
-                                                    <div v-else>
-                                                        {{ item.gram }}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        v-if="
-                                                            !data && !props.id
-                                                        "
-                                                    >
-                                                        <v-select
-                                                            :rules="emtpyRule"
-                                                            :items="colors"
-                                                            :hide-details="
-                                                                false
-                                                            "
-                                                            v-model="item.color"
-                                                        ></v-select>
-                                                    </div>
-                                                    <div v-else>
-                                                        {{ item.color }}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        v-if="
-                                                            !data && !props.id
-                                                        "
-                                                    >
-                                                        <v-select
-                                                            :rules="emtpyRule"
-                                                            :items="pages"
-                                                            v-model="item.page"
-                                                            :hide-details="
-                                                                false
-                                                            "
-                                                        ></v-select>
-                                                    </div>
-                                                    <div v-else>
-                                                        {{ item.page }}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        v-if="
-                                                            !data && !props.id
-                                                        "
-                                                    >
-                                                        <v-select
-                                                            :rules="emtpyRule"
-                                                            :items="lines"
-                                                            :hide-details="
-                                                                false
-                                                            "
-                                                            v-model="item.line"
-                                                        ></v-select>
-                                                    </div>
-                                                    <div v-else>
-                                                        {{
-                                                            lines.find(
-                                                                (l) =>
-                                                                    l ==
-                                                                    item.line
-                                                            )
-                                                        }}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <v-checkbox
-                                                        :hide-details="
-                                                            !(
-                                                                !data &&
-                                                                !props.id
-                                                            )
-                                                        "
-                                                        v-model="item.hasPlan"
-                                                    ></v-checkbox>
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        v-if="
-                                                            !data && !props.id
-                                                        "
-                                                    >
-                                                        <v-text-field
-                                                            :rules="emtpyRule"
-                                                            type="number"
-                                                            label="จำนวน"
-                                                            :hide-details="
-                                                                false
-                                                            "
-                                                            v-model="
-                                                                item.amount
-                                                            "
-                                                        ></v-text-field>
-                                                    </div>
-                                                    <div v-else>
-                                                        {{ item.amount }}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        v-if="
-                                                            !data && !props.id
-                                                        "
-                                                    >
-                                                        <v-text-field
-                                                            :rules="emtpyRule"
-                                                            :hide-details="
-                                                                false
-                                                            "
-                                                            type="number"
-                                                            :disabled="
-                                                                userProfile?.role !=
-                                                                SYSTEM_ROLE.ADMIN
-                                                            "
-                                                            label="ราคา"
-                                                            v-model="item.price"
-                                                        ></v-text-field>
-                                                    </div>
-                                                    <div v-else>
-                                                        {{ item.price }}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    {{
-                                                        item.price * item.amount
-                                                    }}
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        v-if="
-                                                            !data && !props.id
-                                                        "
-                                                    >
-                                                        <v-icon
-                                                            @click="
-                                                                saveItem(index)
-                                                            "
-                                                            color="black"
-                                                            class="rounded-circle cursor-pointer"
-                                                            style="
-                                                                padding: 18px;
-                                                                background-color: #2e7d324d;
-                                                            "
-                                                            >mdi-check-circle-outline</v-icon
-                                                        >
-                                                    </div>
-                                                    <v-btn
-                                                        v-else
-                                                        variant="text"
-                                                        icon
-                                                        color="error"
-                                                        @click="
-                                                            deleteItem(index)
-                                                        "
-                                                    >
-                                                        <v-icon
-                                                            >mdi-delete</v-icon
-                                                        >
-                                                    </v-btn>
-                                                </td>
-                                            </template>
-                                        </UtilsReturnDataSlot>
+                                        <td>
+                                            {{ index + 1 }}
+                                        </td>
+                                        <td>
+                                            <div
+                                                v-if="
+                                                    !item.isSaved && !props.id
+                                                "
+                                            >
+                                                <v-select
+                                                    :rules="emtpyRule"
+                                                    item-title="title"
+                                                    item-value="value"
+                                                    :items="plates"
+                                                    :hide-details="false"
+                                                    v-model="item.plate"
+                                                ></v-select>
+                                            </div>
+                                            <div v-else>
+                                                {{
+                                                    plates.find(
+                                                        (p) =>
+                                                            p.value ==
+                                                            item.plate
+                                                    )?.title
+                                                }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                v-if="
+                                                    !item.isSaved && !props.id
+                                                "
+                                            >
+                                                <v-select
+                                                    :rules="emtpyRule"
+                                                    :items="grams"
+                                                    :hide-details="false"
+                                                    v-model="item.gram"
+                                                ></v-select>
+                                            </div>
+                                            <div v-else>
+                                                {{ item.gram }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                v-if="
+                                                    !item.isSaved && !props.id
+                                                "
+                                            >
+                                                <v-select
+                                                    :rules="emtpyRule"
+                                                    :items="colors"
+                                                    :hide-details="false"
+                                                    v-model="item.color"
+                                                ></v-select>
+                                            </div>
+                                            <div v-else>
+                                                {{ item.color }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                v-if="
+                                                    !item.isSaved && !props.id
+                                                "
+                                            >
+                                                <v-select
+                                                    :rules="emtpyRule"
+                                                    :items="pages"
+                                                    v-model="item.page"
+                                                    :hide-details="false"
+                                                ></v-select>
+                                            </div>
+                                            <div v-else>
+                                                {{ item.page }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                v-if="
+                                                    !item.isSaved && !props.id
+                                                "
+                                            >
+                                                <v-select
+                                                    :rules="emtpyRule"
+                                                    :items="lines"
+                                                    :hide-details="false"
+                                                    v-model="item.line"
+                                                ></v-select>
+                                            </div>
+                                            <div v-else>
+                                                {{
+                                                    lines.find(
+                                                        (l) =>
+                                                            l.value == item.line
+                                                    )?.title
+                                                }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <v-checkbox
+                                                :disabled="
+                                                    !(
+                                                        !item.isSaved &&
+                                                        !props.id
+                                                    )
+                                                "
+                                                :hide-details="
+                                                    !(
+                                                        !item.isSaved &&
+                                                        !props.id
+                                                    )
+                                                "
+                                                v-model="item.hasReference"
+                                            ></v-checkbox>
+                                        </td>
+                                        <td>
+                                            <div
+                                                v-if="
+                                                    !item.isSaved && !props.id
+                                                "
+                                            >
+                                                <v-text-field
+                                                    style="width: 80px"
+                                                    type="number"
+                                                    min="1"
+                                                    :rules="morethanZeroRule"
+                                                    label="จำนวน"
+                                                    :hide-details="false"
+                                                    v-model="item.amount"
+                                                ></v-text-field>
+                                            </div>
+                                            <div v-else>
+                                                {{ item.amount }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                v-if="
+                                                    !item.isSaved && !props.id
+                                                "
+                                            >
+                                                <v-text-field
+                                                    min="1"
+                                                    style="width: 80px"
+                                                    :hide-details="false"
+                                                    :rules="morethanZeroRule"
+                                                    type="number"
+                                                    :disabled="
+                                                        userProfile?.role !=
+                                                        SYSTEM_ROLE.ADMIN
+                                                    "
+                                                    label="ราคา"
+                                                    v-model="item.price"
+                                                ></v-text-field>
+                                            </div>
+                                            <div v-else>
+                                                {{ item.price }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {{ item.price * item.amount }}
+                                        </td>
+                                        <td>
+                                            <div
+                                                v-if="
+                                                    !item.isSaved && !props.id
+                                                "
+                                            >
+                                                <v-icon
+                                                    :disabled="!item.isValid"
+                                                    @click="saveItem(item)"
+                                                    color="black"
+                                                    class="rounded-circle cursor-pointer"
+                                                    style="
+                                                        padding: 18px;
+                                                        background-color: #2e7d324d;
+                                                    "
+                                                    >mdi-check-circle-outline</v-icon
+                                                >
+                                            </div>
+                                            <v-btn
+                                                v-else
+                                                variant="text"
+                                                icon
+                                                color="error"
+                                                @click="deleteItem(index)"
+                                            >
+                                                <v-icon>mdi-delete</v-icon>
+                                            </v-btn>
+                                        </td>
                                     </tr>
                                 </template>
                             </v-data-table>
@@ -411,14 +391,15 @@
                         color="warning"
                         >รีเซ็ต</v-btn
                     > -->
+
                     <v-btn
                         variant="flat"
                         v-if="!props.id"
                         @click="create"
                         :disabled="
                             !valid ||
-                            quotationForm.items.length === 0 ||
-                            isSaved.filter((x) => x.isSaved).length === 0
+                            quotationForm.items.filter((x) => x.isSaved)
+                                .length === 0
                         "
                         color="success"
                         >บันทึก</v-btn
@@ -454,7 +435,11 @@ import dialogSchoolState, {
 } from '@/components/school/dialog/state'
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
-import type { QuotationForm } from '~/models/quotation/quotation'
+import type {
+    CreateQuotationItem,
+    QuotationForm,
+    QuotationItem,
+} from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
 const stateDialogCreateNewSchool = dialogSchoolState()
 provide(dialogSchoolStateSymbol, stateDialogCreateNewSchool)
@@ -473,7 +458,7 @@ const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
 const priceStore = usePriceStore()
-const { emtpyRule } = useRules()
+const { emtpyRule, morethanZeroRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)
@@ -493,7 +478,6 @@ const headerItems = ref([
     { title: 'รวม', key: 'sum' },
     { title: 'ดำเนินการ', key: 'action' },
 ])
-const isSaved = ref<SaveRow[]>([])
 const toast = inject(toastPluginSymbol)!
 const router = useRouter()
 const loadingSchool = ref(false)
@@ -518,40 +502,55 @@ const updateCustomerSelect = async (value: string) => {
     ])
     quotationForm.value.schoolId = ''
 }
+let oldItems = JSON.parse(JSON.stringify(quotationForm.value.items))
 watch(
-    () => quotationForm.value.items,
-    (newValue, oldValue) => {
+    quotationForm.value.items,
+    (newValue) => {
         newValue.forEach((item, index) => {
-            const oldItem = oldValue?.[index]
             if (
-                oldItem &&
-                item.plate === oldItem.plate &&
-                item.gram === oldItem.gram &&
-                item.color === oldItem.color &&
-                item.page === oldItem.page &&
-                item.line === oldItem.line
+                !item.plate ||
+                !item.gram ||
+                !item.color ||
+                !item.page ||
+                !item.line
             ) {
                 return
             }
-
-            if (
-                item.plate &&
-                item.gram &&
-                item.color &&
-                item.page &&
-                item.line
-            ) {
-                item.price =
-                    prices.value.find(
-                        (price) =>
-                            price.plate === item.plate &&
-                            price.gram === item.gram &&
-                            price.color === item.color &&
-                            price.page === item.page &&
-                            price.pattern === item.line
-                    )?.priceRef || 0
+            if (item.amount <= 0 || item.price <= 0) {
+                item.isValid = false
+            } else {
+                item.isValid = true
             }
+            const oldItem = oldItems[index]
+            if (oldItem) {
+                if (
+                    item.plate == oldItem.plate &&
+                    item.gram == oldItem.gram &&
+                    item.color == oldItem.color &&
+                    item.page == oldItem.page &&
+                    item.line == oldItem.line &&
+                    item.hasReference == oldItem.hasReference &&
+                    item.amount == oldItem.amount
+                ) {
+                    return
+                }
+            }
+            const priceRef = prices.value.find(
+                (price) =>
+                    price.plate == item.plate &&
+                    price.gram == item.gram &&
+                    price.color == item.color &&
+                    price.page == item.page &&
+                    price.pattern == item.line &&
+                    price.hasReference == item.hasReference
+            )
+            if (!priceRef) {
+                // item.price = 0
+                return
+            }
+            item.price = priceRef.priceRef
         })
+        oldItems = JSON.parse(JSON.stringify(newValue))
     },
     { deep: true }
 )
@@ -569,9 +568,21 @@ async function getSchools() {
 }
 async function create() {
     try {
-        const items = quotationForm.value.items.filter((item, index) => {
-            return isSaved.value.find((i) => i.index === index)?.isSaved
-        })
+        const items = quotationForm.value.items
+            .filter((item) => item.isSaved)
+            .map((item) => {
+                return {
+                    plate: item.plate,
+                    gram: item.gram,
+                    color: item.color,
+                    page: item.page,
+                    line: item.line,
+                    hasReference: item.hasReference,
+                    amount: item.amount,
+                    price: item.price,
+                    status: '',
+                }
+            })
         const { id } = await createQuotation({
             ...quotationForm.value,
             items,
@@ -601,40 +612,30 @@ async function createNewSchool() {
     stateDialogCreateNewSchool.closeLoading()
 }
 function addItem() {
-    isSaved.value.push({
-        index: quotationForm.value.items.length,
-        isSaved: false,
-    })
     quotationForm.value.items.push({
+        isSaved: false,
+        isValid: false,
         plate: '',
         gram: 0,
         color: '',
         page: 0,
         line: '',
-        hasPlan: false,
+        hasReference: false,
         amount: 0,
         price: 0,
-        status: PRINTSTATUS.OUTBOUND,
     })
 }
 
 function deleteItem(index: number) {
-    isSaved.value = isSaved.value.filter((_, i) => i !== index)
-
     quotationForm.value.items = quotationForm.value.items
         .filter((_, i) => i !== index)
         .map((item, newIndex) => {
             return { ...item, index: newIndex }
         })
-
-    isSaved.value = isSaved.value.map((item, newIndex) => {
-        return { ...item, index: newIndex }
-    })
 }
-function saveItem(index: number) {
-    const item = isSaved.value.find((i) => i.index === index)
-    if (item) item.isSaved = true
-    addItem()
+function saveItem(item: CreateQuotationItem) {
+    item.isSaved = true
+    // addItem()
 }
 async function approve() {
     // const { id } = await quotationApi.approve(props.id);
@@ -651,7 +652,7 @@ onMounted(async () => {
     loading.value = true
     try {
         await userStore.fetchAllUsers()
-        addItem()
+        // addItem()
         if (!props.id) return
         await getQuotationById(props.id)
     } catch (error) {
