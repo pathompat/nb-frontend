@@ -375,7 +375,9 @@
                             </div>
                             <v-divider class="my-4"></v-divider>
                             <v-textarea
+                                :rules="noEmojiOrEscapeCharacterRule"
                                 label="หมายเหตุ"
+                                :hide-details="false"
                                 v-model="quotationForm.remark"
                             ></v-textarea>
                         </div>
@@ -458,7 +460,7 @@ const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
 const priceStore = usePriceStore()
-const { emtpyRule, morethanZeroRule } = useRules()
+const { emtpyRule, morethanZeroRule, noEmojiOrEscapeCharacterRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)

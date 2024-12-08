@@ -38,11 +38,18 @@ export function useRules() {
             return true
         },
     ]
+    const noEmojiOrEscapeCharacterRule = [
+        (v: string) => !/[^\x00-\x7F]/.test(v) || 'ไม่สามารถใช้ emoji ได้',
+        (v: string) =>
+            !/[\\]/.test(v) || 'ไม่สามารถใช้ escape character \\ ได้',
+        (v: string) => true,
+    ]
     return {
         userNameRule,
         passwordRule,
         emtpyRule,
         phoneNumberRule,
         morethanZeroRule,
+        noEmojiOrEscapeCharacterRule,
     }
 }
