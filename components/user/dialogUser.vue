@@ -78,6 +78,7 @@
 <script lang="ts" setup>
 import type { CreateUser, User } from '@/models/user/user'
 import { useUserStore } from '@/stores/user'
+import { toastPluginSymbol } from '~/plugins/toast'
 const tier = ref<{ id: number }[]>([])
 const { tiers } = useShare()
 const { passwordRule, userNameRule, emtpyRule } = useRules()
@@ -98,6 +99,7 @@ function action() {
     loading.value = true
     resolveFn(initFormEdit.value)
 }
+const toast = inject(toastPluginSymbol)!
 const openDialog = async (id?: string): Promise<Partial<User>> => {
     userId.value = id || ''
     initFormEdit.value = {
@@ -109,14 +111,18 @@ const openDialog = async (id?: string): Promise<Partial<User>> => {
     loading.value = true
     dialogOpen.value = true
     tier.value = []
-    if (id) {
-        await fetchUserById(id)
-        initFormEdit.value = {
-            username: user.username,
-            password: '',
-            storeName: user.storeName,
-            tierId: user.tierId,
+    try {
+        if (id) {
+            await fetchUserById(id)
+            initFormEdit.value = {
+                username: user.username,
+                password: '',
+                storeName: user.storeName,
+                tierId: user.tierId,
+            }
         }
+    } catch (e) {
+        toast.error(`${e}`)
     }
     loading.value = false
 
