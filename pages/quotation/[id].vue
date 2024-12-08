@@ -1,5 +1,12 @@
 <template>
-    <CardDetail :id="+id" />
+    <UtilsBasePage
+        :title="`แบบฟอร์มเสนอราคา ${
+            id ? `#QT${id!.toString().padStart(5, '0')}` : ''
+        }`"
+        path="/"
+    >
+        <CardDetail :id="+id" />
+    </UtilsBasePage>
 </template>
 <script setup lang="ts">
 import CardDetail from '@/components/quotation/cardDetail.vue'

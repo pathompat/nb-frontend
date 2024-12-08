@@ -59,6 +59,7 @@
 <script setup lang="ts">
 import type { MenuItem } from '~/models/share/share'
 import { useAuthStore } from '@/stores/auth'
+import { SYSTEM_ROLE } from '~/models/object/object'
 // const { refresh } = inject<PluginInstance>(contextPluginSymbol)!
 const { userProfile, logout } = useAuthStore()
 const drawer = ref(true)
@@ -73,13 +74,13 @@ const items = ref<MenuItem[]>([
         title: 'รายการสั่งผลิต',
         value: '/',
         icon: 'mdi-folder',
-        role: ['ADMIN', 'CUSTOMER'],
+        role: [SYSTEM_ROLE.ADMIN, SYSTEM_ROLE.CUSTOMER],
     },
     {
         title: 'จัดการ User',
         value: '/user',
         icon: 'mdi-account-multiple',
-        role: ['ADMIN'],
+        role: [SYSTEM_ROLE.ADMIN],
     },
 ])
 onMounted(async () => {

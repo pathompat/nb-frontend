@@ -33,15 +33,15 @@
                                 : 'mdi-chevron-down'
                         }}</v-icon>
                         <span>
-                            {{ item.date }}
+                            {{ item.createdAt }}
                         </span>
                     </td>
                     <td>
                         {{ item.school }}
                     </td>
 
-                    <td v-if="userProfile?.role === 'admin'">
-                        <v-icon> mdi-map-marker</v-icon> {{ item.shop }}
+                    <td v-if="userProfile?.role === SYSTEM_ROLE.ADMIN">
+                        <v-icon> mdi-map-marker</v-icon> {{ item.storeName }}
                     </td>
                     <td>
                         <v-chip
@@ -125,6 +125,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import type { Production, ProductionItem } from '@/models/production/production'
+import { SYSTEM_ROLE } from '~/models/object/object'
 const { productions, fetchAllProductions } = useProductionStore()
 const { statusColors, getStatusTitle, lines, plates } = useShare()
 const { userProfile } = useAuthStore()

@@ -1,5 +1,6 @@
 import type { CreateUser, User } from '@/models/user/user'
 import type { ApiResult } from '~/models/api/api'
+import { SYSTEM_ROLE } from '~/models/object/object'
 
 export const useUserStore = defineStore('users', () => {
     const users = ref<User[]>([])
@@ -9,8 +10,11 @@ export const useUserStore = defineStore('users', () => {
         const api = useBaseApi()
         try {
             const allUsers = await api.getRequest<ApiResult<User[]>>(controller)
-            users.value = allUsers.data
-            return allUsers.data
+            const result = allUsers.data.filter(
+                (user) => user.role !== SYSTEM_ROLE.ADMIN
+            )
+            users.value = result
+            return result
         } catch (error) {
             throw error
         }

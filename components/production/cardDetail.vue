@@ -38,7 +38,7 @@
                                 <v-text-field
                                     label="ร้าน *"
                                     disabled
-                                    v-model="production.shop"
+                                    v-model="production.storeName"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="4">
@@ -92,19 +92,13 @@
                                 {{ index + 1 }}
                             </template>
                             <template #item.hasPlan="{ item }">
-                                <v-checkbox v-model="item.hasPlan"></v-checkbox>
+                                <v-checkbox v-model="item.hasRef"></v-checkbox>
                             </template>
                             <template #item.plate="{ item }">
-                                {{
-                                    plates.find((p) => p.value === item.plate)
-                                        ?.title
-                                }}
+                                {{ plates.find((p) => p === item.plate) }}
                             </template>
                             <template #item.line="{ item }">
-                                {{
-                                    lines.find((l) => l.value === item.line)
-                                        ?.title
-                                }}
+                                {{ lines.find((l) => l === item.line) }}
                             </template>
                             <template #item.status="{ item }">
                                 <v-chip
@@ -147,20 +141,17 @@
 <script setup lang="ts">
 import { type Production } from '@/models/production/production'
 import { useProductionStore } from '@/stores/production'
-import { useShare } from '@/composables/share'
+import { useShare } from '~/composables/useShare'
 const { lines, plates, getStatusTitle, statusColors } = useShare()
 const { getProductionById } = useProductionStore()
 const loading = ref(false)
 const router = useRouter()
 function defaultForm(): Partial<Production> {
     return {
-        date: '',
         school: '',
-        shop: '',
+        storeName: '',
         phone: '',
         address: '',
-        dueDate: '',
-        estimateDate: '',
         items: [],
     }
 }
@@ -182,7 +173,7 @@ onMounted(async () => {
     if (props.id) {
         loading.value = true
         try {
-            production.value = await getProductionById(props.id)
+            production.value = await getProductionById(`${props.id}`)
         } catch (error) {
         } finally {
             loading.value = false

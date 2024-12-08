@@ -5,7 +5,15 @@ import type { LoginResult, User, UserJwt } from '~/models/user/user'
 export const useAuthStore = defineStore('auth', () => {
     const { parseJwt } = useUtil()
     const router = useRouter()
-    const userProfile = ref<User | null>(null)
+    const userProfile = ref<User | null>({
+        id: '',
+        username: 'dasdads',
+        createdAt: '',
+        updatedAt: '',
+        storeName: '',
+        tierId: 1,
+        role: 'ADMIN',
+    })
     async function login(username: string, password: string) {
         const api = useBaseApi()
         try {
