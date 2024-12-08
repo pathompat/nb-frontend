@@ -5,34 +5,31 @@ import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
+const isDev = process.env.NODE_ENV === 'development'
+console.log(process.env.NODE_ENV)
 const fontPaths = {
     THSarabunNew: {
         normal: path.join(
             __dirname,
-            '../',
-            '../',
+            `../${isDev ? '../' : ''}`,
             'public',
             '/fonts/THSarabunNew.ttf'
         ),
         bold: path.join(
             __dirname,
-            '../',
-            '../',
+            `../${isDev ? '../' : ''}`,
             'public',
             '/fonts/THSarabunNew Bold.ttf'
         ),
         bolditalics: path.join(
             __dirname,
-            '../',
-            '../',
+            `../${isDev ? '../' : ''}`,
             'public',
             '/fonts/THSarabunNew BoldItalic.ttf'
         ),
         italics: path.join(
             __dirname,
-            '../',
-            '../',
+            `../${isDev ? '../' : ''}`,
             'public',
             '/fonts/THSarabunNew Italic.ttf'
         ),
