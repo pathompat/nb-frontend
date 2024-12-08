@@ -103,7 +103,7 @@
                                         "
                                         :hide-details="false"
                                         :disabled="!isCustomDate"
-                                        v-model="quotationForm.dueDateAt"
+                                        v-model="quotationForm.appointmentAt"
                                         label="วันที่ต้องส่ง"
                                     ></v-date-input
                                 ></v-col>
@@ -111,7 +111,7 @@
                                     <v-date-input
                                         :rules="emtpyRule"
                                         :hide-details="false"
-                                        v-model="quotationForm.appointmentAt"
+                                        v-model="quotationForm.dueDateAt"
                                         label="วันที่พร้อมรับสินค้า"
                                     ></v-date-input>
                                 </v-col>
@@ -586,7 +586,10 @@ async function create() {
         const { id } = await createQuotation({
             ...quotationForm.value,
             items,
-            appointmentAt: new Date(quotationForm.value.appointmentAt!),
+
+            appointmentAt: quotationForm.value.appointmentAt
+                ? new Date(quotationForm.value.appointmentAt)
+                : null,
 
             dueDateAt: new Date(quotationForm.value.dueDateAt!),
         })
