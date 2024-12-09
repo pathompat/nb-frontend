@@ -240,6 +240,11 @@
                                             <v-btn
                                                 variant="text"
                                                 icon
+                                                v-if="
+                                                    !props.id ||
+                                                    userProfile?.role ===
+                                                        SYSTEM_ROLE.ADMIN
+                                                "
                                                 color="primary"
                                                 @click="editItem(index)"
                                             >
@@ -248,6 +253,11 @@
                                             <v-btn
                                                 variant="text"
                                                 icon
+                                                v-if="
+                                                    !props.id ||
+                                                    userProfile?.role ===
+                                                        SYSTEM_ROLE.ADMIN
+                                                "
                                                 color="error"
                                                 @click="deleteItem(index)"
                                             >
@@ -258,83 +268,94 @@
                                 </template>
                             </v-data-table>
                             <v-divider class="my-4"></v-divider>
-
                             <div
-                                class="d-flex justify-end align-center ga-16 text-h6"
+                                class="d-flex w-100 justify-end align-center text-h6"
                             >
-                                <p>เพลท สี ตัด 9 :</p>
-                                <p>
-                                    {{
-                                        quotationForm.items.reduce(
-                                            (sum, item) =>
-                                                sum +
-                                                item.price * item.quantity,
-                                            0
-                                        )
-                                    }}
-                                </p>
+                                <div class="w-25 d-flex justify-space-between">
+                                    <div>เพลท สี ตัด 9 :</div>
+                                    <div>
+                                        {{
+                                            quotationForm.items.reduce(
+                                                (sum, item) =>
+                                                    sum +
+                                                    item.price * item.quantity,
+                                                0
+                                            )
+                                        }}
+                                    </div>
+                                </div>
                             </div>
                             <v-divider class="my-4"></v-divider>
-
                             <div
-                                class="d-flex justify-end align-center ga-16 text-h6"
+                                class="d-flex w-100 justify-end align-center text-h6"
                             >
-                                <p>เพลท ขาวดำ ตัด 9 :</p>
-                                <p>
-                                    {{
-                                        quotationForm.items.reduce(
-                                            (sum, item) =>
-                                                sum +
-                                                item.price * item.quantity,
-                                            0
-                                        )
-                                    }}
-                                </p>
+                                <div class="w-25 d-flex justify-space-between">
+                                    <p>เพลท ขาวดำ ตัด 9 :</p>
+                                    <div>
+                                        {{
+                                            quotationForm.items.reduce(
+                                                (sum, item) =>
+                                                    sum +
+                                                    item.price * item.quantity,
+                                                0
+                                            )
+                                        }}
+                                    </div>
+                                </div>
                             </div>
+
                             <v-divider class="my-4"></v-divider>
-
                             <div
-                                class="d-flex justify-end align-center ga-16 text-h6"
+                                class="d-flex w-100 justify-end align-center text-h6"
                             >
-                                <p>เพลท รายงาน:</p>
-                                <p>
-                                    {{
-                                        quotationForm.items.reduce(
-                                            (sum, item) =>
-                                                sum +
-                                                item.price * item.quantity,
-                                            0
-                                        )
-                                    }}
-                                </p>
+                                <div class="w-25 d-flex justify-space-between">
+                                    <p>เพลท รายงาน:</p>
+                                    <div>
+                                        {{
+                                            quotationForm.items.reduce(
+                                                (sum, item) =>
+                                                    sum +
+                                                    item.price * item.quantity,
+                                                0
+                                            )
+                                        }}
+                                    </div>
+                                </div>
                             </div>
+
                             <v-divider class="my-4"></v-divider>
-
                             <div
-                                class="d-flex justify-end align-center ga-16 text-h6"
+                                class="d-flex w-100 justify-end align-center text-h6"
                             >
-                                <p>ส่วนลดท้ายบิล:</p>
-                                <p>
-                                    <v-text-field type="number"></v-text-field>
-                                </p>
+                                <div class="w-25 d-flex justify-space-between">
+                                    <p>ส่วนลดท้ายบิล:</p>
+                                    <div>
+                                        <v-text-field
+                                            type="number"
+                                        ></v-text-field>
+                                    </div>
+                                </div>
                             </div>
+
                             <v-divider class="my-4"></v-divider>
-
                             <div
-                                class="d-flex justify-end align-center ga-16 text-h6"
+                                class="d-flex w-100 justify-end align-center text-h6"
                             >
-                                <p>รวม :</p>
-                                <p>
-                                    {{
-                                        quotationForm.items.reduce(
-                                            (sum, item) =>
-                                                sum +
-                                                item.price * item.quantity,
-                                            0
-                                        )
-                                    }}
-                                </p>
+                                <div class="w-25 d-flex justify-space-between">
+                                    <p>รวม :</p>
+                                    <div>
+                                        {{
+                                            quotationForm.items.reduce(
+                                                (sum, item) =>
+                                                    sum +
+                                                    item.price * item.quantity,
+                                                0
+                                            )
+                                        }}
+                                    </div>
+                                </div>
                             </div>
+
                             <v-divider class="my-4"></v-divider>
                             <v-textarea
                                 :rules="noEmojiOrEscapeCharacterRule"
@@ -420,12 +441,12 @@ const quotationForm = ref<QuotationForm>({
     items: [],
     remark: '',
 })
-const { plates, lines, grams, pages, colors } = useShare()
+const { plates, lines } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
 const priceStore = usePriceStore()
-const { emtpyRule, morethanZeroRule, noEmojiOrEscapeCharacterRule } = useRules()
+const { emtpyRule, noEmojiOrEscapeCharacterRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)

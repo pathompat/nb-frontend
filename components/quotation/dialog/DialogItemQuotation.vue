@@ -129,7 +129,9 @@
                                     :rules="morethanZeroRule"
                                     type="number"
                                     :disabled="
-                                        userProfile?.role != SYSTEM_ROLE.ADMIN
+                                        userProfile?.role !=
+                                            SYSTEM_ROLE.ADMIN ||
+                                        quotationItem.id != ''
                                     "
                                     label="ราคา"
                                     v-model="quotationItem.price"
