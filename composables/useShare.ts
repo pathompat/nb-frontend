@@ -1,3 +1,5 @@
+import { ITEM_CATEGORY, ITEM_OPTION } from '~/models/object/object'
+
 export function useShare() {
     const STATUS = {
         REVIEWED: 'REVIEWED',
@@ -9,6 +11,7 @@ export function useShare() {
         PACK: 'PACK',
         READY: 'READY',
     }
+
     const statuses = ref([
         { title: 'รออนุมัติ', value: STATUS.REVIEWED },
         { title: 'อนุมัติแล้ว', value: STATUS.APPROVED },
@@ -30,6 +33,24 @@ export function useShare() {
         { id: STATUS.SEWING, color: '#2196F3' },
         { id: STATUS.PACK, color: '#9C27B0' },
         { id: STATUS.READY, color: '#4CAF50' },
+    ])
+    const itemCategories = ref([
+        {
+            title: 'ตัด9',
+            value: ITEM_CATEGORY.CUT_NINE,
+        },
+        {
+            title: 'รายงาน',
+            value: ITEM_CATEGORY.REPORT,
+        },
+        {
+            title: 'วาดเขียน',
+            value: ITEM_CATEGORY.DRAWING,
+        },
+        {
+            title: 'บัญชี',
+            value: ITEM_CATEGORY.ACCOUNTING,
+        },
     ])
     const quotationStatuses = ref([
         {
@@ -54,6 +75,32 @@ export function useShare() {
             statuses.value.find((status) => status.value === value)?.title ||
             'ไม่ทราบสถานะ'
     )
+    const itemOptions = ref([
+        {
+            title: 'พิมพ์ชื่อเส้นที่ปก',
+            value: ITEM_OPTION.COVER_PRINT,
+        },
+        {
+            title: 'เคลือบUV',
+            value: ITEM_OPTION.UV_COATING,
+        },
+        {
+            title: 'เย็บสันกาว',
+            value: ITEM_OPTION.GLUE_BINDING,
+        },
+        {
+            title: 'แพ็คชุดต่ำกว่าโหล',
+            value: ITEM_OPTION.PACK_LESS_THAN_DOZEN,
+        },
+        {
+            title: 'จัดชุดแยกระดับชั้น',
+            value: ITEM_OPTION.SEPARATE_BY_LEVEL,
+        },
+        {
+            title: 'พิมพ์ปกเลือกสีหมึก',
+            value: ITEM_OPTION.COVER_PRINT_COLOR_SELECTION,
+        },
+    ])
     const tiers = ref([1, 2, 3])
     const grams = ref([40, 50, 55, 60, 70, 80, 120, 150])
     const colors = ref(['1', '1ก', '1ล', '1ส', '1อ', '4'])
@@ -201,5 +248,7 @@ export function useShare() {
         plates,
         getStatusTitle,
         quotationStatuses,
+        itemOptions,
+        itemCategories,
     }
 }

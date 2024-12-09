@@ -29,6 +29,9 @@ export interface QuotationResultApi extends Quotation {
     production?: Production
 }
 export interface QuotationItem {
+    id?: string
+    category: string
+    options: string
     hasReference: boolean
     quantity: number
     status: string
@@ -40,6 +43,7 @@ export interface QuotationItem {
     page: number
 }
 export interface CreateQuotationItem extends Omit<QuotationItem, 'status'> {
-    isSaved: boolean
-    isValid: boolean
+    // isSaved: boolean
+    // isValid: boolean
+    id?: string
 }
