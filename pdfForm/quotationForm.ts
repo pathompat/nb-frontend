@@ -23,39 +23,32 @@ export function quotationPdf() {
             pdf.setContent(
                 {
                     pageSize: 'A4',
-                    pageMargins: [40, 150, 40, 40],
+                    pageMargins: [40, 210, 40, 40],
                     content: [
                         {
                             table: {
                                 headerRows: 1,
-                                widths: [
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                ],
+                                widths: ['10%', '*', '*', '10%', '10%', '10%'],
                                 body: [
-                                    // แถว header ของตาราง
                                     [
                                         { text: 'ลำดับ', bold: true },
-                                        { text: 'เพลา', bold: true },
-                                        { text: 'เกรด', bold: true },
-                                        { text: 'สี', bold: true },
-                                        { text: 'แผ่น', bold: true },
-                                        { text: 'เส้น', bold: true },
+                                        {
+                                            text: 'ประเภท/แกรม/สี/แผ่น/เส้น',
+                                            bold: true,
+                                        },
+                                        { text: 'เพิ่มเติม', bold: true },
+                                        { text: 'มีแบบ', bold: true },
                                         { text: 'จำนวน', bold: true },
+                                        { text: 'ราคา', bold: true },
                                     ],
-                                    // ข้อมูลตัวอย่าง
-                                    ...Array.from({ length: 100 }, (_, i) => [
+                                    ...Array.from({ length: 40 }, (_, i) => [
                                         i + 1,
-                                        i % 2 === 0 ? 'ใหญ่' : 'เล็ก',
-                                        '55',
-                                        '4',
-                                        '80',
-                                        i % 2 === 0 ? 'ครั้ง' : 'เส้น',
+                                        i % 2 === 0
+                                            ? '55/44/80/เดี่ยว'
+                                            : '55/44/80/เดี่ยว',
+                                        'uv,lcd,pdf,png',
+                                        i % 2 === 0 ? 'มี' : 'ไม่มี',
+                                        i % 2 === 0 ? '2' : '4',
                                         (i + 1) * 120,
                                     ]),
                                 ],
