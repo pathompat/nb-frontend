@@ -12,8 +12,8 @@ export function useRules() {
             'บัญชีผู้ใช้งานต้องเป็นตัวอักษรภาษาอังกฤษพิมพ์เล็กเท่านั้น',
     ]
     const morethanZeroRule = [
-        (value: string) => !!value || 'กรุณากรอกข้อมูล',
         (value: string) => +value > 0 || 'กรุณากรอกข้อมูลที่มากกว่า 0',
+        (value: string) => !!value || 'กรุณากรอกข้อมูล',
     ]
     const passwordRule = [
         (value: string) => !!value || 'กรุณากรอกรหัสผ่าน',

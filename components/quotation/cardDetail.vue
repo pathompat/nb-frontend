@@ -240,6 +240,14 @@
                                             <v-btn
                                                 variant="text"
                                                 icon
+                                                color="primary"
+                                                @click="editItem(index)"
+                                            >
+                                                <v-icon>mdi-pencil</v-icon>
+                                            </v-btn>
+                                            <v-btn
+                                                variant="text"
+                                                icon
                                                 color="error"
                                                 @click="deleteItem(index)"
                                             >
@@ -603,7 +611,19 @@ async function addItem() {
         toast.error(`${e}`)
     }
 }
-
+async function editItem(index: number) {
+    try {
+        const editItem = await statedialogItemQuotation.setItemAndOpen(
+            JSON.parse(JSON.stringify(quotationForm.value.items[index]))
+        )
+        statedialogItemQuotation.closeDialog()
+        if (editItem) {
+            quotationForm.value.items[index] = editItem
+        }
+    } catch (e) {
+        toast.error(`${e}`)
+    }
+}
 function deleteItem(index: number) {
     quotationForm.value.items = quotationForm.value.items
         .filter((_, i) => i !== index)

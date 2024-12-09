@@ -46,6 +46,14 @@ export default function dialogItemQuotationState() {
         loading,
         action,
         openDialog,
+        setItemAndOpen(item: CreateQuotationItem) {
+            loading.value = false
+            quotationItem.value = item
+            dialogOpen.value = true
+            return new Promise<CreateQuotationItem>((resolve) => {
+                resolveFn = resolve
+            })
+        },
         closeDialog: () => {
             dialogOpen.value = false
         },

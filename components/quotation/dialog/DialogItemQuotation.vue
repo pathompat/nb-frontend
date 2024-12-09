@@ -67,6 +67,7 @@
                                     item-text="title"
                                     item-value="value"
                                     label="ประเภท"
+                                    :rules="emtpyRule"
                                     :hide-details="false"
                                     v-model="quotationItem.category"
                                 ></v-select>
