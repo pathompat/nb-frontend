@@ -72,11 +72,6 @@
                                 </v-col>
                                 <v-col cols="2">
                                     <div>
-                                        <!-- <v-switch
-                                        v-model="isCustomDate"
-                                        size="small"
-                                        label="กำหนดส่ง"
-                                    ></v-switch> -->
                                         <v-radio-group
                                             inline
                                             :model-value="isCustomDate"
@@ -95,39 +90,38 @@
                                         </v-radio-group>
                                     </div>
                                 </v-col>
-
                                 <v-col cols="2">
                                     <v-date-input
                                         :rules="
                                             isCustomDate ? emtpyRule : [true]
                                         "
-                                        :hide-details="false"
                                         :disabled="!isCustomDate"
-                                        v-model="quotationForm.appointmentAt"
-                                        label="วันที่ต้องส่ง"
-                                    ></v-date-input
-                                ></v-col>
-                                <v-col cols="2">
-                                    <v-date-input
-                                        :rules="emtpyRule"
                                         :hide-details="false"
                                         v-model="quotationForm.dueDateAt"
                                         label="วันที่พร้อมรับสินค้า"
                                     ></v-date-input>
                                 </v-col>
+                                <v-col cols="2">
+                                    <v-date-input
+                                        :rules="emtpyRule"
+                                        :hide-details="false"
+                                        v-model="quotationForm.appointmentAt"
+                                        label="วันที่ต้องส่ง"
+                                    ></v-date-input
+                                ></v-col>
+
                                 <v-col cols="3">
-                                    <v-select
+                                    <v-text-field
                                         label="ที่อยู่ *"
-                                        disabled
                                         :model-value="schoolSelect?.address"
-                                    ></v-select>
+                                    ></v-text-field>
                                 </v-col>
                                 <v-col cols="3">
-                                    <v-select
+                                    <v-text-field
                                         label="เบอร์ติดต่อ *"
-                                        disabled
+                                        :rules="phoneNumberRule"
                                         :model-value="schoolSelect?.telephone"
-                                    ></v-select>
+                                    ></v-text-field>
                                 </v-col> </v-row
                         ></v-layout>
                         <div class="mt-4">
@@ -446,7 +440,7 @@ const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
 const priceStore = usePriceStore()
-const { emtpyRule, noEmojiOrEscapeCharacterRule } = useRules()
+const { emtpyRule, noEmojiOrEscapeCharacterRule, phoneNumberRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)
