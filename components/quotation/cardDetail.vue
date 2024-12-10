@@ -152,15 +152,12 @@
                             >
                                 <template #body="{ items }">
                                     <tr v-if="items.length === 0">
-                                        <td :colspan="11" class="text-center">
+                                        <td :colspan="13" class="text-center">
                                             ไม่มีรายการ
                                         </td>
                                     </tr>
 
                                     <tr
-                                        :style="{
-                                            height: `${!item.isSaved && !props.id ? '120px' : '50px'}`,
-                                        }"
                                         v-for="(item, index) in items"
                                         :key="index"
                                     >
@@ -168,21 +165,15 @@
                                             {{ index + 1 }}
                                         </td>
                                         <td>
-                                            <div
-                                                v-if="
-                                                    !item.isSaved && !props.id
-                                                "
-                                            >
-                                                <v-select
-                                                    :rules="emtpyRule"
-                                                    item-title="title"
-                                                    item-value="value"
-                                                    :items="plates"
-                                                    :hide-details="false"
-                                                    v-model="item.plate"
-                                                ></v-select>
-                                            </div>
-                                            <div v-else>
+                                            {{ item.category }}
+                                        </td>
+                                        <td
+                                            v-if="
+                                                userProfile?.role ===
+                                                SYSTEM_ROLE.ADMIN
+                                            "
+                                        >
+                                            <div>
                                                 {{
                                                     plates.find(
                                                         (p) =>
@@ -193,70 +184,22 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div
-                                                v-if="
-                                                    !item.isSaved && !props.id
-                                                "
-                                            >
-                                                <v-select
-                                                    :rules="emtpyRule"
-                                                    :items="grams"
-                                                    :hide-details="false"
-                                                    v-model="item.gram"
-                                                ></v-select>
-                                            </div>
-                                            <div v-else>
+                                            <div>
                                                 {{ item.gram }}
                                             </div>
                                         </td>
                                         <td>
-                                            <div
-                                                v-if="
-                                                    !item.isSaved && !props.id
-                                                "
-                                            >
-                                                <v-select
-                                                    :rules="emtpyRule"
-                                                    :items="colors"
-                                                    :hide-details="false"
-                                                    v-model="item.color"
-                                                ></v-select>
-                                            </div>
-                                            <div v-else>
+                                            <div>
                                                 {{ item.color }}
                                             </div>
                                         </td>
                                         <td>
-                                            <div
-                                                v-if="
-                                                    !item.isSaved && !props.id
-                                                "
-                                            >
-                                                <v-select
-                                                    :rules="emtpyRule"
-                                                    :items="pages"
-                                                    v-model="item.page"
-                                                    :hide-details="false"
-                                                ></v-select>
-                                            </div>
-                                            <div v-else>
+                                            <div>
                                                 {{ item.page }}
                                             </div>
                                         </td>
                                         <td>
-                                            <div
-                                                v-if="
-                                                    !item.isSaved && !props.id
-                                                "
-                                            >
-                                                <v-select
-                                                    :rules="emtpyRule"
-                                                    :items="lines"
-                                                    :hide-details="false"
-                                                    v-model="item.pattern"
-                                                ></v-select>
-                                            </div>
-                                            <div v-else>
+                                            <div>
                                                 {{
                                                     lines.find(
                                                         (l) =>
@@ -268,62 +211,22 @@
                                         </td>
                                         <td>
                                             <v-checkbox
-                                                :disabled="
-                                                    !(
-                                                        !item.isSaved &&
-                                                        !props.id
-                                                    )
-                                                "
-                                                :hide-details="
-                                                    !(
-                                                        !item.isSaved &&
-                                                        !props.id
-                                                    )
-                                                "
+                                                :disabled="true"
                                                 v-model="item.hasReference"
                                             ></v-checkbox>
                                         </td>
                                         <td>
-                                            <div
-                                                v-if="
-                                                    !item.isSaved && !props.id
-                                                "
-                                            >
-                                                <v-text-field
-                                                    style="width: 120px"
-                                                    type="number"
-                                                    min="1"
-                                                    :rules="morethanZeroRule"
-                                                    label="จำนวน"
-                                                    :hide-details="false"
-                                                    v-model="item.quantity"
-                                                ></v-text-field>
+                                            <div>
+                                                {{ item.options }}
                                             </div>
-                                            <div v-else>
+                                        </td>
+                                        <td>
+                                            <div>
                                                 {{ item.quantity }}
                                             </div>
                                         </td>
                                         <td>
-                                            <div
-                                                v-if="
-                                                    !item.isSaved && !props.id
-                                                "
-                                            >
-                                                <v-text-field
-                                                    min="1"
-                                                    style="width: 120px"
-                                                    :hide-details="false"
-                                                    :rules="morethanZeroRule"
-                                                    type="number"
-                                                    :disabled="
-                                                        userProfile?.role !=
-                                                        SYSTEM_ROLE.ADMIN
-                                                    "
-                                                    label="ราคา"
-                                                    v-model="item.price"
-                                                ></v-text-field>
-                                            </div>
-                                            <div v-else>
+                                            <div>
                                                 {{ item.price }}
                                             </div>
                                         </td>
@@ -331,27 +234,30 @@
                                             {{ item.price * item.quantity }}
                                         </td>
                                         <td>
-                                            <div
-                                                v-if="
-                                                    !item.isSaved && !props.id
-                                                "
-                                            >
-                                                <v-icon
-                                                    :disabled="!item.isValid"
-                                                    @click="saveItem(item)"
-                                                    color="black"
-                                                    class="rounded-circle cursor-pointer"
-                                                    style="
-                                                        padding: 18px;
-                                                        background-color: #2e7d324d;
-                                                    "
-                                                    >mdi-check-circle-outline</v-icon
-                                                >
-                                            </div>
+                                            {{ item.price * item.quantity }}
+                                        </td>
+                                        <td>
                                             <v-btn
-                                                v-else
                                                 variant="text"
                                                 icon
+                                                v-if="
+                                                    !props.id ||
+                                                    userProfile?.role ===
+                                                        SYSTEM_ROLE.ADMIN
+                                                "
+                                                color="primary"
+                                                @click="editItem(index)"
+                                            >
+                                                <v-icon>mdi-pencil</v-icon>
+                                            </v-btn>
+                                            <v-btn
+                                                variant="text"
+                                                icon
+                                                v-if="
+                                                    !props.id ||
+                                                    userProfile?.role ===
+                                                        SYSTEM_ROLE.ADMIN
+                                                "
                                                 color="error"
                                                 @click="deleteItem(index)"
                                             >
@@ -361,21 +267,95 @@
                                     </tr>
                                 </template>
                             </v-data-table>
+                            <v-divider class="my-4"></v-divider>
                             <div
-                                class="d-flex justify-end align-center ga-16 text-h6"
+                                class="d-flex w-100 justify-end align-center text-h6"
                             >
-                                <p>รวม :</p>
-                                <p>
-                                    {{
-                                        quotationForm.items.reduce(
-                                            (sum, item) =>
-                                                sum +
-                                                item.price * item.quantity,
-                                            0
-                                        )
-                                    }}
-                                </p>
+                                <div class="w-25 d-flex justify-space-between">
+                                    <div>เพลท สี ตัด 9 :</div>
+                                    <div>
+                                        {{
+                                            quotationForm.items.reduce(
+                                                (sum, item) =>
+                                                    sum +
+                                                    item.price * item.quantity,
+                                                0
+                                            )
+                                        }}
+                                    </div>
+                                </div>
                             </div>
+                            <v-divider class="my-4"></v-divider>
+                            <div
+                                class="d-flex w-100 justify-end align-center text-h6"
+                            >
+                                <div class="w-25 d-flex justify-space-between">
+                                    <p>เพลท ขาวดำ ตัด 9 :</p>
+                                    <div>
+                                        {{
+                                            quotationForm.items.reduce(
+                                                (sum, item) =>
+                                                    sum +
+                                                    item.price * item.quantity,
+                                                0
+                                            )
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <v-divider class="my-4"></v-divider>
+                            <div
+                                class="d-flex w-100 justify-end align-center text-h6"
+                            >
+                                <div class="w-25 d-flex justify-space-between">
+                                    <p>เพลท รายงาน:</p>
+                                    <div>
+                                        {{
+                                            quotationForm.items.reduce(
+                                                (sum, item) =>
+                                                    sum +
+                                                    item.price * item.quantity,
+                                                0
+                                            )
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <v-divider class="my-4"></v-divider>
+                            <div
+                                class="d-flex w-100 justify-end align-center text-h6"
+                            >
+                                <div class="w-25 d-flex justify-space-between">
+                                    <p>ส่วนลดท้ายบิล:</p>
+                                    <div>
+                                        <v-text-field
+                                            type="number"
+                                        ></v-text-field>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <v-divider class="my-4"></v-divider>
+                            <div
+                                class="d-flex w-100 justify-end align-center text-h6"
+                            >
+                                <div class="w-25 d-flex justify-space-between">
+                                    <p>รวม :</p>
+                                    <div>
+                                        {{
+                                            quotationForm.items.reduce(
+                                                (sum, item) =>
+                                                    sum +
+                                                    item.price * item.quantity,
+                                                0
+                                            )
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+
                             <v-divider class="my-4"></v-divider>
                             <v-textarea
                                 :rules="noEmojiOrEscapeCharacterRule"
@@ -401,11 +381,7 @@
                         variant="flat"
                         v-if="!props.id"
                         @click="create"
-                        :disabled="
-                            !valid ||
-                            quotationForm.items.filter((x) => x.isSaved)
-                                .length === 0
-                        "
+                        :disabled="!valid || quotationForm.items.length === 0"
                         color="success"
                         >บันทึก</v-btn
                     >
@@ -429,6 +405,7 @@
         </section>
     </main>
     <SchoolDialogSchool></SchoolDialogSchool>
+    <QuotationDialogItemQuotation></QuotationDialogItemQuotation>
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
@@ -436,16 +413,24 @@ import { SYSTEM_ROLE } from '~/models/object/object'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
+
+import dialogItemQuotationState, {
+    dialogItemQuotationStateSymbol,
+} from '@/components/quotation/dialog/state'
+
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
 import type {
     CreateQuotationItem,
     QuotationForm,
-    QuotationItem,
 } from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
 const stateDialogCreateNewSchool = dialogSchoolState()
+const statedialogItemQuotation = dialogItemQuotationState()
+
 provide(dialogSchoolStateSymbol, stateDialogCreateNewSchool)
+provide(dialogItemQuotationStateSymbol, statedialogItemQuotation)
+
 const valid = ref(false)
 const { getQuotationById, createQuotation } = useQuotationStore()
 const quotationForm = ref<QuotationForm>({
@@ -456,31 +441,43 @@ const quotationForm = ref<QuotationForm>({
     items: [],
     remark: '',
 })
-const { plates, lines, grams, pages, colors } = useShare()
+const { plates, lines } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
 const priceStore = usePriceStore()
-const { emtpyRule, morethanZeroRule, noEmojiOrEscapeCharacterRule } = useRules()
+const { emtpyRule, noEmojiOrEscapeCharacterRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)
 
 const { userProfile } = useAuthStore()
 const isCustomDate = ref(false)
-const headerItems = ref([
-    { title: 'ลำดับ', key: 'id' },
-    { title: 'เพลท', key: 'plate' },
-    { title: 'แกรม', key: 'gram' },
-    { title: 'สี', key: 'color' },
-    { title: 'แผ่น', key: 'page' },
-    { title: 'เส้น', key: 'line' },
-    { title: 'มีแบบ', key: 'hasPlan' },
-    { title: 'จำนวน', key: 'amount' },
-    { title: 'ราคา', key: 'price' },
-    { title: 'รวม', key: 'sum' },
-    { title: 'ดำเนินการ', key: 'action' },
-])
+const headerItems = computed(() => {
+    const headers = [
+        { title: 'ลำดับ', key: 'id' },
+        { title: 'ประเภท', key: 'category' },
+        { title: 'เพลท', key: 'plate' },
+
+        { title: 'แกรม', key: 'gram' },
+        { title: 'สี', key: 'color' },
+        { title: 'แผ่น', key: 'page' },
+        { title: 'เส้น', key: 'line' },
+        { title: 'มีแบบ', key: 'hasPlan' },
+        { title: 'เพิ่มเติม', key: 'options' },
+
+        { title: 'จำนวน', key: 'amount' },
+        { title: 'ราคา', key: 'price' },
+        { title: '+/- ต่อตัว', key: 'priceUnit' },
+
+        { title: 'รวม', key: 'sum' },
+        { title: 'ดำเนินการ', key: 'action' },
+    ]
+    return headers.filter(
+        (header) =>
+            !(header.key == 'plate' && userProfile?.role !== SYSTEM_ROLE.ADMIN)
+    )
+})
 const toast = inject(toastPluginSymbol)!
 const router = useRouter()
 const loadingSchool = ref(false)
@@ -530,11 +527,11 @@ function handlerPriceRef(newValue: CreateQuotationItem[]) {
         ) {
             return
         }
-        if (item.quantity <= 0 || item.price <= 0) {
-            item.isValid = false
-        } else {
-            item.isValid = true
-        }
+        // if (item.quantity <= 0 || item.price <= 0) {
+        //     item.isValid = false
+        // } else {
+        //     item.isValid = true
+        // }
         const oldItem = oldItems[index]
         if (oldItem) {
             if (
@@ -544,7 +541,7 @@ function handlerPriceRef(newValue: CreateQuotationItem[]) {
                 item.page == oldItem.page &&
                 item.pattern == oldItem.line &&
                 item.hasReference == oldItem.hasReference &&
-                item.quantity == oldItem.amount
+                item.quantity == oldItem.quantity
             ) {
                 return
             }
@@ -580,21 +577,21 @@ async function getSchools() {
 }
 async function create() {
     try {
-        const items = quotationForm.value.items
-            .filter((item) => item.isSaved)
-            .map((item) => {
-                return {
-                    plate: item.plate,
-                    gram: item.gram,
-                    color: item.color,
-                    page: item.page,
-                    pattern: item.pattern,
-                    hasReference: item.hasReference,
-                    quantity: item.quantity,
-                    price: item.price,
-                    status: '',
-                }
-            })
+        const items = quotationForm.value.items.map((item) => {
+            return {
+                plate: item.plate,
+                gram: item.gram,
+                color: item.color,
+                page: item.page,
+                pattern: item.pattern,
+                hasReference: item.hasReference,
+                quantity: +item.quantity,
+                price: +item.price,
+                status: '',
+                options: item.options,
+                category: item.category,
+            }
+        })
         const { id } = await createQuotation({
             ...quotationForm.value,
             items,
@@ -626,21 +623,28 @@ async function createNewSchool() {
     }
     stateDialogCreateNewSchool.closeLoading()
 }
-function addItem() {
-    quotationForm.value.items.push({
-        isSaved: false,
-        isValid: false,
-        plate: '',
-        gram: 0,
-        color: '',
-        page: 0,
-        pattern: '',
-        hasReference: false,
-        quantity: 0,
-        price: 0,
-    })
+async function addItem() {
+    try {
+        const newItems = await statedialogItemQuotation.openDialog()
+        statedialogItemQuotation.closeDialog()
+        quotationForm.value.items.push(newItems)
+    } catch (e) {
+        toast.error(`${e}`)
+    }
 }
-
+async function editItem(index: number) {
+    try {
+        const editItem = await statedialogItemQuotation.setItemAndOpen(
+            JSON.parse(JSON.stringify(quotationForm.value.items[index]))
+        )
+        statedialogItemQuotation.closeDialog()
+        if (editItem) {
+            quotationForm.value.items[index] = editItem
+        }
+    } catch (e) {
+        toast.error(`${e}`)
+    }
+}
 function deleteItem(index: number) {
     quotationForm.value.items = quotationForm.value.items
         .filter((_, i) => i !== index)
@@ -648,10 +652,7 @@ function deleteItem(index: number) {
             return { ...item, index: newIndex }
         })
 }
-function saveItem(item: CreateQuotationItem) {
-    item.isSaved = true
-    // addItem()
-}
+
 async function approve() {
     // const { id } = await quotationApi.approve(props.id);
     router.push(`/production/${props.id}`)

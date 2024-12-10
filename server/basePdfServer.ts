@@ -38,12 +38,26 @@ const fontPaths = {
 
 const footers = {
     defaultFooter: (currentPage: number, pageCount: number) => {
-        return {
-            text: `หน้า ${currentPage} จาก ${pageCount}`,
-            alignment: 'right',
-            margin: [0, 0, 50, 0],
-            fontSize: 12,
-        }
+        return [
+            {
+                text: `ผู้อนุมัติ_____________________`,
+                alignment: 'right',
+                margin: [0, 0, 40, 0],
+                fontSize: 12,
+            },
+            {
+                text: `วันที่ 19/10/2024`,
+                alignment: 'right',
+                margin: [0, 0, 65, 0],
+                fontSize: 12,
+            },
+            {
+                text: `หน้า ${currentPage} จาก ${pageCount}`,
+                alignment: 'right',
+                margin: [0, -650, 40, 0],
+                fontSize: 12,
+            },
+        ]
     },
 }
 async function createPdfBinary(pdfDoc: TDocumentDefinitions): Promise<Buffer> {
