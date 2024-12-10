@@ -1,16 +1,10 @@
 import type { TableLayout } from 'pdfmake/interfaces'
-import { toastPluginSymbol } from '~/plugins/toast'
 
 export function quotationPdf() {
     const pdf = usePdf()
     const quotationStore = useQuotationStore()
     const { quotation } = storeToRefs(quotationStore)
-    const layoutTable: TableLayout = {
-        hLineWidth: () => 0.5,
-        vLineWidth: () => 0.5,
-        paddingTop: () => 2,
-        paddingBottom: () => 2,
-    }
+
     return {
         async setItem(id: string) {
             try {
@@ -41,16 +35,24 @@ export function quotationPdf() {
                                         { text: 'จำนวน', bold: true },
                                         { text: 'ราคา', bold: true },
                                     ],
-                                    ...Array.from({ length: 40 }, (_, i) => [
-                                        i + 1,
-                                        i % 2 === 0
-                                            ? '55/44/80/เดี่ยว'
-                                            : '55/44/80/เดี่ยว',
-                                        'uv,lcd,pdf,png',
-                                        i % 2 === 0 ? 'มี' : 'ไม่มี',
-                                        i % 2 === 0 ? '2' : '4',
-                                        (i + 1) * 120,
-                                    ]),
+                                    ...quotation.value.items.map(
+                                        (item, index) => [
+                                            index + 1,
+                                            item.category +
+                                                '/' +
+                                                item.gram +
+                                                '/' +
+                                                item.color +
+                                                '/' +
+                                                item.page +
+                                                '/' +
+                                                item.pattern,
+                                            item.options,
+                                            item.hasReference,
+                                            item.quantity,
+                                            item.price,
+                                        ]
+                                    ),
                                 ],
                             },
                             layout: 'lightHorizontalLines',
@@ -75,11 +77,11 @@ export function quotationPdf() {
                     },
                 },
                 {
-                    appointmentDate: '2021-09-01',
-                    duedate: '2021-09-15',
-                    quotationId: '00001',
-                    schoolname: 'โรงเรียนสองสองสอง',
-                    shopname: 'ร้านค้าสองสองสอง',
+                    appointmentDate: '90',
+                    duedate: quotation.value.dueDateAt?.toString() || '',
+                    quotationId: quotation.value.id.toString(),
+                    schoolname: quotation.value.schoolName,
+                    shopname: quotation.value.storeName,
                 }
             )
             pdf.download('quotation-pdf')
