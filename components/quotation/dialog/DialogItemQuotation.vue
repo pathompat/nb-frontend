@@ -163,7 +163,8 @@
                                     label="เพิ่มเติม"
                                     :hide-details="false"
                                     :model-value="
-                                        quotationItem.options.split(',')
+                                        quotationItem.options?.split(',') ||
+                                        null
                                     "
                                     @update:model-value="
                                         quotationItem.options = $event

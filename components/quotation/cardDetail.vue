@@ -449,7 +449,9 @@ provide(dialogSchoolStateSymbol, stateDialogCreateNewSchool)
 provide(dialogItemQuotationStateSymbol, statedialogItemQuotation)
 
 const valid = ref(false)
-const { getQuotationById, createQuotation } = useQuotationStore()
+const quotationStore = useQuotationStore()
+const { getQuotationById, createQuotation } = quotationStore
+const { quotation } = storeToRefs(quotationStore)
 const quotationForm = ref<QuotationForm>({
     userId: '',
     schoolId: '',
@@ -636,7 +638,16 @@ onMounted(async () => {
         // addItem()
         if (!props.id) return
         await getQuotationById(props.id)
+        quotationForm.value = {
+            ...quotation.value,
+            appointmentAt: quotation.value.appointmentAt
+                ? new Date(quotation.value.appointmentAt)
+                : null,
+            dueDateAt: new Date(quotation.value.dueDateAt!),
+        }
+        console.log(quotationForm.value)
     } catch (error) {
+        toast.error(`${error}`)
     } finally {
         loading.value = false
     }
