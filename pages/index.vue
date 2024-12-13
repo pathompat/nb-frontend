@@ -19,6 +19,4 @@
 <script setup lang="ts">
 import List from '@/components/quotation/list.vue'
 import Table from '@/components/quotation/tableStatus.vue'
-import { SYSTEM_ROLE } from '~/models/enum/enum'
-const { userProfile } = useAuthStore()
 </script>
