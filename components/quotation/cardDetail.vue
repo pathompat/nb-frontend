@@ -646,7 +646,7 @@ async function cancel() {
     try {
         await quotationStore.updateQuotation(`${quotation.value.id!}`, {
             ...quotation.value,
-            status: STAT_STATUS.CANCLE,
+            status: STAT_STATUS.CANCELED,
         })
         toast.success('ยกเลิกสำเร็จ')
         router.push(`/`)

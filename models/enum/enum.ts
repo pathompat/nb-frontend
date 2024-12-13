@@ -33,7 +33,7 @@ export enum STAT_STATUS {
     APPROVED = 'APPROVED',
     REVIEWING = 'REVIEWING',
     DONE = 'DONE',
-    CANCLE = 'CANCLE',
+    CANCELED = 'CANCELED',
 }
 export enum PRINTSTATUS {
     OUTBOUND = 1,
