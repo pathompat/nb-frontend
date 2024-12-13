@@ -1,16 +1,8 @@
-import type { TableLayout, TDocumentDefinitions } from 'pdfmake/interfaces'
-import { toastPluginSymbol } from '~/plugins/toast'
-
 export function productionPdf() {
     const pdf = usePdf()
     const productionStore = useProductionStore()
     const { production } = storeToRefs(productionStore)
-    const layoutTable: TableLayout = {
-        hLineWidth: () => 0.5,
-        vLineWidth: () => 0.5,
-        paddingTop: () => 2,
-        paddingBottom: () => 2,
-    }
+
     return {
         async setItem(id: string) {
             try {
@@ -23,44 +15,74 @@ export function productionPdf() {
             pdf.setContent(
                 {
                     pageSize: 'A4',
-                    pageMargins: [40, 150, 40, 40],
+                    pageMargins: [40, 210, 40, 40],
                     content: [
                         {
                             table: {
                                 headerRows: 1,
-                                widths: [
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                ],
+                                widths: ['10%', '*', '*', '10%', '10%', '10%'],
                                 body: [
-                                    // แถว header ของตาราง
                                     [
                                         { text: 'ลำดับ', bold: true },
-                                        { text: 'เพลา', bold: true },
-                                        { text: 'เกรด', bold: true },
-                                        { text: 'สี', bold: true },
-                                        { text: 'แผ่น', bold: true },
-                                        { text: 'เส้น', bold: true },
+                                        {
+                                            text: 'ประเภท/แกรม/สี/แผ่น/เส้น',
+                                            bold: true,
+                                        },
+                                        { text: 'เพิ่มเติม', bold: true },
+                                        { text: 'มีแบบ', bold: true },
                                         { text: 'จำนวน', bold: true },
+                                        { text: 'ราคา', bold: true },
                                     ],
-                                    // ข้อมูลตัวอย่าง
-                                    ...Array.from({ length: 100 }, (_, i) => [
-                                        i + 1,
-                                        i % 2 === 0 ? 'ใหญ่' : 'เล็ก',
-                                        '55',
-                                        '4',
-                                        '80',
-                                        i % 2 === 0 ? 'ครั้ง' : 'เส้น',
-                                        (i + 1) * 120,
-                                    ]),
+                                    ...production.value!.items.map(
+                                        (item, index) => [
+                                            index + 1,
+                                            item.category +
+                                                '/' +
+                                                item.gram +
+                                                '/' +
+                                                item.color +
+                                                '/' +
+                                                item.page +
+                                                '/' +
+                                                item.pattern,
+                                            item.options,
+                                            item.hasReference,
+                                            item.quantity,
+                                            item.price,
+                                        ]
+                                    ),
                                 ],
                             },
                             layout: 'lightHorizontalLines',
+                        },
+                        {
+                            pageBreak:
+                                production.value!.items.length > 12
+                                    ? 'before'
+                                    : undefined,
+                            text: 'รายการสินค้า',
+                            fontSize: 17,
+                            margin: [0, 0, 0, 10], // เว้นระยะด้านล่าง
+                        },
+                        {
+                            table: {
+                                headerRows: 1,
+                                widths: ['*', '*', '*', '*'],
+                                body: [
+                                    [
+                                        { text: 'ลำดับ', bold: true },
+                                        { text: 'วัตถุดิบ', bold: true },
+                                        { text: 'จำนวน', bold: true },
+                                        { text: 'หน่วย', bold: true },
+                                    ],
+                                    ...Array(
+                                        production.value!.items.length > 12
+                                            ? 27
+                                            : 12
+                                    ).fill(['', '', '', '']),
+                                ],
+                            },
+                            layout: 'lightHorizontalLines', // ใช้เส้นแบ่งแบบบาง
                         },
                     ],
                     styles: {
@@ -82,11 +104,11 @@ export function productionPdf() {
                     },
                 },
                 {
-                    appointmentDate: '2021-09-01',
-                    duedate: '2021-09-15',
-                    schoolname: `${production.value!.school}`,
-                    shopname: `${production.value!.storeName}`,
-                    productionId: `${production.value!.id}`,
+                    appointmentDate: '90',
+                    duedate: production.value!.dueDateAt?.toString() || '',
+                    quotationId: production.value!.id.toString(),
+                    schoolname: production.value!.schoolName,
+                    shopname: production.value!.storeName,
                 }
             )
             pdf.download('production-pdf')

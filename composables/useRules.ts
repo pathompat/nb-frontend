@@ -14,8 +14,8 @@ export function useRules() {
     ]
 
     const morethanZeroRule = [
-        (value: number) => value != null || 'กรุณากรอกข้อมูล',
-        (value: number) => value > 0 || 'กรุณากรอกข้อมูลที่มากกว่า 0',
+        (value: string) => +value.trim() > 0 || 'กรุณากรอกข้อมูลที่มากกว่า 0',
+        (value: string) => !!value.trim() || 'กรุณากรอกข้อมูล',
     ]
 
     const passwordRule = [

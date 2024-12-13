@@ -91,7 +91,9 @@ const initFormEdit = ref<CreateUser>({
 })
 const valid = ref(false)
 const userId = ref('')
-const { fetchUserById, user } = useUserStore()
+const userStore = useUserStore()
+const { fetchUserById } = userStore
+const { user } = storeToRefs(userStore)
 const loading = ref(false)
 let resolveFn: ((user: Partial<User>) => void) | null = null
 function action() {
@@ -115,10 +117,10 @@ const openDialog = async (id?: string): Promise<Partial<User>> => {
         if (id) {
             await fetchUserById(id)
             initFormEdit.value = {
-                username: user.username,
+                username: user.value.username,
                 password: '',
-                storeName: user.storeName,
-                tierId: user.tierId,
+                storeName: user.value.storeName,
+                tierId: user.value.tierId,
             }
         }
     } catch (e) {
