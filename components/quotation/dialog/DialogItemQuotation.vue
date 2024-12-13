@@ -46,6 +46,7 @@
                                 <v-select
                                     :rules="emtpyRule"
                                     label="แกรม"
+                                    :disabled="!quotationItem.id"
                                     :items="grams"
                                     :hide-details="false"
                                     :model-value="quotationItem.gram"
@@ -64,6 +65,7 @@
                                 <v-select
                                     :rules="emtpyRule"
                                     label="สี"
+                                    :disabled="!quotationItem.id"
                                     :items="colors"
                                     :hide-details="false"
                                     :model-value="quotationItem.color"
@@ -83,6 +85,7 @@
                                     :rules="emtpyRule"
                                     label="แผ่น"
                                     :items="pages"
+                                    :disabled="!quotationItem.id"
                                     :model-value="quotationItem.page"
                                     @update:model-value="
                                         (e) => {
@@ -102,6 +105,7 @@
                                     :items="itemCategories"
                                     item-text="title"
                                     item-value="value"
+                                    :disabled="!quotationItem.id"
                                     label="ประเภท"
                                     :rules="emtpyRule"
                                     :model-value="quotationItem.category"
@@ -122,6 +126,7 @@
                                     :rules="emtpyRule"
                                     :items="lines"
                                     label="เส้น"
+                                    :disabled="!quotationItem.id"
                                     :hide-details="false"
                                     :model-value="quotationItem.pattern"
                                     @update:model-value="
@@ -141,6 +146,7 @@
                             <v-col cols="2">
                                 <v-checkbox
                                     label="มีแบบ"
+                                    :disabled="!quotationItem.id"
                                     :model-value="quotationItem.hasReference"
                                     @update:model-value="
                                         (e: any) => {
@@ -155,6 +161,7 @@
                             </v-col>
                             <v-col cols="10">
                                 <v-select
+                                    :disabled="!quotationItem.id"
                                     multiple
                                     clearable
                                     :items="itemOptions"
@@ -180,6 +187,7 @@
                                 <v-text-field
                                     type="number"
                                     min="1"
+                                    :disabled="!quotationItem.id"
                                     :rules="morethanZeroRule"
                                     label="จำนวน"
                                     :hide-details="false"

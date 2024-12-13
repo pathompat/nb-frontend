@@ -7,6 +7,14 @@ export enum PLATE {
     SMALL = 2,
     EXTRA = 3,
 }
+export enum STAT_STATUS {
+    PRINTING = 'PRINTING',
+    DESIGNING = 'DESIGNING',
+    BOOKBINDING = 'BOOKBINDING',
+    REVIEWING = 'REVIEWING',
+    APPROVED = 'APPROVED',
+    REVIEWED = 'REVIEWED',
+}
 export enum PRINTSTATUS {
     OUTBOUND = 1,
     PRINT = 2,

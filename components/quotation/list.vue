@@ -38,6 +38,12 @@
     </v-row>
 </template>
 <script setup lang="ts">
+const quotationStore = useQuotationStore()
+const { quotationStat } = storeToRefs(quotationStore)
+onMounted(async () => {
+    await quotationStore.fetchQuotationsState()
+    console.log(quotationStat.value)
+})
 const sectionProducts = ref([
     { title: 'ออกเเบบ', amount: 3, icon: 'mdi-pencil-ruler', color: '#5E60CE' },
     { title: 'พิมพ์', amount: 12, icon: 'mdi-printer', color: '#4C566A' },

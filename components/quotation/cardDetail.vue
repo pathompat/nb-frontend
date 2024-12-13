@@ -145,10 +145,7 @@
                                     variant="flat"
                                     @click="addItem"
                                     color="primary"
-                                    v-if="
-                                        !props.id ||
-                                        userProfile?.role === SYSTEM_ROLE.ADMIN
-                                    "
+                                    v-if="!props.id"
                                 >
                                     เพิ่มรายการสินค้าใหม่
                                 </v-btn>
@@ -245,7 +242,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            {{ item.price / item.quantity }}
+                                            <!-- {{ item.price / item.quantity }} -->
                                         </td>
                                         <td>
                                             {{ item.price * item.quantity }}
@@ -267,11 +264,7 @@
                                             <v-btn
                                                 variant="text"
                                                 icon
-                                                v-if="
-                                                    !props.id ||
-                                                    userProfile?.role ===
-                                                        SYSTEM_ROLE.ADMIN
-                                                "
+                                                v-if="!props.id"
                                                 color="error"
                                                 @click="deleteItem(index)"
                                             >
@@ -405,13 +398,6 @@
                         color="success"
                         >บันทึก</v-btn
                     >
-                    <v-btn
-                        variant="flat"
-                        v-if="props.id"
-                        @click="approve"
-                        color="success"
-                        >อนุมัติ</v-btn
-                    >
 
                     <v-btn
                         variant="flat"
@@ -419,6 +405,13 @@
                         @click="cancel"
                         color="error"
                         >ยกเลิก</v-btn
+                    >
+                    <v-btn
+                        variant="flat"
+                        v-if="props.id"
+                        @click="approve"
+                        color="success"
+                        >อนุมัติ</v-btn
                     >
                 </v-card-actions>
             </v-card>

@@ -10,6 +10,7 @@ export const useQuotationStore = defineStore('quotation', () => {
     const controller = 'quotation'
 
     const quotations = ref<QuotationResultApi[]>([])
+    const quotationStat = ref([])
     const quotation = ref<QuotationResultApi>({
         schoolId: '',
         createdAt: '',
@@ -32,7 +33,16 @@ export const useQuotationStore = defineStore('quotation', () => {
             throw error
         }
     }
-
+    const fetchQuotationsState = async () => {
+        try {
+            const response = await getRequest<ApiResult<[]>>(
+                controller + `/stat`
+            )
+            quotationStat.value = response.data
+        } catch (error) {
+            throw error
+        }
+    }
     const createQuotation = async (
         quotation: CreateQuotation
     ): Promise<Quotation> => {
@@ -75,6 +85,8 @@ export const useQuotationStore = defineStore('quotation', () => {
         createQuotation,
         getQuotationById,
         updateQuotation,
+        fetchQuotationsState,
+        quotationStat,
         quotation,
     }
 })

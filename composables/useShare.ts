@@ -1,4 +1,4 @@
-import { ITEM_CATEGORY } from '~/models/enum/enum'
+import { ITEM_CATEGORY, STAT_STATUS } from '~/models/enum/enum'
 import { ITEM_OPTION } from '~/models/object/object'
 
 export function useShare() {
@@ -23,6 +23,41 @@ export function useShare() {
         { title: 'เย็บเข้าเล่ม', value: STATUS.SEWING },
         { title: 'แพ็ค', value: STATUS.PACK },
         { title: 'พร้อมจัดส่ง', value: STATUS.READY },
+    ])
+    const statAndIconColor = ref([
+        {
+            title: 'ออกเเบบ',
+
+            value: STAT_STATUS.DESIGNING,
+            icon: 'mdi-pencil-ruler',
+            color: '#5E60CE',
+        },
+        {
+            title: 'พิมพ์',
+            icon: 'mdi-printer',
+            color: '#4C566A',
+            value: STAT_STATUS.PRINTING,
+        },
+        {
+            title: 'เย็บเข้าเล่ม',
+            value: STAT_STATUS.REVIEWING,
+
+            icon: 'mdi-book-open-blank-variant',
+            color: '#0081A7',
+        },
+        {
+            title: 'แพ็ค',
+            value: STAT_STATUS.DESIGNING,
+
+            icon: 'mdi-package-variant',
+            color: '#F4A261',
+        },
+        {
+            title: 'พร้อมจัดส่ง',
+            value: STAT_STATUS.REVIEWED,
+            icon: 'mdi-truck-delivery',
+            color: '#2A9D8F',
+        },
     ])
     const statusColors = ref([
         { id: STATUS.REVIEWED, color: '#FF9800' },
@@ -244,6 +279,7 @@ export function useShare() {
         statusColors,
         lines,
         pages,
+        statAndIconColor,
         grams,
         colors,
         plates,
