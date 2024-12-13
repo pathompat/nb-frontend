@@ -77,7 +77,7 @@ export const useQuotationStore = defineStore('quotation', () => {
     ) => {
         try {
             const response = await putRequest<QuotationItem>(
-                `${controller}/item/${id}`,
+                `${controller}/items/${id}`,
                 item
             )
             return response

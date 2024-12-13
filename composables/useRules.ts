@@ -14,8 +14,9 @@ export function useRules() {
     ]
 
     const morethanZeroRule = [
-        (value: string) => +value.trim() > 0 || 'กรุณากรอกข้อมูลที่มากกว่า 0',
-        (value: string) => !!value.trim() || 'กรุณากรอกข้อมูล',
+        (value: string) =>
+            +`${value}`.trim() > 0 || 'กรุณากรอกข้อมูลที่มากกว่า 0',
+        (value: string) => !!`${value}`.trim() || 'กรุณากรอกข้อมูล',
     ]
 
     const passwordRule = [
@@ -38,7 +39,10 @@ export function useRules() {
             'รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว',
     ]
 
-    const emtpyRule = [(value: string) => value != null || 'กรุณากรอกข้อมูล']
+    const emtpyRule = [
+        (value: string) => value != null || 'กรุณากรอกข้อมูล',
+        (value: string) => !!`${value}`.trim() || 'กรุณากรอกข้อมูล',
+    ]
 
     const phoneNumberRule = [
         (value: string) => {
