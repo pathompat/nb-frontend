@@ -43,7 +43,5 @@ export interface QuotationItem {
     page: number
 }
 export interface CreateQuotationItem extends Omit<QuotationItem, 'status'> {
-    // isSaved: boolean
-    // isValid: boolean
     id?: string
 }
