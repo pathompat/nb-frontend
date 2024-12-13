@@ -1,16 +1,10 @@
 import type { TableLayout } from 'pdfmake/interfaces'
-import { toastPluginSymbol } from '~/plugins/toast'
 
 export function quotationPdf() {
     const pdf = usePdf()
     const quotationStore = useQuotationStore()
     const { quotation } = storeToRefs(quotationStore)
-    const layoutTable: TableLayout = {
-        hLineWidth: () => 0.5,
-        vLineWidth: () => 0.5,
-        paddingTop: () => 2,
-        paddingBottom: () => 2,
-    }
+
     return {
         async setItem(id: string) {
             try {
@@ -23,41 +17,42 @@ export function quotationPdf() {
             pdf.setContent(
                 {
                     pageSize: 'A4',
-                    pageMargins: [40, 150, 40, 40],
+                    pageMargins: [40, 210, 40, 40],
                     content: [
                         {
                             table: {
                                 headerRows: 1,
-                                widths: [
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                    'auto',
-                                ],
+                                widths: ['10%', '*', '*', '10%', '10%', '10%'],
                                 body: [
-                                    // แถว header ของตาราง
                                     [
                                         { text: 'ลำดับ', bold: true },
-                                        { text: 'เพลา', bold: true },
-                                        { text: 'เกรด', bold: true },
-                                        { text: 'สี', bold: true },
-                                        { text: 'แผ่น', bold: true },
-                                        { text: 'เส้น', bold: true },
+                                        {
+                                            text: 'ประเภท/แกรม/สี/แผ่น/เส้น',
+                                            bold: true,
+                                        },
+                                        { text: 'เพิ่มเติม', bold: true },
+                                        { text: 'มีแบบ', bold: true },
                                         { text: 'จำนวน', bold: true },
+                                        { text: 'ราคา', bold: true },
                                     ],
-                                    // ข้อมูลตัวอย่าง
-                                    ...Array.from({ length: 100 }, (_, i) => [
-                                        i + 1,
-                                        i % 2 === 0 ? 'ใหญ่' : 'เล็ก',
-                                        '55',
-                                        '4',
-                                        '80',
-                                        i % 2 === 0 ? 'ครั้ง' : 'เส้น',
-                                        (i + 1) * 120,
-                                    ]),
+                                    ...quotation.value.items.map(
+                                        (item, index) => [
+                                            index + 1,
+                                            item.category +
+                                                '/' +
+                                                item.gram +
+                                                '/' +
+                                                item.color +
+                                                '/' +
+                                                item.page +
+                                                '/' +
+                                                item.pattern,
+                                            item.options,
+                                            item.hasReference,
+                                            item.quantity,
+                                            item.price,
+                                        ]
+                                    ),
                                 ],
                             },
                             layout: 'lightHorizontalLines',
@@ -82,11 +77,11 @@ export function quotationPdf() {
                     },
                 },
                 {
-                    appointmentDate: '2021-09-01',
-                    duedate: '2021-09-15',
-                    quotationId: '00001',
-                    schoolname: 'โรงเรียนสองสองสอง',
-                    shopname: 'ร้านค้าสองสองสอง',
+                    appointmentDate: '90',
+                    duedate: quotation.value.dueDateAt?.toString() || '',
+                    quotationId: quotation.value.id.toString(),
+                    schoolname: quotation.value.schoolName,
+                    shopname: quotation.value.storeName,
                 }
             )
             pdf.download('quotation-pdf')

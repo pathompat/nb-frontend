@@ -21,7 +21,7 @@ const toast = inject(toastPluginSymbol)!
 
 onMounted(async () => {
     try {
-        // await pdf.setItem(id as string)
+        await pdf.setItem(id as string)
         await pdf.download()
     } catch (error) {
         toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
