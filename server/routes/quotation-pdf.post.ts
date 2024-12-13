@@ -1,5 +1,4 @@
 import { TDocumentDefinitions } from 'pdfmake/interfaces'
-import { text } from 'stream/consumers'
 import { PdfBaseRequest, QuotationPdfRequest } from '~/models/api/api'
 import { pdfServer } from '~/server/basePdfServer'
 function getHeader({

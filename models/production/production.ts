@@ -2,25 +2,29 @@ import type { PRINTSTATUS, LINE, PLATE } from '../enum/enum'
 
 export interface Production {
     id: number
-    school: string
-    status: string
-    userName: string
     storeName: string
-    phone: string
-    address: string
-    quotationId: number
+    schoolName: string
+    schoolAddress: string
+    schoolTelephone: string
     createdAt: string
     updatedAt: string
+    dueDateAt: string | null
+    status: string
+    appointmentAt: string | null
     items: ProductionItem[]
     remark?: string
 }
 export interface ProductionItem {
-    plate: string
-    grams: number
-    color: number
-    page: number
-    line: string
-    hasRef: boolean
-    price: number
+    id?: string
+    category: string
+    options: string
+    hasReference: boolean
     quantity: number
+    status: string
+    plate: string
+    gram: number
+    price: number
+    color: string
+    pattern: string
+    page: number
 }

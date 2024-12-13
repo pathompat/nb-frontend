@@ -1,5 +1,3 @@
-import type { TableLayout } from 'pdfmake/interfaces'
-
 export function quotationPdf() {
     const pdf = usePdf()
     const quotationStore = useQuotationStore()
