@@ -145,7 +145,10 @@
                                     variant="flat"
                                     @click="addItem"
                                     color="primary"
-                                    v-if="!props.id"
+                                    v-if="
+                                        !props.id ||
+                                        userProfile?.role === SYSTEM_ROLE.ADMIN
+                                    "
                                 >
                                     เพิ่มรายการสินค้าใหม่
                                 </v-btn>
@@ -171,7 +174,12 @@
                                             {{ index + 1 }}
                                         </td>
                                         <td>
-                                            {{ item.category }}
+                                            {{
+                                                itemCategories.find(
+                                                    (x) =>
+                                                        x.value == item.category
+                                                )?.title
+                                            }}
                                         </td>
                                         <td
                                             v-if="
@@ -452,7 +460,7 @@ const quotationForm = ref<QuotationForm>({
 })
 
 const discount = ref(0)
-const { plates, lines } = useShare()
+const { plates, lines, itemCategories } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
