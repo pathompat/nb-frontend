@@ -403,7 +403,7 @@
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
-import { SYSTEM_ROLE } from '~/models/object/object'
+import { SYSTEM_ROLE } from '~/models/enum/enum'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -445,7 +445,7 @@ const { emtpyRule, noEmojiOrEscapeCharacterRule, phoneNumberRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)
-const { handlerRowItemsPriceRef, isNewItem } = useCalculatorQuotationItem()
+const { handlerRowItemsPriceRef } = useCalculatorQuotationItem()
 const { userProfile } = useAuthStore()
 const isCustomDate = ref(false)
 const headerItems = computed(() => {
@@ -497,15 +497,6 @@ const updateCustomerSelect = async (value: string) => {
     ])
     quotationForm.value.schoolId = ''
 }
-let oldItems = JSON.parse(JSON.stringify(quotationForm.value.items))
-// watch(
-//     quotationForm.value.items,
-//     (newValue) => {
-//         if (isNewItem(oldItems, newValue))
-//             handlerRowItemsPriceRef(newValue, prices.value)
-//     },
-//     { deep: true }
-// )
 watch(
     () => prices.value,
     async (newValue) => {

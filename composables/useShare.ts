@@ -1,4 +1,5 @@
-import { ITEM_CATEGORY, ITEM_OPTION } from '~/models/object/object'
+import { ITEM_CATEGORY } from '~/models/enum/enum'
+import { ITEM_OPTION } from '~/models/object/object'
 
 export function useShare() {
     const STATUS = {

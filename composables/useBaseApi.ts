@@ -1,4 +1,4 @@
-import { LOCALSTORAGE_KEY } from '~/models/object/object'
+import { LOCALSTORAGE_KEY } from '~/models/enum/enum'
 
 export default function useBaseApi() {
     const createApi = async <T = null>(

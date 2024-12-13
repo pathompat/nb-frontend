@@ -125,7 +125,7 @@
 <script setup lang="ts">
 // import { useAuthStore } from '@/stores/auth'
 // import type { Production, ProductionItem } from '@/models/production/production'
-// import { SYSTEM_ROLE } from '~/models/object/object'
+// import { SYSTEM_ROLE } from '~/models/enum/enum'
 // const { productions, fetchAllProductions } = useProductionStore()
 // const { statusColors, getStatusTitle, lines, plates } = useShare()
 // const { userProfile } = useAuthStore()

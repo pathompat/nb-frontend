@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import type { MenuItem } from '~/models/share/share'
 import { useAuthStore } from '@/stores/auth'
-import { SYSTEM_ROLE } from '~/models/object/object'
+import { SYSTEM_ROLE } from '~/models/enum/enum'
 // const { refresh } = inject<PluginInstance>(contextPluginSymbol)!
 const { userProfile, logout } = useAuthStore()
 const drawer = ref(true)

@@ -189,7 +189,11 @@
                                 ><v-text-field
                                     min="1"
                                     :hide-details="false"
-                                    :rules="morethanZeroRule"
+                                    :rules="
+                                        userProfile?.role == SYSTEM_ROLE.ADMIN
+                                            ? morethanZeroRule
+                                            : []
+                                    "
                                     type="number"
                                     :disabled="
                                         userProfile?.role !=
@@ -219,7 +223,7 @@
     >
 </template>
 <script lang="ts" setup>
-import { SYSTEM_ROLE } from '~/models/object/object'
+import { SYSTEM_ROLE } from '~/models/enum/enum'
 import { dialogItemQuotationStateSymbol } from './state'
 const valid = ref(false)
 const { userProfile } = useAuthStore()

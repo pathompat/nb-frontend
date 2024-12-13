@@ -18,3 +18,17 @@ export enum HEADER {
     QUOTATION,
     PRODUCTION,
 }
+export enum LOCALSTORAGE_KEY {
+    AUTH_TOKEN = 'auth_token',
+    AUTH_TOKEN_EXPIRE = 'auth_token_expire',
+}
+export enum SYSTEM_ROLE {
+    ADMIN = 'ADMIN',
+    CUSTOMER = 'CUSTOMER',
+}
+export enum ITEM_CATEGORY {
+    CUT_NINE = 'CUT_NINE',
+    REPORT = 'REPORT',
+    DRAWING = 'DRAWING',
+    ACCOUNTING = 'ACCOUNTING',
+}
