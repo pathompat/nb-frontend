@@ -106,7 +106,7 @@ export function productionPdf() {
                 {
                     appointmentDate: '90',
                     duedate: production.value!.dueDateAt?.toString() || '',
-                    quotationId: production.value!.id.toString(),
+                    productionId: production.value!.id.toString(),
                     schoolname: production.value!.schoolName,
                     shopname: production.value!.storeName,
                 }
