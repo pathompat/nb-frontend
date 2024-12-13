@@ -1,11 +1,12 @@
 <template>
     <main>
-        <div class="d-flex justify-space-between" v-if="false">
+        <div class="d-flex justify-end">
             <div class="d-flex ga-2">
                 <v-btn
                     variant="flat"
                     v-if="props.id"
                     color="success"
+                    target="_blank"
                     :to="`/quotation/document/${props.id}`"
                     >ดาวน์โหลดเอกสาร</v-btn
                 >
