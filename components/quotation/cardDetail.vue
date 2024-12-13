@@ -419,6 +419,7 @@ import type {
     QuotationForm,
 } from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
+import type { Price } from '~/models/price/price'
 const stateDialogCreateNewSchool = dialogSchoolState()
 const statedialogItemQuotation = dialogItemQuotationState()
 
@@ -444,7 +445,7 @@ const { emtpyRule, noEmojiOrEscapeCharacterRule, phoneNumberRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)
-
+const { handlerRowItemsPriceRef, isNewItem } = useCalculatorQuotationItem()
 const { userProfile } = useAuthStore()
 const isCustomDate = ref(false)
 const headerItems = computed(() => {
@@ -497,66 +498,20 @@ const updateCustomerSelect = async (value: string) => {
     quotationForm.value.schoolId = ''
 }
 let oldItems = JSON.parse(JSON.stringify(quotationForm.value.items))
-watch(
-    quotationForm.value.items,
-    (newValue) => {
-        handlerPriceRef(newValue)
-    },
-    { deep: true }
-)
+// watch(
+//     quotationForm.value.items,
+//     (newValue) => {
+//         if (isNewItem(oldItems, newValue))
+//             handlerRowItemsPriceRef(newValue, prices.value)
+//     },
+//     { deep: true }
+// )
 watch(
     () => prices.value,
     async (newValue) => {
-        handlerPriceRef(quotationForm.value.items)
+        handlerRowItemsPriceRef(quotationForm.value.items, prices.value)
     }
 )
-function handlerPriceRef(newValue: CreateQuotationItem[]) {
-    newValue.forEach((item, index) => {
-        if (
-            !item.plate ||
-            !item.gram ||
-            !item.color ||
-            !item.page ||
-            !item.pattern
-        ) {
-            return
-        }
-        // if (item.quantity <= 0 || item.price <= 0) {
-        //     item.isValid = false
-        // } else {
-        //     item.isValid = true
-        // }
-        const oldItem = oldItems[index]
-        if (oldItem) {
-            if (
-                item.plate == oldItem.plate &&
-                item.gram == oldItem.gram &&
-                item.color == oldItem.color &&
-                item.page == oldItem.page &&
-                item.pattern == oldItem.line &&
-                item.hasReference == oldItem.hasReference &&
-                item.quantity == oldItem.quantity
-            ) {
-                return
-            }
-        }
-        const priceRef = prices.value.find(
-            (price) =>
-                price.plate == item.plate &&
-                price.gram == item.gram &&
-                price.color == item.color &&
-                price.page == item.page &&
-                price.pattern == item.pattern &&
-                price.hasReference == item.hasReference
-        )
-        if (!priceRef) {
-            // item.price = 0
-            return
-        }
-        item.price = priceRef.priceRef
-    })
-    oldItems = JSON.parse(JSON.stringify(newValue))
-}
 
 async function getSchools() {
     loadingSchool.value = true

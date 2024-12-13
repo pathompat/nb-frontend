@@ -30,7 +30,16 @@
                                     label="เพลท"
                                     :items="plates"
                                     :hide-details="false"
-                                    v-model="quotationItem.plate"
+                                    :model-value="quotationItem.plate"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.plate = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
@@ -39,7 +48,16 @@
                                     label="แกรม"
                                     :items="grams"
                                     :hide-details="false"
-                                    v-model="quotationItem.gram"
+                                    :model-value="quotationItem.gram"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.gram = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
@@ -48,7 +66,16 @@
                                     label="สี"
                                     :items="colors"
                                     :hide-details="false"
-                                    v-model="quotationItem.color"
+                                    :model-value="quotationItem.color"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.color = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
@@ -56,7 +83,16 @@
                                     :rules="emtpyRule"
                                     label="แผ่น"
                                     :items="pages"
-                                    v-model="quotationItem.page"
+                                    :model-value="quotationItem.page"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.page = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                     :hide-details="false"
                                 ></v-select>
                             </v-col>
@@ -68,8 +104,17 @@
                                     item-value="value"
                                     label="ประเภท"
                                     :rules="emtpyRule"
+                                    :model-value="quotationItem.category"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.category = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                     :hide-details="false"
-                                    v-model="quotationItem.category"
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
@@ -78,7 +123,16 @@
                                     :items="lines"
                                     label="เส้น"
                                     :hide-details="false"
-                                    v-model="quotationItem.pattern"
+                                    :model-value="quotationItem.pattern"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.pattern = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-select>
                             </v-col>
                         </v-row>
@@ -87,7 +141,16 @@
                             <v-col cols="2">
                                 <v-checkbox
                                     label="มีแบบ"
-                                    v-model="quotationItem.hasReference"
+                                    :model-value="quotationItem.hasReference"
+                                    @update:model-value="
+                                        (e: any) => {
+                                            quotationItem.hasReference = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-checkbox>
                             </v-col>
                             <v-col cols="10">
@@ -163,7 +226,8 @@ const { userProfile } = useAuthStore()
 const { emtpyRule, morethanZeroRule } = useRules()
 const { plates, lines, grams, pages, colors, itemOptions, itemCategories } =
     useShare()
-
+const { handlerByItemPriceRef } = useCalculatorQuotationItem()
+const { prices } = storeToRefs(usePriceStore())
 const { action, dialogOpen, quotationItem, loading } = inject(
     dialogItemQuotationStateSymbol
 )!
