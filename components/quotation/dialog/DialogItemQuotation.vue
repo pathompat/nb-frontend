@@ -46,7 +46,7 @@
                                 <v-select
                                     :rules="emtpyRule"
                                     label="แกรม"
-                                    :disabled="!!quotationItem.id"
+                                    :disabled="!openFormEdit"
                                     :items="grams"
                                     :hide-details="false"
                                     :model-value="quotationItem.gram"
@@ -65,7 +65,7 @@
                                 <v-select
                                     :rules="emtpyRule"
                                     label="สี"
-                                    :disabled="!!quotationItem.id"
+                                    :disabled="!openFormEdit"
                                     :items="colors"
                                     :hide-details="false"
                                     :model-value="quotationItem.color"
@@ -85,7 +85,7 @@
                                     :rules="emtpyRule"
                                     label="แผ่น"
                                     :items="pages"
-                                    :disabled="!!quotationItem.id"
+                                    :disabled="!openFormEdit"
                                     :model-value="quotationItem.page"
                                     @update:model-value="
                                         (e) => {
@@ -105,7 +105,7 @@
                                     :items="itemCategories"
                                     item-text="title"
                                     item-value="value"
-                                    :disabled="!!quotationItem.id"
+                                    :disabled="!openFormEdit"
                                     label="ประเภท"
                                     :rules="emtpyRule"
                                     :model-value="quotationItem.category"
@@ -126,7 +126,7 @@
                                     :rules="emtpyRule"
                                     :items="lines"
                                     label="เส้น"
-                                    :disabled="!!quotationItem.id"
+                                    :disabled="!openFormEdit"
                                     :hide-details="false"
                                     :model-value="quotationItem.pattern"
                                     @update:model-value="
@@ -146,7 +146,7 @@
                             <v-col cols="2">
                                 <v-checkbox
                                     label="มีแบบ"
-                                    :disabled="!!quotationItem.id"
+                                    :disabled="!openFormEdit"
                                     :model-value="quotationItem.hasReference"
                                     @update:model-value="
                                         (e: any) => {
@@ -161,7 +161,7 @@
                             </v-col>
                             <v-col cols="10">
                                 <v-select
-                                    :disabled="!!quotationItem.id"
+                                    :disabled="!openFormEdit"
                                     multiple
                                     clearable
                                     :items="itemOptions"
@@ -187,7 +187,7 @@
                                 <v-text-field
                                     type="number"
                                     min="1"
-                                    :disabled="!!quotationItem.id"
+                                    :disabled="!openFormEdit"
                                     :rules="morethanZeroRule"
                                     label="จำนวน"
                                     :hide-details="false"
@@ -205,9 +205,7 @@
                                     "
                                     type="number"
                                     :disabled="
-                                        userProfile?.role !=
-                                            SYSTEM_ROLE.ADMIN ||
-                                        quotationItem.id != ''
+                                        userProfile?.role != SYSTEM_ROLE.ADMIN
                                     "
                                     label="ราคา"
                                     v-model="quotationItem.price"
@@ -239,6 +237,9 @@ const { userProfile } = useAuthStore()
 const { emtpyRule, morethanZeroRule } = useRules()
 const { plates, lines, grams, pages, colors, itemOptions, itemCategories } =
     useShare()
+const openFormEdit = computed(
+    () => quotationItem.value.id === '' || quotationItem.value.id == undefined
+)
 const { handlerByItemPriceRef } = useCalculatorQuotationItem()
 const { prices } = storeToRefs(usePriceStore())
 const { action, dialogOpen, quotationItem, loading } = inject(

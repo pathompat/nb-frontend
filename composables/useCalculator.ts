@@ -20,12 +20,6 @@ export default function useCalculator() {
                     if (totalItemAmount >= 30000) return 0.1
                     if (totalItemAmount >= 50000) return 0.15
                     return 0
-                // case ITEM_CATEGORY.PAPERBOARD:
-                //     return 0.15
-                // case ITEM_CATEGORY.PAPERBOARD:
-                //     return 0.2
-                // default:
-                //     return 0
                 default:
                     return 0
             }

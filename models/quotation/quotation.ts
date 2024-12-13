@@ -27,6 +27,7 @@ export interface CreateQuotation {
     schoolId: string
     schoolAddress: string
     schoolTelephone: string
+    schoolName: string
     dueDateAt: Date | null
     appointmentAt: Date | null
     items: QuotationItem[]

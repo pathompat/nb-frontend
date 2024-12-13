@@ -10,7 +10,6 @@ export default function useCalculatorQuotationItem() {
             const oldItem = oldItems[index]
             if (oldItem) {
                 if (
-                    // item.plate == oldItem.plate &&
                     item.gram == oldItem.gram &&
                     item.color == oldItem.color &&
                     item.page == oldItem.page &&
@@ -26,18 +25,11 @@ export default function useCalculatorQuotationItem() {
         return true
     }
     function handlerByItemPriceRef(item: CreateQuotationItem, prices: Price[]) {
-        if (
-            // !item.plate ||
-            !item.gram ||
-            !item.color ||
-            !item.page ||
-            !item.pattern
-        ) {
+        if (!item.gram || !item.color || !item.page || !item.pattern) {
             return
         }
         const priceRef = prices.find(
             (price) =>
-                // price.plate == item.plate &&
                 price.gram == item.gram &&
                 price.color == item.color &&
                 price.page == item.page &&

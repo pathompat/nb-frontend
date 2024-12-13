@@ -449,6 +449,7 @@ const quotationForm = ref<QuotationForm>({
     appointmentAt: null,
     dueDateAt: null,
     items: [],
+    schoolName: '',
     remark: '',
 })
 
@@ -502,6 +503,7 @@ watch(
     async (newValue) => {
         const school = schools.value.find((school) => school.id === newValue)!
         quotationForm.value.schoolAddress = school?.address
+        quotationForm.value.schoolName = school?.name
         quotationForm.value.schoolTelephone = school?.telephone
     }
 )
@@ -630,7 +632,6 @@ onMounted(async () => {
     loading.value = true
     try {
         await userStore.fetchAllUsers()
-        // addItem()
         if (!props.id) return
         await getQuotationById(props.id)
         quotationForm.value = {

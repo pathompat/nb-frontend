@@ -100,7 +100,7 @@
                             :to="
                                 !item.productionId
                                     ? `/quotation/${item.id}`
-                                    : `/production/${item.productionId!}`
+                                    : `/production/${item.productionId}`
                             "
                             >รายละเอียด</v-btn
                         >
