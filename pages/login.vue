@@ -15,7 +15,7 @@
                         autocomplete="on"
                         :hide-details="false"
                         :rules="userNameRule"
-                        placeholder="กรุณากรอกบัญชีผู้ใช้งานs"
+                        placeholder="กรุณากรอกบัญชีผู้ใช้งาน"
                     ></v-text-field>
                     <v-text-field
                         v-model="userform.password"
