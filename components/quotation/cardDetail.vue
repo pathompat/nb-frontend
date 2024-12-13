@@ -225,7 +225,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            {{ item.price * item.quantity }}
+                                            {{ item.price / item.quantity }}
                                         </td>
                                         <td>
                                             {{ item.price * item.quantity }}
@@ -268,14 +268,14 @@
                                 <div class="w-25 d-flex justify-space-between">
                                     <div>เพลท สี ตัด 9 :</div>
                                     <div>
-                                        {{
+                                        <!-- {{
                                             quotationForm.items.reduce(
                                                 (sum, item) =>
                                                     sum +
                                                     item.price * item.quantity,
                                                 0
                                             )
-                                        }}
+                                        }} -->
                                     </div>
                                 </div>
                             </div>
@@ -286,14 +286,14 @@
                                 <div class="w-25 d-flex justify-space-between">
                                     <p>เพลท ขาวดำ ตัด 9 :</p>
                                     <div>
-                                        {{
+                                        <!-- {{
                                             quotationForm.items.reduce(
                                                 (sum, item) =>
                                                     sum +
                                                     item.price * item.quantity,
                                                 0
                                             )
-                                        }}
+                                        }} -->
                                     </div>
                                 </div>
                             </div>
@@ -305,14 +305,14 @@
                                 <div class="w-25 d-flex justify-space-between">
                                     <p>เพลท รายงาน:</p>
                                     <div>
-                                        {{
+                                        <!-- {{
                                             quotationForm.items.reduce(
                                                 (sum, item) =>
                                                     sum +
                                                     item.price * item.quantity,
                                                 0
                                             )
-                                        }}
+                                        }} -->
                                     </div>
                                 </div>
                             </div>
@@ -325,6 +325,7 @@
                                     <p>ส่วนลดท้ายบิล:</p>
                                     <div>
                                         <v-text-field
+                                            v-model="discount"
                                             type="number"
                                         ></v-text-field>
                                     </div>
@@ -344,7 +345,7 @@
                                                     sum +
                                                     item.price * item.quantity,
                                                 0
-                                            )
+                                            ) - discount
                                         }}
                                     </div>
                                 </div>
@@ -414,12 +415,8 @@ import dialogItemQuotationState, {
 
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
-import type {
-    CreateQuotationItem,
-    QuotationForm,
-} from '~/models/quotation/quotation'
+import type { QuotationForm } from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
-import type { Price } from '~/models/price/price'
 const stateDialogCreateNewSchool = dialogSchoolState()
 const statedialogItemQuotation = dialogItemQuotationState()
 
@@ -436,6 +433,8 @@ const quotationForm = ref<QuotationForm>({
     items: [],
     remark: '',
 })
+
+const discount = ref(0)
 const { plates, lines } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
@@ -603,7 +602,8 @@ async function cancel() {}
 onMounted(async () => {
     if (userProfile?.role !== SYSTEM_ROLE.ADMIN) {
         quotationForm.value.userId = userProfile!.id
-        getSchools()
+        await getSchools()
+        await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
     }
     loading.value = true
     try {
