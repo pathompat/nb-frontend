@@ -27,7 +27,8 @@
                                         :hide-details="false"
                                         :disabled="
                                             userProfile?.role !=
-                                            SYSTEM_ROLE.ADMIN
+                                                SYSTEM_ROLE.ADMIN ||
+                                            props.id != undefined
                                         "
                                         :model-value="quotationForm.userId"
                                         @update:model-value="
@@ -52,7 +53,10 @@
                                         :items="schools"
                                         :rules="emtpyRule"
                                         :hide-details="false"
-                                        :disabled="quotationForm.userId === ''"
+                                        :disabled="
+                                            quotationForm.userId === '' ||
+                                            props.id != undefined
+                                        "
                                         v-model="quotationForm.schoolId"
                                     >
                                         <template v-slot:prepend-item>
@@ -75,6 +79,7 @@
                                     <div>
                                         <v-radio-group
                                             inline
+                                            :disabled="props.id != undefined"
                                             :model-value="isCustomDate"
                                             @update:model-value="
                                                 updateCustomDate
@@ -96,7 +101,10 @@
                                         :rules="
                                             isCustomDate ? emtpyRule : [true]
                                         "
-                                        :disabled="!isCustomDate"
+                                        :disabled="
+                                            !isCustomDate ||
+                                            props.id != undefined
+                                        "
                                         :hide-details="false"
                                         v-model="quotationForm.dueDateAt"
                                         label="วันที่พร้อมรับสินค้า"
@@ -108,6 +116,7 @@
                                         :hide-details="false"
                                         v-model="quotationForm.appointmentAt"
                                         label="วันที่ต้องส่ง"
+                                        :disabled="props.id != undefined"
                                     ></v-date-input
                                 ></v-col>
 
@@ -115,6 +124,7 @@
                                     <v-text-field
                                         label="ที่อยู่ *"
                                         :model-value="schoolSelect?.address"
+                                        :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="3">
@@ -122,6 +132,7 @@
                                         label="เบอร์ติดต่อ *"
                                         :rules="phoneNumberRule"
                                         :model-value="schoolSelect?.telephone"
+                                        :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col> </v-row
                         ></v-layout>
@@ -326,6 +337,10 @@
                                     <p>ส่วนลดท้ายบิล:</p>
                                     <div>
                                         <v-text-field
+                                            :disabled="
+                                                userProfile?.role !==
+                                                SYSTEM_ROLE.ADMIN
+                                            "
                                             v-model="discount"
                                             type="number"
                                         ></v-text-field>
@@ -357,6 +372,7 @@
                                 :rules="noEmojiOrEscapeCharacterRule"
                                 label="หมายเหตุ"
                                 :hide-details="false"
+                                :disabled="props.id != undefined"
                                 v-model="quotationForm.remark"
                             ></v-textarea>
                         </div>
