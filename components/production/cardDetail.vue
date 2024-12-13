@@ -11,7 +11,7 @@
                 <v-btn
                     variant="flat"
                     color="success"
-                    :to="`/quotation/document/${production.quotationId}`"
+                    :to="`/quotation/document/${production.id}`"
                     >ใบเสนอราคา</v-btn
                 >
                 <v-btn
@@ -45,7 +45,7 @@
                                 <v-select
                                     label="โรงเรียน *"
                                     disabled
-                                    v-model="production.school"
+                                    v-model="production.schoolName"
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
@@ -64,14 +64,14 @@
                                 <v-select
                                     label="ที่อยู่ *"
                                     disabled
-                                    v-model="production.address"
+                                    v-model="production.schoolAddress"
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
                                 <v-select
                                     label="ที่อยู่ *"
                                     disabled
-                                    v-model="production.phone"
+                                    v-model="production.schoolTelephone"
                                 ></v-select>
                             </v-col> </v-row
                     ></v-layout>
@@ -92,13 +92,21 @@
                                 {{ index + 1 }}
                             </template>
                             <template #item.hasPlan="{ item }">
-                                <v-checkbox v-model="item.hasRef"></v-checkbox>
+                                <v-checkbox
+                                    v-model="item.hasReference"
+                                ></v-checkbox>
                             </template>
                             <template #item.plate="{ item }">
-                                {{ plates.find((p) => p === item.plate) }}
+                                {{
+                                    plates.find((p) => p.value === item.plate)
+                                        ?.title
+                                }}
                             </template>
                             <template #item.line="{ item }">
-                                {{ lines.find((l) => l === item.line) }}
+                                {{
+                                    lines.find((l) => l.value === item.pattern)
+                                        ?.title
+                                }}
                             </template>
                             <template #item.status="{ item }">
                                 <v-chip
@@ -148,10 +156,10 @@ const loading = ref(false)
 const router = useRouter()
 function defaultForm(): Partial<Production> {
     return {
-        school: '',
+        schoolName: '',
         storeName: '',
-        phone: '',
-        address: '',
+        schoolTelephone: '',
+        schoolAddress: '',
         items: [],
     }
 }
