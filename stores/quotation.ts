@@ -50,11 +50,11 @@ export const useQuotationStore = defineStore('quotation', () => {
         quotation: CreateQuotation
     ): Promise<Quotation> => {
         try {
-            const response = await postRequest<QuotationResultApi>(
+            const response = await postRequest<ApiResult<QuotationResultApi>>(
                 controller,
                 quotation
             )
-            return response
+            return response.data
         } catch (error) {
             throw error
         }
@@ -72,12 +72,13 @@ export const useQuotationStore = defineStore('quotation', () => {
     }
 
     const updateQuotationItem = async (
+        quotationId: string,
         id: string,
         item: Partial<QuotationItem>
     ) => {
         try {
             const response = await putRequest<QuotationItem>(
-                `${controller}/items/${id}`,
+                `${controller}/${quotationId}/item/${id}`,
                 item
             )
             return response
@@ -89,13 +90,13 @@ export const useQuotationStore = defineStore('quotation', () => {
     const updateQuotation = async (
         id: string,
         quotation: Partial<Quotation>
-    ): Promise<Quotation> => {
+    ): Promise<QuotationResultApi> => {
         try {
-            const response = await putRequest<QuotationResultApi>(
+            const response = await putRequest<ApiResult<QuotationResultApi>>(
                 `${controller}/${id}`,
                 quotation
             )
-            return response
+            return response.data
         } catch (error) {
             throw error
         }

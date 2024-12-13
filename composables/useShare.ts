@@ -8,9 +8,10 @@ import { ITEM_OPTION } from '~/models/object/object'
 
 export function useShare() {
     const itemStatuses = ref([
-        { title: 'รออนุมัติ', value: ITEM_STATUS.REVIEWED },
+        { title: 'รออนุมัติ', value: ITEM_STATUS.REVIEWING },
         { title: 'อนุมัติแล้ว', value: ITEM_STATUS.APPROVED },
         { title: 'ยกเลิก', value: ITEM_STATUS.CANCELED },
+        { title: 'สำเร็จ', value: ITEM_STATUS.DONE },
 
         { title: 'ออกเเบบ', value: ITEM_STATUS.OUTBOUND },
         { title: 'พิมพ์', value: ITEM_STATUS.PRINT },
@@ -67,7 +68,7 @@ export function useShare() {
         },
     ])
     const statusColors = ref([
-        { id: ITEM_STATUS.REVIEWED, color: '#FF9800' },
+        { id: ITEM_STATUS.REVIEWING, color: '#FF9800' },
         { id: ITEM_STATUS.APPROVED, color: '#00b300' },
         { id: ITEM_STATUS.CANCELED, color: '#b30000' },
 
@@ -115,8 +116,8 @@ export function useShare() {
     ])
     const getStatusTitle = computed(
         () => (value: string) =>
-            statuses.value.find((status) => status.value === value)?.title ||
-            'ไม่ทราบสถานะ'
+            itemStatuses.value.find((status) => status.value === value)
+                ?.title || 'ไม่ทราบสถานะ'
     )
     const itemOptions = ref([
         {

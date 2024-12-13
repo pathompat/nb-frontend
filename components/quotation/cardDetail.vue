@@ -603,9 +603,14 @@ async function editItem(index: number) {
         statedialogItemQuotation.closeDialog()
         if (editItem) {
             quotationForm.value.items[index] = editItem
-            await quotationStore.updateQuotationItem(editItem.id!, {
-                ...editItem,
-            })
+            await quotationStore.updateQuotationItem(
+                `${quotation.value.id}`,
+                editItem.id!,
+                {
+                    ...editItem,
+                    price: +`${editItem.price}`,
+                }
+            )
             toast.success(`แก้ไขสำเร็จ`)
             return
         }
@@ -624,12 +629,15 @@ function deleteItem(index: number) {
 
 async function approve() {
     try {
-        await quotationStore.updateQuotation(`${quotation.value.id!}`, {
-            ...quotation.value,
-            status: STAT_STATUS.APPROVED,
-        })
+        const { productionId } = await quotationStore.updateQuotation(
+            `${quotation.value.id!}`,
+            {
+                ...quotation.value,
+                status: STAT_STATUS.APPROVED,
+            }
+        )
         toast.success('อนุมัติสำเร็จ')
-        router.push(`/production/${props.id}`)
+        router.push(`/production/${productionId}`)
     } catch (e) {
         toast.error(`${e}`)
     }
