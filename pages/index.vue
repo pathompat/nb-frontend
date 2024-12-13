@@ -8,7 +8,7 @@
                 </v-btn>
             </div>
         </div>
-        <section class="py-8" v-if="userProfile?.role == SYSTEM_ROLE.ADMIN">
+        <section class="py-8">
             <List />
         </section>
         <section>
