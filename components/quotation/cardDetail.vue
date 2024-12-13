@@ -418,7 +418,7 @@
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
-import { SYSTEM_ROLE } from '~/models/enum/enum'
+import { STAT_STATUS, STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -603,7 +603,18 @@ async function editItem(index: number) {
         statedialogItemQuotation.closeDialog()
         if (editItem) {
             quotationForm.value.items[index] = editItem
+            await quotationStore.updateQuotationItem(
+                `${quotation.value.id}`,
+                editItem.id!,
+                {
+                    ...editItem,
+                    price: +`${editItem.price}`,
+                }
+            )
+            toast.success(`แก้ไขสำเร็จ`)
+            return
         }
+        throw new Error('ไม่สามารถแก้ไขได้')
     } catch (e) {
         toast.error(`${e}`)
     }
@@ -617,12 +628,32 @@ function deleteItem(index: number) {
 }
 
 async function approve() {
-    // const { id } = await quotationApi.approve(props.id);
-    router.push(`/production/${props.id}`)
-    // await productApi.approve(props.id);
+    try {
+        const { productionId } = await quotationStore.updateQuotation(
+            `${quotation.value.id!}`,
+            {
+                ...quotation.value,
+                status: STAT_STATUS.APPROVED,
+            }
+        )
+        toast.success('อนุมัติสำเร็จ')
+        router.push(`/production/${productionId}`)
+    } catch (e) {
+        toast.error(`${e}`)
+    }
 }
-async function reset() {}
-async function cancel() {}
+async function cancel() {
+    try {
+        await quotationStore.updateQuotation(`${quotation.value.id!}`, {
+            ...quotation.value,
+            status: STAT_STATUS.CANCELED,
+        })
+        toast.success('ยกเลิกสำเร็จ')
+        router.push(`/`)
+    } catch (e) {
+        toast.error(`${e}`)
+    }
+}
 onMounted(async () => {
     if (userProfile?.role !== SYSTEM_ROLE.ADMIN) {
         quotationForm.value.userId = userProfile!.id
