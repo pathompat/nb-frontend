@@ -7,13 +7,33 @@ export enum PLATE {
     SMALL = 2,
     EXTRA = 3,
 }
+export enum ITEM_STATUS {
+    REVIEWED = 'REVIEWED',
+    APPROVED = 'APPROVED',
+    CANCELED = 'CANCELED',
+    OUTBOUND = 'OUTBOUND',
+    PRINT = 'PRINT',
+    SEWING = 'SEWING',
+    PACK = 'PACK',
+    READY = 'READY',
+}
+export enum STATUS {
+    QUOTATION = 'QUOTATION',
+    PRODUCTION = 'PRODUCTION',
+}
+
 export enum STAT_STATUS {
     PRINTING = 'PRINTING',
     DESIGNING = 'DESIGNING',
     BOOKBINDING = 'BOOKBINDING',
     REVIEWING = 'REVIEWING',
+    SHIPING = 'SHIPING',
+    PACK = 'PACK',
+
     APPROVED = 'APPROVED',
     REVIEWED = 'REVIEWED',
+    DONE = 'DONE',
+    CANCLE = 'DONE',
 }
 export enum PRINTSTATUS {
     OUTBOUND = 1,

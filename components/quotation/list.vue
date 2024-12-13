@@ -1,11 +1,13 @@
 <template>
     <v-row>
-        <v-col v-for="(sectionProduct, index) in sectionProducts" :key="index">
+        <v-col v-for="(sectionProduct, index) in statAndIconColor" :key="index">
             <v-card
                 elevation="2"
-                class="pa-4 rounded-card hover-card h-100 align-center"
+                class="position-relative pa-4 rounded-card hover-card h-100 align-center"
             >
-                <v-card-text class="d-flex align-center justify-space-between">
+                <v-card-text
+                    class="pt-6 d-flex align-center justify-space-between"
+                >
                     <div class="d-flex flex-column justify-start ga-1">
                         <v-icon
                             :style="{ color: sectionProduct.color }"
@@ -29,8 +31,30 @@
                                 fontSize: '2.5rem',
                             }"
                         >
-                            {{ sectionProduct.amount }}
+                            {{
+                                quotationStat.find(
+                                    (x) => x.status == sectionProduct.value
+                                )?.count || 0
+                            }}
                         </span>
+                        <utils-return-data-slot
+                            :data="
+                                statuses.find(
+                                    (x) => x.value == sectionProduct.type
+                                )
+                            "
+                        >
+                            <template #default="{ data }">
+                                <div
+                                    class="font-weight-bold position-absolute top-0 right-0 pa-2 rounded-sm opacity-70"
+                                    :style="{
+                                        backgroundColor: data?.color,
+                                    }"
+                                >
+                                    {{ data?.title }}
+                                </div>
+                            </template>
+                        </utils-return-data-slot>
                     </div>
                 </v-card-text>
             </v-card>
@@ -40,30 +64,9 @@
 <script setup lang="ts">
 const quotationStore = useQuotationStore()
 const { quotationStat } = storeToRefs(quotationStore)
+const { statAndIconColor, statuses } = useShare()
 onMounted(async () => {
     await quotationStore.fetchQuotationsState()
     console.log(quotationStat.value)
 })
-const sectionProducts = ref([
-    { title: 'ออกเเบบ', amount: 3, icon: 'mdi-pencil-ruler', color: '#5E60CE' },
-    { title: 'พิมพ์', amount: 12, icon: 'mdi-printer', color: '#4C566A' },
-    {
-        title: 'เย็บเข้าเล่ม',
-        amount: 21,
-        icon: 'mdi-book-open-blank-variant',
-        color: '#0081A7',
-    },
-    {
-        title: 'แพ็ค',
-        amount: 32,
-        icon: 'mdi-package-variant',
-        color: '#F4A261',
-    },
-    {
-        title: 'พร้อมจัดส่ง',
-        amount: 12,
-        icon: 'mdi-truck-delivery',
-        color: '#2A9D8F',
-    },
-])
 </script>

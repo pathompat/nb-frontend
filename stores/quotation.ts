@@ -2,6 +2,7 @@ import {
     type Quotation,
     type CreateQuotation,
     type QuotationResultApi,
+    type QuotationStat,
 } from '~/models/quotation/quotation'
 import type { ApiResult } from '~/models/api/api'
 
@@ -10,7 +11,7 @@ export const useQuotationStore = defineStore('quotation', () => {
     const controller = 'quotation'
 
     const quotations = ref<QuotationResultApi[]>([])
-    const quotationStat = ref([])
+    const quotationStat = ref<QuotationStat[]>([])
     const quotation = ref<QuotationResultApi>({
         schoolId: '',
         createdAt: '',
@@ -26,8 +27,9 @@ export const useQuotationStore = defineStore('quotation', () => {
 
     const fetchQuotations = async () => {
         try {
-            const response =
-                await getRequest<ApiResult<QuotationResultApi[]>>(controller)
+            const response = await getRequest<ApiResult<QuotationResultApi[]>>(
+                controller + '?includeProduction=true'
+            )
             quotations.value = response.data
         } catch (error) {
             throw error
@@ -35,7 +37,7 @@ export const useQuotationStore = defineStore('quotation', () => {
     }
     const fetchQuotationsState = async () => {
         try {
-            const response = await getRequest<ApiResult<[]>>(
+            const response = await getRequest<ApiResult<QuotationStat[]>>(
                 controller + `/stat`
             )
             quotationStat.value = response.data
@@ -51,7 +53,6 @@ export const useQuotationStore = defineStore('quotation', () => {
                 controller,
                 quotation
             )
-            // quotations.value.push(response)
             return response
         } catch (error) {
             throw error
@@ -72,10 +73,6 @@ export const useQuotationStore = defineStore('quotation', () => {
     const updateQuotation = async (
         quotation: Quotation
     ): Promise<Quotation> => {
-        // const index = quotations.value.findIndex((q) => q.id === quotation.id)
-        // if (index !== -1) {
-        //     quotations.value[index] = quotation
-        // }
         return quotation
     }
 
