@@ -30,25 +30,54 @@
                                     label="เพลท"
                                     :items="plates"
                                     :hide-details="false"
-                                    v-model="quotationItem.plate"
+                                    :model-value="quotationItem.plate"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.plate = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
                                 <v-select
                                     :rules="emtpyRule"
                                     label="แกรม"
+                                    :disabled="!openFormEdit"
                                     :items="grams"
                                     :hide-details="false"
-                                    v-model="quotationItem.gram"
+                                    :model-value="quotationItem.gram"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.gram = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
                                 <v-select
                                     :rules="emtpyRule"
                                     label="สี"
+                                    :disabled="!openFormEdit"
                                     :items="colors"
                                     :hide-details="false"
-                                    v-model="quotationItem.color"
+                                    :model-value="quotationItem.color"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.color = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
@@ -56,7 +85,17 @@
                                     :rules="emtpyRule"
                                     label="แผ่น"
                                     :items="pages"
-                                    v-model="quotationItem.page"
+                                    :disabled="!openFormEdit"
+                                    :model-value="quotationItem.page"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.page = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                     :hide-details="false"
                                 ></v-select>
                             </v-col>
@@ -66,10 +105,20 @@
                                     :items="itemCategories"
                                     item-text="title"
                                     item-value="value"
+                                    :disabled="!openFormEdit"
                                     label="ประเภท"
                                     :rules="emtpyRule"
+                                    :model-value="quotationItem.category"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.category = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                     :hide-details="false"
-                                    v-model="quotationItem.category"
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
@@ -77,8 +126,18 @@
                                     :rules="emtpyRule"
                                     :items="lines"
                                     label="เส้น"
+                                    :disabled="!openFormEdit"
                                     :hide-details="false"
-                                    v-model="quotationItem.pattern"
+                                    :model-value="quotationItem.pattern"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.pattern = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-select>
                             </v-col>
                         </v-row>
@@ -87,11 +146,22 @@
                             <v-col cols="2">
                                 <v-checkbox
                                     label="มีแบบ"
-                                    v-model="quotationItem.hasReference"
+                                    :disabled="!openFormEdit"
+                                    :model-value="quotationItem.hasReference"
+                                    @update:model-value="
+                                        (e: any) => {
+                                            quotationItem.hasReference = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
                                 ></v-checkbox>
                             </v-col>
                             <v-col cols="10">
                                 <v-select
+                                    :disabled="!openFormEdit"
                                     multiple
                                     clearable
                                     :items="itemOptions"
@@ -100,7 +170,8 @@
                                     label="เพิ่มเติม"
                                     :hide-details="false"
                                     :model-value="
-                                        quotationItem.options.split(',')
+                                        quotationItem.options?.split(',') ||
+                                        null
                                     "
                                     @update:model-value="
                                         quotationItem.options = $event
@@ -116,6 +187,7 @@
                                 <v-text-field
                                     type="number"
                                     min="1"
+                                    :disabled="!openFormEdit"
                                     :rules="morethanZeroRule"
                                     label="จำนวน"
                                     :hide-details="false"
@@ -126,12 +198,14 @@
                                 ><v-text-field
                                     min="1"
                                     :hide-details="false"
-                                    :rules="morethanZeroRule"
+                                    :rules="
+                                        userProfile?.role == SYSTEM_ROLE.ADMIN
+                                            ? morethanZeroRule
+                                            : []
+                                    "
                                     type="number"
                                     :disabled="
-                                        userProfile?.role !=
-                                            SYSTEM_ROLE.ADMIN ||
-                                        quotationItem.id != ''
+                                        userProfile?.role != SYSTEM_ROLE.ADMIN
                                     "
                                     label="ราคา"
                                     v-model="quotationItem.price"
@@ -156,14 +230,18 @@
     >
 </template>
 <script lang="ts" setup>
-import { SYSTEM_ROLE } from '~/models/object/object'
+import { SYSTEM_ROLE } from '~/models/enum/enum'
 import { dialogItemQuotationStateSymbol } from './state'
 const valid = ref(false)
 const { userProfile } = useAuthStore()
 const { emtpyRule, morethanZeroRule } = useRules()
 const { plates, lines, grams, pages, colors, itemOptions, itemCategories } =
     useShare()
-
+const openFormEdit = computed(
+    () => quotationItem.value.id === '' || quotationItem.value.id == undefined
+)
+const { handlerByItemPriceRef } = useCalculatorQuotationItem()
+const { prices } = storeToRefs(usePriceStore())
 const { action, dialogOpen, quotationItem, loading } = inject(
     dialogItemQuotationStateSymbol
 )!

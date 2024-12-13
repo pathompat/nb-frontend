@@ -1,38 +1,81 @@
-import { ITEM_CATEGORY, ITEM_OPTION } from '~/models/object/object'
+import {
+    ITEM_CATEGORY,
+    ITEM_STATUS,
+    STAT_STATUS,
+    STATUS,
+} from '~/models/enum/enum'
+import { ITEM_OPTION } from '~/models/object/object'
 
 export function useShare() {
-    const STATUS = {
-        REVIEWED: 'REVIEWED',
-        APPROVED: 'APPROVED',
-        CANCELED: 'CANCELED',
-        OUTBOUND: 'OUTBOUND',
-        PRINT: 'PRINT',
-        SEWING: 'SEWING',
-        PACK: 'PACK',
-        READY: 'READY',
-    }
+    const itemStatuses = ref([
+        { title: 'รออนุมัติ', value: ITEM_STATUS.REVIEWED },
+        { title: 'อนุมัติแล้ว', value: ITEM_STATUS.APPROVED },
+        { title: 'ยกเลิก', value: ITEM_STATUS.CANCELED },
 
+        { title: 'ออกเเบบ', value: ITEM_STATUS.OUTBOUND },
+        { title: 'พิมพ์', value: ITEM_STATUS.PRINT },
+        { title: 'เย็บเข้าเล่ม', value: ITEM_STATUS.SEWING },
+        { title: 'แพ็ค', value: ITEM_STATUS.PACK },
+        { title: 'พร้อมจัดส่ง', value: ITEM_STATUS.READY },
+    ])
     const statuses = ref([
-        { title: 'รออนุมัติ', value: STATUS.REVIEWED },
-        { title: 'อนุมัติแล้ว', value: STATUS.APPROVED },
-        { title: 'ยกเลิก', value: STATUS.CANCELED },
-
-        { title: 'ออกเเบบ', value: STATUS.OUTBOUND },
-        { title: 'พิมพ์', value: STATUS.PRINT },
-        { title: 'เย็บเข้าเล่ม', value: STATUS.SEWING },
-        { title: 'แพ็ค', value: STATUS.PACK },
-        { title: 'พร้อมจัดส่ง', value: STATUS.READY },
+        { title: 'ใบเสนอราคา', value: STATUS.QUOTATION, color: '#C6E7FF' },
+        { title: 'ใบสั่งผลิต', value: STATUS.PRODUCTION, color: '#D0E8C5' },
+    ])
+    const statAndIconColor = ref([
+        {
+            title: 'รออนุมัติ',
+            value: STAT_STATUS.REVIEWING,
+            icon: 'mdi-format-list-bulleted',
+            color: '#FCC737',
+            type: 'QUOTATION',
+        },
+        {
+            title: 'ออกเเบบ',
+            value: STAT_STATUS.DESIGNING,
+            icon: 'mdi-pencil-ruler',
+            color: '#5E60CE',
+            type: 'PRODUCTION',
+        },
+        {
+            title: 'พิมพ์',
+            icon: 'mdi-printer',
+            color: '#4C566A',
+            value: STAT_STATUS.PRINTING,
+            type: 'PRODUCTION',
+        },
+        {
+            title: 'เย็บเข้าเล่ม',
+            value: STAT_STATUS.BOOKBINDING,
+            icon: 'mdi-book-open-blank-variant',
+            color: '#0081A7',
+            type: 'PRODUCTION',
+        },
+        {
+            title: 'แพ็ค',
+            value: STAT_STATUS.PACK,
+            icon: 'mdi-package-variant',
+            color: '#F4A261',
+            type: 'PRODUCTION',
+        },
+        {
+            title: 'พร้อมจัดส่ง',
+            value: STAT_STATUS.SHIPING,
+            icon: 'mdi-truck-delivery',
+            color: '#2A9D8F',
+            type: 'PRODUCTION',
+        },
     ])
     const statusColors = ref([
-        { id: STATUS.REVIEWED, color: '#FF9800' },
-        { id: STATUS.APPROVED, color: '#00b300' },
-        { id: STATUS.CANCELED, color: '#b30000' },
+        { id: ITEM_STATUS.REVIEWED, color: '#FF9800' },
+        { id: ITEM_STATUS.APPROVED, color: '#00b300' },
+        { id: ITEM_STATUS.CANCELED, color: '#b30000' },
 
-        { id: STATUS.PRINT, color: '#FF9800' },
-        { id: STATUS.OUTBOUND, color: '#B0BEC5' },
-        { id: STATUS.SEWING, color: '#2196F3' },
-        { id: STATUS.PACK, color: '#9C27B0' },
-        { id: STATUS.READY, color: '#4CAF50' },
+        { id: ITEM_STATUS.PRINT, color: '#FF9800' },
+        { id: ITEM_STATUS.OUTBOUND, color: '#B0BEC5' },
+        { id: ITEM_STATUS.SEWING, color: '#2196F3' },
+        { id: ITEM_STATUS.PACK, color: '#9C27B0' },
+        { id: ITEM_STATUS.READY, color: '#4CAF50' },
     ])
     const itemCategories = ref([
         {
@@ -237,14 +280,16 @@ export function useShare() {
     ])
 
     return {
-        statuses,
+        itemStatuses,
         tiers,
-        STATUS,
+        ITEM_STATUS,
         statusColors,
         lines,
         pages,
+        statAndIconColor,
         grams,
         colors,
+        statuses,
         plates,
         getStatusTitle,
         quotationStatuses,

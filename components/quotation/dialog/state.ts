@@ -8,6 +8,8 @@ export default function dialogItemQuotationState() {
     const dialogOpen = ref(false)
     const quotationItem = ref<CreateQuotationItem>(defaultQuotationItem())
     const loading = ref(false)
+    const { prices } = storeToRefs(usePriceStore())
+    const { handlerByItemPriceRef } = useCalculatorQuotationItem()
     let resolveFn: ((user: CreateQuotationItem) => void) | null = null
     function action() {
         if (!resolveFn) return
@@ -49,6 +51,7 @@ export default function dialogItemQuotationState() {
         setItemAndOpen(item: CreateQuotationItem) {
             loading.value = false
             quotationItem.value = item
+            handlerByItemPriceRef(quotationItem.value, prices.value)
             dialogOpen.value = true
             return new Promise<CreateQuotationItem>((resolve) => {
                 resolveFn = resolve

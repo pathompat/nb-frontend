@@ -1,11 +1,12 @@
 <template>
     <main>
-        <div class="d-flex justify-space-between" v-if="false">
+        <div class="d-flex justify-end">
             <div class="d-flex ga-2">
                 <v-btn
                     variant="flat"
                     v-if="props.id"
                     color="success"
+                    target="_blank"
                     :to="`/quotation/document/${props.id}`"
                     >ดาวน์โหลดเอกสาร</v-btn
                 >
@@ -26,7 +27,8 @@
                                         :hide-details="false"
                                         :disabled="
                                             userProfile?.role !=
-                                            SYSTEM_ROLE.ADMIN
+                                                SYSTEM_ROLE.ADMIN ||
+                                            props.id != undefined
                                         "
                                         :model-value="quotationForm.userId"
                                         @update:model-value="
@@ -51,7 +53,10 @@
                                         :items="schools"
                                         :rules="emtpyRule"
                                         :hide-details="false"
-                                        :disabled="quotationForm.userId === ''"
+                                        :disabled="
+                                            quotationForm.userId === '' ||
+                                            props.id != undefined
+                                        "
                                         v-model="quotationForm.schoolId"
                                     >
                                         <template v-slot:prepend-item>
@@ -72,13 +77,9 @@
                                 </v-col>
                                 <v-col cols="2">
                                     <div>
-                                        <!-- <v-switch
-                                        v-model="isCustomDate"
-                                        size="small"
-                                        label="กำหนดส่ง"
-                                    ></v-switch> -->
                                         <v-radio-group
                                             inline
+                                            :disabled="props.id != undefined"
                                             :model-value="isCustomDate"
                                             @update:model-value="
                                                 updateCustomDate
@@ -95,39 +96,48 @@
                                         </v-radio-group>
                                     </div>
                                 </v-col>
-
                                 <v-col cols="2">
                                     <v-date-input
                                         :rules="
                                             isCustomDate ? emtpyRule : [true]
                                         "
-                                        :hide-details="false"
-                                        :disabled="!isCustomDate"
-                                        v-model="quotationForm.appointmentAt"
-                                        label="วันที่ต้องส่ง"
-                                    ></v-date-input
-                                ></v-col>
-                                <v-col cols="2">
-                                    <v-date-input
-                                        :rules="emtpyRule"
+                                        :disabled="
+                                            !isCustomDate ||
+                                            props.id != undefined
+                                        "
                                         :hide-details="false"
                                         v-model="quotationForm.dueDateAt"
                                         label="วันที่พร้อมรับสินค้า"
                                     ></v-date-input>
                                 </v-col>
+                                <v-col cols="2">
+                                    <v-date-input
+                                        :rules="emtpyRule"
+                                        :hide-details="false"
+                                        v-model="quotationForm.appointmentAt"
+                                        label="วันที่ต้องส่ง"
+                                        :disabled="props.id != undefined"
+                                    ></v-date-input
+                                ></v-col>
+
                                 <v-col cols="3">
-                                    <v-select
+                                    <v-text-field
                                         label="ที่อยู่ *"
-                                        disabled
-                                        :model-value="schoolSelect?.address"
-                                    ></v-select>
+                                        :model-value="
+                                            quotationForm?.schoolAddress
+                                        "
+                                        :disabled="props.id != undefined"
+                                    ></v-text-field>
                                 </v-col>
                                 <v-col cols="3">
-                                    <v-select
+                                    <v-text-field
                                         label="เบอร์ติดต่อ *"
-                                        disabled
-                                        :model-value="schoolSelect?.telephone"
-                                    ></v-select>
+                                        :rules="phoneNumberRule"
+                                        :model-value="
+                                            quotationForm?.schoolTelephone
+                                        "
+                                        :disabled="props.id != undefined"
+                                    ></v-text-field>
                                 </v-col> </v-row
                         ></v-layout>
                         <div class="mt-4">
@@ -165,7 +175,12 @@
                                             {{ index + 1 }}
                                         </td>
                                         <td>
-                                            {{ item.category }}
+                                            {{
+                                                itemCategories.find(
+                                                    (x) =>
+                                                        x.value == item.category
+                                                )?.title
+                                            }}
                                         </td>
                                         <td
                                             v-if="
@@ -231,7 +246,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            {{ item.price * item.quantity }}
+                                            <!-- {{ item.price / item.quantity }} -->
                                         </td>
                                         <td>
                                             {{ item.price * item.quantity }}
@@ -253,11 +268,7 @@
                                             <v-btn
                                                 variant="text"
                                                 icon
-                                                v-if="
-                                                    !props.id ||
-                                                    userProfile?.role ===
-                                                        SYSTEM_ROLE.ADMIN
-                                                "
+                                                v-if="!props.id"
                                                 color="error"
                                                 @click="deleteItem(index)"
                                             >
@@ -274,14 +285,14 @@
                                 <div class="w-25 d-flex justify-space-between">
                                     <div>เพลท สี ตัด 9 :</div>
                                     <div>
-                                        {{
+                                        <!-- {{
                                             quotationForm.items.reduce(
                                                 (sum, item) =>
                                                     sum +
                                                     item.price * item.quantity,
                                                 0
                                             )
-                                        }}
+                                        }} -->
                                     </div>
                                 </div>
                             </div>
@@ -292,14 +303,14 @@
                                 <div class="w-25 d-flex justify-space-between">
                                     <p>เพลท ขาวดำ ตัด 9 :</p>
                                     <div>
-                                        {{
+                                        <!-- {{
                                             quotationForm.items.reduce(
                                                 (sum, item) =>
                                                     sum +
                                                     item.price * item.quantity,
                                                 0
                                             )
-                                        }}
+                                        }} -->
                                     </div>
                                 </div>
                             </div>
@@ -311,14 +322,14 @@
                                 <div class="w-25 d-flex justify-space-between">
                                     <p>เพลท รายงาน:</p>
                                     <div>
-                                        {{
+                                        <!-- {{
                                             quotationForm.items.reduce(
                                                 (sum, item) =>
                                                     sum +
                                                     item.price * item.quantity,
                                                 0
                                             )
-                                        }}
+                                        }} -->
                                     </div>
                                 </div>
                             </div>
@@ -331,6 +342,11 @@
                                     <p>ส่วนลดท้ายบิล:</p>
                                     <div>
                                         <v-text-field
+                                            :disabled="
+                                                userProfile?.role !==
+                                                SYSTEM_ROLE.ADMIN
+                                            "
+                                            v-model="discount"
                                             type="number"
                                         ></v-text-field>
                                     </div>
@@ -350,7 +366,7 @@
                                                     sum +
                                                     item.price * item.quantity,
                                                 0
-                                            )
+                                            ) - discount
                                         }}
                                     </div>
                                 </div>
@@ -361,21 +377,14 @@
                                 :rules="noEmojiOrEscapeCharacterRule"
                                 label="หมายเหตุ"
                                 :hide-details="false"
+                                :disabled="props.id != undefined"
                                 v-model="quotationForm.remark"
                             ></v-textarea>
                         </div>
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
-                    <!-- <v-btn variant="flat" to="/"> หน้าแรก </v-btn> -->
                     <v-spacer></v-spacer>
-                    <!-- <v-btn
-                        variant="flat"
-                        v-if="!props.id"
-                        @click="reset"
-                        color="warning"
-                        >รีเซ็ต</v-btn
-                    > -->
 
                     <v-btn
                         variant="flat"
@@ -385,13 +394,6 @@
                         color="success"
                         >บันทึก</v-btn
                     >
-                    <v-btn
-                        variant="flat"
-                        v-if="props.id"
-                        @click="approve"
-                        color="success"
-                        >อนุมัติ</v-btn
-                    >
 
                     <v-btn
                         variant="flat"
@@ -399,6 +401,13 @@
                         @click="cancel"
                         color="error"
                         >ยกเลิก</v-btn
+                    >
+                    <v-btn
+                        variant="flat"
+                        v-if="props.id"
+                        @click="approve"
+                        color="success"
+                        >อนุมัติ</v-btn
                     >
                 </v-card-actions>
             </v-card>
@@ -409,7 +418,7 @@
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
-import { SYSTEM_ROLE } from '~/models/object/object'
+import { SYSTEM_ROLE } from '~/models/enum/enum'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -420,10 +429,7 @@ import dialogItemQuotationState, {
 
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
-import type {
-    CreateQuotationItem,
-    QuotationForm,
-} from '~/models/quotation/quotation'
+import type { QuotationForm } from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
 const stateDialogCreateNewSchool = dialogSchoolState()
 const statedialogItemQuotation = dialogItemQuotationState()
@@ -432,25 +438,32 @@ provide(dialogSchoolStateSymbol, stateDialogCreateNewSchool)
 provide(dialogItemQuotationStateSymbol, statedialogItemQuotation)
 
 const valid = ref(false)
-const { getQuotationById, createQuotation } = useQuotationStore()
+const quotationStore = useQuotationStore()
+const { getQuotationById, createQuotation } = quotationStore
+const { quotation } = storeToRefs(quotationStore)
 const quotationForm = ref<QuotationForm>({
     userId: '',
     schoolId: '',
+    schoolAddress: '',
+    schoolTelephone: '',
     appointmentAt: null,
     dueDateAt: null,
     items: [],
+    schoolName: '',
     remark: '',
 })
-const { plates, lines } = useShare()
+
+const discount = ref(0)
+const { plates, lines, itemCategories } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
 const priceStore = usePriceStore()
-const { emtpyRule, noEmojiOrEscapeCharacterRule } = useRules()
+const { emtpyRule, noEmojiOrEscapeCharacterRule, phoneNumberRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)
-
+const { handlerRowItemsPriceRef } = useCalculatorQuotationItem()
 const { userProfile } = useAuthStore()
 const isCustomDate = ref(false)
 const headerItems = computed(() => {
@@ -485,11 +498,16 @@ const storeSelect = computed(() => {
     return users.value.find((user) => user.id === quotationForm.value.userId)
         ?.storeName
 })
-const schoolSelect = computed(() => {
-    return schools.value.find(
-        (school) => school.id === quotationForm.value.schoolId
-    )
-})
+watch(
+    () => quotationForm.value.schoolId,
+    async (newValue) => {
+        const school = schools.value.find((school) => school.id === newValue)!
+        quotationForm.value.schoolAddress = school?.address
+        quotationForm.value.schoolName = school?.name
+        quotationForm.value.schoolTelephone = school?.telephone
+    }
+)
+
 const updateCustomDate = (value: boolean | null) => {
     isCustomDate.value = value!
     if (!value) quotationForm.value.dueDateAt = null
@@ -502,67 +520,12 @@ const updateCustomerSelect = async (value: string) => {
     ])
     quotationForm.value.schoolId = ''
 }
-let oldItems = JSON.parse(JSON.stringify(quotationForm.value.items))
-watch(
-    quotationForm.value.items,
-    (newValue) => {
-        handlerPriceRef(newValue)
-    },
-    { deep: true }
-)
 watch(
     () => prices.value,
     async (newValue) => {
-        handlerPriceRef(quotationForm.value.items)
+        handlerRowItemsPriceRef(quotationForm.value.items, prices.value)
     }
 )
-function handlerPriceRef(newValue: CreateQuotationItem[]) {
-    newValue.forEach((item, index) => {
-        if (
-            !item.plate ||
-            !item.gram ||
-            !item.color ||
-            !item.page ||
-            !item.pattern
-        ) {
-            return
-        }
-        // if (item.quantity <= 0 || item.price <= 0) {
-        //     item.isValid = false
-        // } else {
-        //     item.isValid = true
-        // }
-        const oldItem = oldItems[index]
-        if (oldItem) {
-            if (
-                item.plate == oldItem.plate &&
-                item.gram == oldItem.gram &&
-                item.color == oldItem.color &&
-                item.page == oldItem.page &&
-                item.pattern == oldItem.line &&
-                item.hasReference == oldItem.hasReference &&
-                item.quantity == oldItem.quantity
-            ) {
-                return
-            }
-        }
-        const priceRef = prices.value.find(
-            (price) =>
-                price.plate == item.plate &&
-                price.gram == item.gram &&
-                price.color == item.color &&
-                price.page == item.page &&
-                price.pattern == item.pattern &&
-                price.hasReference == item.hasReference
-        )
-        if (!priceRef) {
-            // item.price = 0
-            return
-        }
-        item.price = priceRef.priceRef
-    })
-    oldItems = JSON.parse(JSON.stringify(newValue))
-}
 
 async function getSchools() {
     loadingSchool.value = true
@@ -663,15 +626,24 @@ async function cancel() {}
 onMounted(async () => {
     if (userProfile?.role !== SYSTEM_ROLE.ADMIN) {
         quotationForm.value.userId = userProfile!.id
-        getSchools()
+        await getSchools()
+        await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
     }
     loading.value = true
     try {
         await userStore.fetchAllUsers()
-        // addItem()
         if (!props.id) return
         await getQuotationById(props.id)
+        quotationForm.value = {
+            ...quotation.value,
+            appointmentAt: quotation.value.appointmentAt
+                ? new Date(quotation.value.appointmentAt)
+                : null,
+            dueDateAt: new Date(quotation.value.dueDateAt!),
+        }
+        console.log(quotationForm.value)
     } catch (error) {
+        toast.error(`${error}`)
     } finally {
         loading.value = false
     }

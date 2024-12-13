@@ -1,6 +1,11 @@
 import type { PRINTSTATUS, LINE, PLATE } from '../enum/enum'
 import type { Production } from '../production/production'
 
+export interface QuotationStat {
+    status: string
+    count: number
+    type: string
+}
 export interface Quotation
     extends Omit<CreateQuotation, 'dueDateAt' | 'appointmentAt'> {
     id: number
@@ -20,6 +25,9 @@ export interface QuotationForm extends Omit<CreateQuotation, 'items'> {
 export interface CreateQuotation {
     userId: string
     schoolId: string
+    schoolAddress: string
+    schoolTelephone: string
+    schoolName: string
     dueDateAt: Date | null
     appointmentAt: Date | null
     items: QuotationItem[]
@@ -27,6 +35,7 @@ export interface CreateQuotation {
 }
 export interface QuotationResultApi extends Quotation {
     production?: Production
+    productionId: string | null
 }
 export interface QuotationItem {
     id?: string

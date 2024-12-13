@@ -1,5 +1,5 @@
 import type { ApiResult } from '~/models/api/api'
-import { LOCALSTORAGE_KEY } from '~/models/object/object'
+import { LOCALSTORAGE_KEY } from '~/models/enum/enum'
 import type { LoginResult, User, UserJwt } from '~/models/user/user'
 
 export const useAuthStore = defineStore('auth', () => {

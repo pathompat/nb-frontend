@@ -1,6 +1,6 @@
 import type { CreateUser, User } from '@/models/user/user'
 import type { ApiResult } from '~/models/api/api'
-import { SYSTEM_ROLE } from '~/models/object/object'
+import { SYSTEM_ROLE } from '~/models/enum/enum'
 
 export const useUserStore = defineStore('users', () => {
     const users = ref<User[]>([])

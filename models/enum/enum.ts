@@ -7,6 +7,34 @@ export enum PLATE {
     SMALL = 2,
     EXTRA = 3,
 }
+export enum ITEM_STATUS {
+    REVIEWED = 'REVIEWED',
+    APPROVED = 'APPROVED',
+    CANCELED = 'CANCELED',
+    OUTBOUND = 'OUTBOUND',
+    PRINT = 'PRINT',
+    SEWING = 'SEWING',
+    PACK = 'PACK',
+    READY = 'READY',
+}
+export enum STATUS {
+    QUOTATION = 'QUOTATION',
+    PRODUCTION = 'PRODUCTION',
+}
+
+export enum STAT_STATUS {
+    PRINTING = 'PRINTING',
+    DESIGNING = 'DESIGNING',
+    BOOKBINDING = 'BOOKBINDING',
+    REVIEWING = 'REVIEWING',
+    SHIPING = 'SHIPING',
+    PACK = 'PACK',
+
+    APPROVED = 'APPROVED',
+    REVIEWED = 'REVIEWED',
+    DONE = 'DONE',
+    CANCLE = 'DONE',
+}
 export enum PRINTSTATUS {
     OUTBOUND = 1,
     PRINT = 2,
@@ -17,4 +45,18 @@ export enum PRINTSTATUS {
 export enum HEADER {
     QUOTATION,
     PRODUCTION,
+}
+export enum LOCALSTORAGE_KEY {
+    AUTH_TOKEN = 'auth_token',
+    AUTH_TOKEN_EXPIRE = 'auth_token_expire',
+}
+export enum SYSTEM_ROLE {
+    ADMIN = 'ADMIN',
+    CUSTOMER = 'CUSTOMER',
+}
+export enum ITEM_CATEGORY {
+    CUT_NINE = 'CUT_NINE',
+    REPORT = 'REPORT',
+    DRAWING = 'DRAWING',
+    ACCOUNTING = 'ACCOUNTING',
 }

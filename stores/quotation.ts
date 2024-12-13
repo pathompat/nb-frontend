@@ -1,16 +1,18 @@
 import {
     type Quotation,
     type CreateQuotation,
+    type QuotationResultApi,
+    type QuotationStat,
 } from '~/models/quotation/quotation'
-import { PRINTSTATUS } from '~/models/enum/enum'
 import type { ApiResult } from '~/models/api/api'
 
 export const useQuotationStore = defineStore('quotation', () => {
     const { getRequest, postRequest } = useBaseApi()
     const controller = 'quotation'
 
-    const quotations = ref<Quotation[]>([])
-    const quotation = ref<Quotation>({
+    const quotations = ref<QuotationResultApi[]>([])
+    const quotationStat = ref<QuotationStat[]>([])
+    const quotation = ref<QuotationResultApi>({
         schoolId: '',
         createdAt: '',
         items: [],
@@ -25,20 +27,32 @@ export const useQuotationStore = defineStore('quotation', () => {
 
     const fetchQuotations = async () => {
         try {
-            const response =
-                await getRequest<ApiResult<Quotation[]>>(controller)
+            const response = await getRequest<ApiResult<QuotationResultApi[]>>(
+                controller + '?includeProduction=true'
+            )
             quotations.value = response.data
         } catch (error) {
             throw error
         }
     }
-
+    const fetchQuotationsState = async () => {
+        try {
+            const response = await getRequest<ApiResult<QuotationStat[]>>(
+                controller + `/stat`
+            )
+            quotationStat.value = response.data
+        } catch (error) {
+            throw error
+        }
+    }
     const createQuotation = async (
         quotation: CreateQuotation
     ): Promise<Quotation> => {
         try {
-            const response = await postRequest<Quotation>(controller, quotation)
-            quotations.value.push(response)
+            const response = await postRequest<QuotationResultApi>(
+                controller,
+                quotation
+            )
             return response
         } catch (error) {
             throw error
@@ -47,10 +61,10 @@ export const useQuotationStore = defineStore('quotation', () => {
 
     const getQuotationById = async (id: number) => {
         try {
-            const response = await getRequest<Quotation[]>(
+            const response = await getRequest<ApiResult<QuotationResultApi>>(
                 `${controller}/${id}`
             )
-            quotations.value = response
+            quotation.value = response.data
         } catch (error) {
             throw error
         }
@@ -59,10 +73,6 @@ export const useQuotationStore = defineStore('quotation', () => {
     const updateQuotation = async (
         quotation: Quotation
     ): Promise<Quotation> => {
-        const index = quotations.value.findIndex((q) => q.id === quotation.id)
-        if (index !== -1) {
-            quotations.value[index] = quotation
-        }
         return quotation
     }
 
@@ -72,6 +82,8 @@ export const useQuotationStore = defineStore('quotation', () => {
         createQuotation,
         getQuotationById,
         updateQuotation,
+        fetchQuotationsState,
+        quotationStat,
         quotation,
     }
 })

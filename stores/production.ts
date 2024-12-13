@@ -1,4 +1,5 @@
 import useBaseApi from '~/composables/useBaseApi'
+import type { ApiResult } from '~/models/api/api'
 import type { Production } from '~/models/production/production'
 
 export const useProductionStore = defineStore('production', () => {
@@ -28,7 +29,9 @@ export const useProductionStore = defineStore('production', () => {
     async function getProductionById(id: string) {
         const { getRequest } = useBaseApi()
         try {
-            production.value = await getRequest<Production>(`production/${id}`)
+            production.value = (
+                await getRequest<ApiResult<Production>>(`production/${id}`)
+            ).data
             return production.value
         } catch (error) {
             throw error
