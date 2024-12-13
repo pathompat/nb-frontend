@@ -123,7 +123,9 @@
                                 <v-col cols="3">
                                     <v-text-field
                                         label="ที่อยู่ *"
-                                        :model-value="schoolSelect?.address"
+                                        :model-value="
+                                            quotationForm?.schoolAddress
+                                        "
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col>
@@ -131,7 +133,9 @@
                                     <v-text-field
                                         label="เบอร์ติดต่อ *"
                                         :rules="phoneNumberRule"
-                                        :model-value="schoolSelect?.telephone"
+                                        :model-value="
+                                            quotationForm?.schoolTelephone
+                                        "
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col> </v-row
@@ -380,15 +384,7 @@
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
-                    <!-- <v-btn variant="flat" to="/"> หน้าแรก </v-btn> -->
                     <v-spacer></v-spacer>
-                    <!-- <v-btn
-                        variant="flat"
-                        v-if="!props.id"
-                        @click="reset"
-                        color="warning"
-                        >รีเซ็ต</v-btn
-                    > -->
 
                     <v-btn
                         variant="flat"
@@ -448,6 +444,8 @@ const { quotation } = storeToRefs(quotationStore)
 const quotationForm = ref<QuotationForm>({
     userId: '',
     schoolId: '',
+    schoolAddress: '',
+    schoolTelephone: '',
     appointmentAt: null,
     dueDateAt: null,
     items: [],
@@ -499,11 +497,15 @@ const storeSelect = computed(() => {
     return users.value.find((user) => user.id === quotationForm.value.userId)
         ?.storeName
 })
-const schoolSelect = computed(() => {
-    return schools.value.find(
-        (school) => school.id === quotationForm.value.schoolId
-    )
-})
+watch(
+    () => quotationForm.value.schoolId,
+    async (newValue) => {
+        const school = schools.value.find((school) => school.id === newValue)!
+        quotationForm.value.schoolAddress = school?.address
+        quotationForm.value.schoolTelephone = school?.telephone
+    }
+)
+
 const updateCustomDate = (value: boolean | null) => {
     isCustomDate.value = value!
     if (!value) quotationForm.value.dueDateAt = null

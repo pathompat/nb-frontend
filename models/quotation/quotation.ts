@@ -25,6 +25,8 @@ export interface QuotationForm extends Omit<CreateQuotation, 'items'> {
 export interface CreateQuotation {
     userId: string
     schoolId: string
+    schoolAddress: string
+    schoolTelephone: string
     dueDateAt: Date | null
     appointmentAt: Date | null
     items: QuotationItem[]
