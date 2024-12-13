@@ -22,7 +22,9 @@ export const useUserStore = defineStore('users', () => {
     async function fetchUserById(id: string) {
         const api = useBaseApi()
         try {
-            user.value = await api.getRequest<User>(`${controller}/${id}`)
+            user.value = (
+                await api.getRequest<ApiResult<User>>(`${controller}/${id}`)
+            ).data
         } catch (error) {
             throw error
         }
