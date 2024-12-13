@@ -97,7 +97,11 @@
                         <v-btn
                             variant="outlined"
                             class="text-primary"
-                            :to="`/quotation/${item.id}`"
+                            :to="
+                                !item.productionId
+                                    ? `/quotation/${item.id}`
+                                    : `/production/${item.productionId!}`
+                            "
                             >รายละเอียด</v-btn
                         >
                     </td>

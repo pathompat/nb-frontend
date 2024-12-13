@@ -27,6 +27,7 @@ export interface CreateQuotation {
 }
 export interface QuotationResultApi extends Quotation {
     production?: Production
+    productionId: string | null
 }
 export interface QuotationItem {
     id?: string
