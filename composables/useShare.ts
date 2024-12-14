@@ -149,7 +149,7 @@ export function useShare() {
     const getStatusTitle = computed(
         () => (value: string) =>
             itemStatuses.value.find((status) => status.value === value)
-                ?.title || 'ไม่ทราบสถานะ'
+                ?.title || 'ไม่พบสถานะ'
     )
     const itemOptions = ref([
         {

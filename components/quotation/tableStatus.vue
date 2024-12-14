@@ -170,7 +170,6 @@ import { toastPluginSymbol } from '~/plugins/toast'
 import filterMenuQuotationState, {
     filterMenuQuotationStateSymbol,
 } from '@/components/quotation/filterMenu/state'
-import type { FilterQuotation } from '~/models/quotation/quotation'
 const { getStatusTitle, itemStatuses } = useShare()
 const { plates, lines, statuses, getMaxStatus } = useShare()
 const { formatDate } = useFormatDate()
