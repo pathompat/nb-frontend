@@ -4,7 +4,12 @@
             <div class="d-flex justify-start my-2">
                 <h1>เข้าสู่ระบบ</h1>
             </div>
-            <v-form ref="form" v-model="valid" class="d-flex flex-column ga-4">
+            <v-form
+                ref="form"
+                v-model="valid"
+                class="d-flex flex-column ga-4"
+                @submit.prevent="submit"
+            >
                 <div class="d-flex flex-column ga-4">
                     <v-text-field
                         v-model="userform.username"
@@ -34,7 +39,7 @@
                     :disabled="!valid"
                     :loading="loading"
                     variant="flat"
-                    @click="submit"
+                    type="submit"
                 >
                     เข้าสู่ระบบ
                 </v-btn>

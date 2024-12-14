@@ -62,6 +62,7 @@ export function productionPdf() {
                                     : undefined,
                             text: 'รายการวัตถุดิบ',
                             fontSize: 17,
+                            bold: true,
                             margin: [0, 20, 0, 0],
                         },
                         {
