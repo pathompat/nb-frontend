@@ -13,7 +13,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!token) {
         return navigateTo('/login')
     }
-    // return
     try {
         const user = await authStore.getProfile()
         if (!user) return navigateTo('/login')
