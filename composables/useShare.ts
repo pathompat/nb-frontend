@@ -93,6 +93,8 @@ export function useShare() {
         { id: STATUS.DESIGNING, color: '#B0BEC5' },
         { id: STATUS.BOOKBINDING, color: '#2196F3' },
         { id: STATUS.PACKING, color: '#9C27B0' },
+        { id: STATUS.TRANSPORTING, color: '#2A9D8F' },
+
         { id: STATUS.DONE, color: '#4CAF50' },
     ])
     const itemCategories = ref([
