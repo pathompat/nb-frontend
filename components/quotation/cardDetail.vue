@@ -409,7 +409,8 @@
                 <v-card-actions
                     v-if="
                         quotationForm.status != STATUS.APPROVED &&
-                        quotationForm.status != STATUS.CANCELED
+                        quotationForm.status != STATUS.CANCELED &&
+                        userProfile?.role === SYSTEM_ROLE.ADMIN
                     "
                 >
                     <v-spacer></v-spacer>
