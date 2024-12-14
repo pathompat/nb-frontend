@@ -36,11 +36,11 @@ export enum STATUS {
     CANCELED = 'CANCELED',
 }
 export enum PRINTSTATUS {
-    OUTBOUND = 1,
-    PRINT = 2,
-    SEWING = 3,
-    PACK = 4,
-    READY = 5,
+    DESIGNING = 1,
+    PRINTING = 2,
+    BOOKBINDING = 3,
+    PACKING = 4,
+    DONE = 5,
 }
 export enum HEADER {
     QUOTATION,

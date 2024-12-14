@@ -58,4 +58,5 @@ export interface FilterQuotation {
     school: string[]
     store: string[]
     status: string[]
+    type: string | null
 }

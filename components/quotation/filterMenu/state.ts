@@ -13,6 +13,7 @@ export default function filterMenuQuotationState() {
         school: [],
         store: [],
         status: [],
+        type: null,
     })
     const loading = ref(false)
     let callback: ((param: FilterQuotation) => void) | null = null

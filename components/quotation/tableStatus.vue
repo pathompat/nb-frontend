@@ -65,11 +65,29 @@
                             :style="{
                                 backgroundColor:
                                     statusColors.find(
-                                        (s) => s.id == item.status
+                                        (s) =>
+                                            s.id ==
+                                            (item.production == undefined
+                                                ? item.status
+                                                : getMaxStatus(
+                                                      item.production!.items.map(
+                                                          (x) => x.status
+                                                      )
+                                                  ))
                                     )?.color || 'gray',
                             }"
                         >
-                            {{ getStatusTitle(item.status) }}
+                            {{
+                                item.production == undefined
+                                    ? getStatusTitle(item.status)
+                                    : getStatusTitle(
+                                          getMaxStatus(
+                                              item.production!.items.map(
+                                                  (x) => x.status
+                                              )
+                                          )
+                                      )
+                            }}
                         </v-chip>
                     </td>
                     <td>
@@ -153,7 +171,7 @@ import filterMenuQuotationState, {
 } from '@/components/quotation/filterMenu/state'
 import type { FilterQuotation } from '~/models/quotation/quotation'
 const { getStatusTitle, statusColors } = useShare()
-const { plates, lines, statuses } = useShare()
+const { plates, lines, statuses, getMaxStatus } = useShare()
 const { formatDate } = useFormatDate()
 const stateFilter = filterMenuQuotationState()
 provide(filterMenuQuotationStateSymbol, stateFilter)
@@ -181,21 +199,16 @@ const { quotations } = storeToRefs(quotationStore)
 const filterQuotation = computed(() =>
     quotations.value.filter(
         (x) =>
-            filter.value.status.length === 0 ||
-            filter.value.status.includes(x.status)
+            // filter.value.status.length === 0 ||
+            stateFilter.filter.value.type == null ||
+            // filter.value.status.includes(x.status) ||
+            (stateFilter.filter.value.type == TYPE.QUOTATION &&
+                x.productionId == null) ||
+            (stateFilter.filter.value.type == TYPE.PRODUCTION &&
+                x.productionId != null)
     )
 )
-const filter = ref<FilterQuotation>({
-    store: [],
-    status: [],
-    school: [],
-})
-stateFilter.setCallback(async (param: FilterQuotation) => {
-    filter.value = param
-    // stateFilter.setCallback(async (param: FilterQuotation) => {
-    //     filter.value = param
-    // })
-})
+
 onMounted(async () => {
     loading.value = true
     try {
