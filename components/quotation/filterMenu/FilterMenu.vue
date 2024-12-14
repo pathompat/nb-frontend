@@ -63,6 +63,7 @@
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-select
+                                clearable
                                 :loading="loading"
                                 label="เลือกประเภท"
                                 :items="statuses"
