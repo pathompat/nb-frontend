@@ -8,7 +8,19 @@
             </div>
         </template>
         <v-card width="500" :loading="loading">
-            <v-card-title>กรองข้อมูลเพิ่มเติม</v-card-title>
+            <v-card-title class="d-flex justify-space-between align-center">
+                <div>กรองข้อมูลเพิ่มเติม</div>
+                <div>
+                    <v-btn
+                        icon
+                        variant="text"
+                        @click="dialogMenu = false"
+                        class="d-flex justify-center"
+                    >
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </div>
+            </v-card-title>
             <v-card-text class="d-flex flex-column ga-4">
                 <v-container>
                     <v-row dense>
@@ -19,8 +31,8 @@
                             <v-autocomplete
                                 multiple
                                 :loading="loading"
+                                :items="schoolList"
                                 label="เลือกโรงเรียน"
-                                :items="schools"
                                 v-model="filter.school"
                             ></v-autocomplete
                         ></v-col>
@@ -36,6 +48,7 @@
                         >
                             <v-autocomplete
                                 multiple
+                                :items="storeList"
                                 :loading="loading"
                                 label="เลือกร้านค้า"
                                 v-model="filter.store"
@@ -74,33 +87,19 @@
                     </v-row>
                 </v-container>
             </v-card-text>
-            <!-- <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="error" :loading="loading" variant="plain"
-                    >ล้างข้อมูล</v-btn
-                >
-                <v-btn
-                    color="primary"
-                    :loading="loading"
-                    variant="flat"
-                    @click="action"
-                    >ค้นหา</v-btn
-                >
-            </v-card-actions> -->
         </v-card>
     </v-menu>
 </template>
 <script setup lang="ts">
 import { filterMenuQuotationStateSymbol } from '~/components/quotation/filterMenu/state'
 import { SYSTEM_ROLE } from '~/models/enum/enum'
-const { action, filter, dialogMenu, loading } = inject(
+const { storeList, schoolList, filter, dialogMenu, loading } = inject(
     filterMenuQuotationStateSymbol
 )!
 const { itemStatuses, statuses } = useShare()
 const authStore = useAuthStore()
 const { userProfile } = storeToRefs(authStore)!
 const schoolStore = useSchoolStore()
-const { schools } = storeToRefs(schoolStore)
 onMounted(async () => {
     loading.value = true
     await schoolStore.fetchAllSchoolsWithCustomer(userProfile.value!.id)

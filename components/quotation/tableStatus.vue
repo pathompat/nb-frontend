@@ -199,13 +199,21 @@ const { quotations } = storeToRefs(quotationStore)
 const filterQuotation = computed(() =>
     quotations.value.filter(
         (x) =>
-            // filter.value.status.length === 0 ||
-            stateFilter.filter.value.type == null ||
-            // filter.value.status.includes(x.status) ||
+            (stateFilter.filter.value.type == null &&
+                stateFilter.filter.value.status.length === 0 &&
+                stateFilter.filter.value.school.length === 0 &&
+                stateFilter.filter.value.store.length === 0) ||
+            stateFilter.filter.value.status.some((s) =>
+                !x.productionId
+                    ? s == x.status
+                    : x.production!.items.some((y) => y.status == s)
+            ) ||
             (stateFilter.filter.value.type == TYPE.QUOTATION &&
                 x.productionId == null) ||
             (stateFilter.filter.value.type == TYPE.PRODUCTION &&
-                x.productionId != null)
+                x.productionId != null) ||
+            stateFilter.filter.value.school.includes(x.schoolName) ||
+            stateFilter.filter.value.store.includes(x.storeName)
     )
 )
 
@@ -213,6 +221,12 @@ onMounted(async () => {
     loading.value = true
     try {
         await fetchQuotations()
+        stateFilter.storeList.value = [
+            ...new Set(quotations.value.map((x) => x.storeName)),
+        ]
+        stateFilter.schoolList.value = [
+            ...new Set(quotations.value.map((x) => x.schoolName)),
+        ]
     } catch (error) {
         toast.error(`${error}`)
     }

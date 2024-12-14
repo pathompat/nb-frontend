@@ -9,6 +9,8 @@ export const filterMenuQuotationStateSymbol: InjectionKey<FilterMenuQuotationSta
     Symbol('$FilterMenuQuotationState')
 export default function filterMenuQuotationState() {
     const dialogMenu = ref(false)
+    const schoolList = ref<string[]>([])
+    const storeList = ref<string[]>([])
     const filter = ref<FilterQuotation>({
         school: [],
         store: [],
@@ -29,6 +31,8 @@ export default function filterMenuQuotationState() {
         dialogMenu,
         loading,
         filter,
+        schoolList,
+        storeList,
         action,
         setCallback(fn: (param: FilterQuotation) => void) {
             callback = fn

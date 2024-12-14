@@ -122,9 +122,7 @@
                                 <v-col cols="3">
                                     <v-text-field
                                         label="ที่อยู่ *"
-                                        :model-value="
-                                            quotationForm?.schoolAddress
-                                        "
+                                        v-model="quotationForm!.schoolAddress"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col>
@@ -132,9 +130,7 @@
                                     <v-text-field
                                         label="เบอร์ติดต่อ *"
                                         :rules="phoneNumberRule"
-                                        :model-value="
-                                            quotationForm?.schoolTelephone
-                                        "
+                                        v-model="quotationForm!.schoolTelephone"
                                         :hide-details="false"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
