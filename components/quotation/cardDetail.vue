@@ -253,7 +253,9 @@
                                         <td
                                             v-if="
                                                 quotationForm.status !=
-                                                STATUS.APPROVED
+                                                    STATUS.APPROVED &&
+                                                quotationForm.status !=
+                                                    STATUS.CANCELED
                                             "
                                         >
                                             <v-btn
@@ -264,7 +266,9 @@
                                                     (userProfile?.role ===
                                                         SYSTEM_ROLE.ADMIN &&
                                                         quotationForm.status !=
-                                                            STATUS.APPROVED)
+                                                            STATUS.APPROVED &&
+                                                        quotationForm.status !=
+                                                            STATUS.CANCELED)
                                                 "
                                                 color="primary"
                                                 @click="editItem(index)"
@@ -277,7 +281,9 @@
                                                 v-if="
                                                     !props.id &&
                                                     quotationForm.status !=
-                                                        STATUS.APPROVED
+                                                        STATUS.APPROVED &&
+                                                    quotationForm.status !=
+                                                        STATUS.CANCELED
                                                 "
                                                 color="error"
                                                 @click="deleteItem(index)"
@@ -356,7 +362,9 @@
                                                 userProfile?.role !==
                                                     SYSTEM_ROLE.ADMIN ||
                                                 quotationForm.status ==
-                                                    STATUS.APPROVED
+                                                    STATUS.APPROVED ||
+                                                quotationForm.status ==
+                                                    STATUS.CANCELED
                                             "
                                             v-model="discount"
                                             type="number"
@@ -391,14 +399,20 @@
                                 :hide-details="false"
                                 :disabled="
                                     props.id != undefined ||
-                                    quotationForm.status == STATUS.APPROVED
+                                    quotationForm.status == STATUS.APPROVED ||
+                                    quotationForm.status == STATUS.CANCELED
                                 "
                                 v-model="quotationForm.remark"
                             ></v-textarea>
                         </div>
                     </v-form>
                 </v-card-text>
-                <v-card-actions v-if="quotationForm.status != STATUS.APPROVED">
+                <v-card-actions
+                    v-if="
+                        quotationForm.status != STATUS.APPROVED &&
+                        quotationForm.status != STATUS.CANCELED
+                    "
+                >
                     <v-spacer></v-spacer>
 
                     <v-btn
@@ -508,7 +522,8 @@ const headerItems = computed(() => {
             ) &&
             !(
                 header.key == 'action' &&
-                quotationForm.value.status == STATUS.APPROVED
+                (quotationForm.value.status == STATUS.APPROVED ||
+                    quotationForm.value.status == STATUS.CANCELED)
             )
     )
 })
