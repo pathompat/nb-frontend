@@ -3,18 +3,27 @@ import { ITEM_OPTION } from '~/models/object/object'
 
 export function useShare() {
     const itemStatuses = ref([
-        { title: 'รออนุมัติ', value: STATUS.REVIEWING },
-        { title: 'อนุมัติแล้ว', value: STATUS.APPROVED },
-        { title: 'ยกเลิก', value: STATUS.CANCELED },
+        { order: 1, title: 'รออนุมัติ', value: STATUS.REVIEWING },
+        { order: 2, title: 'อนุมัติแล้ว', value: STATUS.APPROVED },
+        { order: 3, title: 'ยกเลิก', value: STATUS.CANCELED },
 
-        { title: 'ออกเเบบ', value: STATUS.DESIGNING },
-        { title: 'พิมพ์', value: STATUS.PRINTING },
-        { title: 'เย็บเข้าเล่ม', value: STATUS.BOOKBINDING },
-        { title: 'แพ็ค', value: STATUS.PACKING },
-        { title: 'พร้อมจัดส่ง', value: STATUS.TRANSPORTING },
+        { order: 4, title: 'ออกเเบบ', value: STATUS.DESIGNING },
+        { order: 5, title: 'พิมพ์', value: STATUS.PRINTING },
+        { order: 6, title: 'เย็บเข้าเล่ม', value: STATUS.BOOKBINDING },
+        { order: 7, title: 'แพ็ค', value: STATUS.PACKING },
+        { order: 8, title: 'พร้อมจัดส่ง', value: STATUS.TRANSPORTING },
 
-        { title: 'สำเร็จ', value: STATUS.DONE },
+        { order: 9, title: 'สำเร็จ', value: STATUS.DONE },
     ])
+
+    const getNextStatus = (text: string) => {
+        const currentitem = itemStatuses.value.find((x) => x.value === text)
+        if (!currentitem) return null
+        const nextItem = itemStatuses.value.find(
+            (x) => x.order === currentitem?.order + 1
+        )
+        return nextItem
+    }
 
     const getMaxStatus = (text: string[]) => {
         const result = text.map((item) => {
@@ -25,7 +34,6 @@ export function useShare() {
             }
         })
         if (result.length === 0) return 'ไม่ทราบสถานะ'
-        console.log(result)
         return result.sort((a, b) => b.value - a.value)[0].title
     }
     const statuses = ref([
@@ -302,6 +310,7 @@ export function useShare() {
         statuses,
         plates,
         getStatusTitle,
+        getNextStatus,
         quotationStatuses,
         itemOptions,
         itemCategories,

@@ -78,9 +78,6 @@
                     <div class="mt-4">
                         <div class="d-flex justify-space-between align-center">
                             <h2>รายการสินค้า</h2>
-                            <v-btn variant="text" icon color="primary">
-                                <v-icon>mdi-plus</v-icon>
-                            </v-btn>
                         </div>
                         <v-data-table
                             class="my-4"
@@ -93,6 +90,7 @@
                             </template>
                             <template #item.hasPlan="{ item }">
                                 <v-checkbox
+                                    disabled
                                     v-model="item.hasReference"
                                 ></v-checkbox>
                             </template>
@@ -123,21 +121,42 @@
                                 </v-chip></template
                             >
                             <template #item.action="{ item }">
-                                <v-btn
-                                    size="small"
-                                    variant="flat"
-                                    :color="
-                                        statusColors.find(
-                                            (s) => s.id === item.status + 1
-                                        )?.color || 'gray'
+                                <utils-return-data-slot
+                                    :data="
+                                        getNextStatus(
+                                            itemStatuses.find(
+                                                (x) => x.value == item.status
+                                            )?.value!
+                                        )
                                     "
                                 >
-                                    {{ getStatusTitle(item.status + 1) }}
-                                </v-btn>
+                                    <template #default="{ data }">
+                                        <v-btn
+                                            size="small"
+                                            variant="flat"
+                                            :color="
+                                                data == null
+                                                    ? 'gray'
+                                                    : statusColors.find(
+                                                          (s) =>
+                                                              s.id ===
+                                                              data.value
+                                                      )?.color || 'gray'
+                                            "
+                                        >
+                                            {{
+                                                getStatusTitle(
+                                                    data?.value || ''
+                                                )
+                                            }}
+                                        </v-btn>
+                                    </template>
+                                </utils-return-data-slot>
                             </template>
                         </v-data-table>
                         <v-textarea
                             label="หมายเหตุ"
+                            disabled
                             v-model="production.remark"
                         ></v-textarea>
                     </div>
@@ -150,10 +169,16 @@
 import { type Production } from '@/models/production/production'
 import { useProductionStore } from '@/stores/production'
 import { useShare } from '~/composables/useShare'
-const { lines, plates, getStatusTitle, statusColors } = useShare()
+const {
+    lines,
+    plates,
+    getStatusTitle,
+    statusColors,
+    itemStatuses,
+    getNextStatus,
+} = useShare()
 const { getProductionById } = useProductionStore()
 const loading = ref(false)
-const router = useRouter()
 function defaultForm(): Partial<Production> {
     return {
         schoolName: '',
