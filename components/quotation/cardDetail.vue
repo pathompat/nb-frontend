@@ -704,6 +704,9 @@ onMounted(async () => {
         await getQuotationById(props.id)
         quotationForm.value = {
             ...quotation.value,
+            schoolAddress: quotation.value.schoolAddress,
+            schoolTelephone: quotation.value.schoolTelephone,
+            schoolName: quotation.value.schoolName,
             appointmentAt: quotation.value.appointmentAt
                 ? new Date(quotation.value.appointmentAt)
                 : null,
