@@ -46,7 +46,7 @@ export function productionPdf() {
                                                 '/' +
                                                 item.pattern,
                                             item.options,
-                                            item.hasReference,
+                                            item.hasReference ? 'มี' : 'ไม่มี',
                                             item.quantity,
                                             item.price,
                                         ]

@@ -1,6 +1,6 @@
 <template>
     <UtilsBasePage
-        :title="`เอกสารใบเสนอราคา ${id.toString().padStart(5, '0')}`"
+        :title="`เอกสารใบเสนอราคา ${`${id}`.padStart(5, '0')}`"
         path="/"
     >
         <div class="d-flex ga-4 align-center pa-8">

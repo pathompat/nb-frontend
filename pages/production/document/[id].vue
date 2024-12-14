@@ -1,10 +1,15 @@
 <template>
-    <div class="d-flex ga-4 align-center">
-        <span> ดาวน์โหลดเอกสารไม่สำเร็จ ? </span>
-        <v-btn variant="flat" @click="pdf.download()"
-            >ลองดาวน์โหลดอีกครั้ง</v-btn
-        >
-    </div>
+    <UtilsBasePage
+        :title="`เอกสารใบสั่งผลิต ${`${id}`.padStart(5, '0')}`"
+        path="/"
+    >
+        <div class="d-flex ga-4 align-center">
+            <span> ดาวน์โหลดเอกสารไม่สำเร็จ ? </span>
+            <v-btn variant="flat" @click="pdf.download()"
+                >ลองดาวน์โหลดอีกครั้ง</v-btn
+            >
+        </div>
+    </UtilsBasePage>
 </template>
 <script setup lang="ts">
 import { productionPdf } from '~/pdfForm/productionForm'

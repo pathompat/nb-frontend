@@ -46,7 +46,7 @@ export function quotationPdf() {
                                                 '/' +
                                                 item.pattern,
                                             item.options,
-                                            item.hasReference,
+                                            item.hasReference ? 'มี' : 'ไม่มี',
                                             item.quantity,
                                             item.price,
                                         ]
@@ -76,7 +76,7 @@ export function quotationPdf() {
                 },
                 {
                     appointmentDate: '90',
-                    duedate: quotation.value.dueDateAt?.toString() || '',
+                    duedate: quotation.value.appointmentAt?.toString() || '',
                     quotationId: quotation.value.id.toString(),
                     schoolname: quotation.value.schoolName,
                     shopname: quotation.value.storeName,
