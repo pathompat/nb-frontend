@@ -61,6 +61,17 @@ export function useShare() {
         if (result.length === 0) return 'ไม่ทราบสถานะ'
         return result.sort((a, b) => b.value - a.value)[0].title
     }
+    const getMinStatus = (text: string[]) => {
+        const result = text.map((item) => {
+            const index = itemStatuses.value.findIndex((x) => x.value === item)
+            return {
+                title: item,
+                value: index,
+            }
+        })
+        if (result.length === 0) return 'ไม่ทราบสถานะ'
+        return result.sort((a, b) => a.value - b.value)[0].title
+    }
     const statuses = ref([
         { title: 'ใบเสนอราคา', value: TYPE.QUOTATION, color: '#C6E7FF' },
         { title: 'ใบสั่งผลิต', value: TYPE.PRODUCTION, color: '#D0E8C5' },
@@ -318,6 +329,7 @@ export function useShare() {
         lines,
         pages,
         getMaxStatus,
+        getMinStatus,
         statAndIconColor,
         grams,
         colors,
