@@ -409,8 +409,7 @@
                 <v-card-actions
                     v-if="
                         quotationForm.status != STATUS.APPROVED &&
-                        quotationForm.status != STATUS.CANCELED &&
-                        userProfile?.role === SYSTEM_ROLE.ADMIN
+                        quotationForm.status != STATUS.CANCELED
                     "
                 >
                     <v-spacer></v-spacer>
@@ -426,14 +425,18 @@
 
                     <v-btn
                         variant="flat"
-                        v-if="props.id"
+                        v-if="
+                            props.id && userProfile?.role === SYSTEM_ROLE.ADMIN
+                        "
                         @click="cancel"
                         color="error"
                         >ยกเลิก</v-btn
                     >
                     <v-btn
                         variant="flat"
-                        v-if="props.id"
+                        v-if="
+                            props.id && userProfile?.role === SYSTEM_ROLE.ADMIN
+                        "
                         @click="approve"
                         color="success"
                         >อนุมัติ</v-btn

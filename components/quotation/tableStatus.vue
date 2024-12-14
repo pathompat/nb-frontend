@@ -207,8 +207,17 @@ const quotationStore = useQuotationStore()
 const toast = inject(toastPluginSymbol)!
 const { fetchQuotations } = quotationStore
 const { quotations } = storeToRefs(quotationStore)
-const filterQuotation = computed(() =>
-    quotations.value.filter(
+const filterQuotation = computed(() => {
+    if (
+        stateFilter.filter.value.type == null &&
+        stateFilter.filter.value.status.length === 0 &&
+        stateFilter.filter.value.school.length === 0 &&
+        stateFilter.filter.value.store.length === 0
+    ) {
+        return quotations.value
+    }
+
+    let result = quotations.value.filter(
         (x) =>
             (stateFilter.filter.value.type == null &&
                 stateFilter.filter.value.status.length === 0 &&
@@ -226,7 +235,8 @@ const filterQuotation = computed(() =>
             stateFilter.filter.value.school.includes(x.schoolName) ||
             stateFilter.filter.value.store.includes(x.storeName)
     )
-)
+    return result
+})
 
 onMounted(async () => {
     loading.value = true
