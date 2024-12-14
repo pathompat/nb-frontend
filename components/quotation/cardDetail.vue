@@ -11,6 +11,7 @@
                 >
             </div>
         </div>
+
         <section class="py-8">
             <v-card :loading="loading">
                 <v-card-text>
@@ -122,7 +123,7 @@
                                 <v-col cols="3">
                                     <v-text-field
                                         label="ที่อยู่ *"
-                                        v-model="quotationForm!.schoolAddress"
+                                        v-model="quotationForm.schoolAddress"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col>
@@ -130,7 +131,7 @@
                                     <v-text-field
                                         label="เบอร์ติดต่อ *"
                                         :rules="phoneNumberRule"
-                                        v-model="quotationForm!.schoolTelephone"
+                                        v-model="quotationForm.schoolTelephone"
                                         :hide-details="false"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
@@ -535,6 +536,7 @@ const storeSelect = computed(() => {
 watch(
     () => quotationForm.value.schoolId,
     async (newValue) => {
+        if (quotationForm.value.status != undefined) return
         const school = schools.value.find((school) => school.id === newValue)!
         quotationForm.value.schoolAddress = school?.address
         quotationForm.value.schoolName = school?.name
@@ -736,6 +738,7 @@ onMounted(async () => {
                     quantity: x.quantity!,
                 }
             }),
+            status: quotation.value.status,
             schoolAddress: quotation.value.schoolAddress,
             schoolTelephone: quotation.value.schoolTelephone,
             schoolName: quotation.value.schoolName,
