@@ -138,7 +138,7 @@
                                             )?.color || 'gray',
                                     }"
                                 >
-                                    {{ getStatusTitle(item.status) }}
+                                    {{ getStatusTitle(item.status!) }}
                                 </v-chip>
                             </template>
                             <template #item.description="{ item }">

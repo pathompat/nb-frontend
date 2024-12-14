@@ -245,7 +245,7 @@
                                             <!-- {{ item.price / item.quantity }} -->
                                         </td>
                                         <td>
-                                            {{ item.price * item.quantity }}
+                                            {{ item.price! * item.quantity! }}
                                         </td>
                                         <td
                                             v-if="
@@ -381,7 +381,8 @@
                                             quotationForm.items.reduce(
                                                 (sum, item) =>
                                                     sum +
-                                                    item.price * item.quantity,
+                                                    item.price! *
+                                                        item.quantity!,
                                                 0
                                             ) - discount
                                         }}
@@ -455,7 +456,7 @@ import dialogItemQuotationState, {
 
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
-import type { QuotationForm } from '~/models/quotation/quotation'
+import type { QuotationForm, QuotationItem } from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
 const stateDialogCreateNewSchool = dialogSchoolState()
 const statedialogItemQuotation = dialogItemQuotationState()
@@ -581,8 +582,8 @@ async function create() {
                 page: item.page,
                 pattern: item.pattern,
                 hasReference: item.hasReference,
-                quantity: +item.quantity,
-                price: +item.price,
+                quantity: +item.quantity!,
+                price: +item.price!,
                 status: '',
                 options: item.options,
                 category: item.category,
@@ -590,8 +591,21 @@ async function create() {
         })
         const { id } = await createQuotation({
             ...quotationForm.value,
-            items,
-
+            items: items.map<QuotationItem>((x) => {
+                return {
+                    category: x.category!,
+                    color: x.color!,
+                    gram: x.gram!,
+                    hasReference: x.hasReference!,
+                    options: x.options || '',
+                    page: x.page!,
+                    pattern: x.pattern!,
+                    plate: x.plate!,
+                    status: '',
+                    quantity: +x.quantity!,
+                    price: +x.price!,
+                }
+            }),
             appointmentAt: quotationForm.value.appointmentAt
                 ? new Date(quotationForm.value.appointmentAt)
                 : null,
@@ -705,7 +719,23 @@ onMounted(async () => {
         if (!props.id) return
         await getQuotationById(props.id)
         quotationForm.value = {
-            ...quotation.value,
+            userId: quotation.value.userId,
+            schoolId: quotation.value.schoolId,
+            remark: quotation.value.remark,
+            items: quotation.value.items.map((x) => {
+                return {
+                    category: x.category,
+                    color: x.color,
+                    gram: x.gram,
+                    hasReference: x.hasReference,
+                    options: x.options,
+                    page: x.page,
+                    pattern: x.pattern,
+                    plate: x.plate,
+                    price: x.price!,
+                    quantity: x.quantity!,
+                }
+            }),
             schoolAddress: quotation.value.schoolAddress,
             schoolTelephone: quotation.value.schoolTelephone,
             schoolName: quotation.value.schoolName,
