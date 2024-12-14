@@ -251,14 +251,21 @@
                                         <td>
                                             {{ item.price * item.quantity }}
                                         </td>
-                                        <td>
+                                        <td
+                                            v-if="
+                                                quotationForm.status !=
+                                                STATUS.APPROVED
+                                            "
+                                        >
                                             <v-btn
                                                 variant="text"
                                                 icon
                                                 v-if="
                                                     !props.id ||
-                                                    userProfile?.role ===
-                                                        SYSTEM_ROLE.ADMIN
+                                                    (userProfile?.role ===
+                                                        SYSTEM_ROLE.ADMIN &&
+                                                        quotationForm.status !=
+                                                            STATUS.APPROVED)
                                                 "
                                                 color="primary"
                                                 @click="editItem(index)"
@@ -268,7 +275,11 @@
                                             <v-btn
                                                 variant="text"
                                                 icon
-                                                v-if="!props.id"
+                                                v-if="
+                                                    !props.id &&
+                                                    quotationForm.status !=
+                                                        STATUS.APPROVED
+                                                "
                                                 color="error"
                                                 @click="deleteItem(index)"
                                             >
@@ -344,7 +355,9 @@
                                         <v-text-field
                                             :disabled="
                                                 userProfile?.role !==
-                                                SYSTEM_ROLE.ADMIN
+                                                    SYSTEM_ROLE.ADMIN ||
+                                                quotationForm.status ==
+                                                    STATUS.APPROVED
                                             "
                                             v-model="discount"
                                             type="number"
@@ -377,13 +390,16 @@
                                 :rules="noEmojiOrEscapeCharacterRule"
                                 label="หมายเหตุ"
                                 :hide-details="false"
-                                :disabled="props.id != undefined"
+                                :disabled="
+                                    props.id != undefined ||
+                                    quotationForm.status == STATUS.APPROVED
+                                "
                                 v-model="quotationForm.remark"
                             ></v-textarea>
                         </div>
                     </v-form>
                 </v-card-text>
-                <v-card-actions>
+                <v-card-actions v-if="quotationForm.status != STATUS.APPROVED">
                     <v-spacer></v-spacer>
 
                     <v-btn
@@ -488,7 +504,13 @@ const headerItems = computed(() => {
     ]
     return headers.filter(
         (header) =>
-            !(header.key == 'plate' && userProfile?.role !== SYSTEM_ROLE.ADMIN)
+            !(
+                header.key == 'plate' && userProfile?.role !== SYSTEM_ROLE.ADMIN
+            ) &&
+            !(
+                header.key == 'action' &&
+                quotationForm.value.status == STATUS.APPROVED
+            )
     )
 })
 const toast = inject(toastPluginSymbol)!

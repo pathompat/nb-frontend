@@ -47,6 +47,7 @@
                         >
                             <template #default="{ data }">
                                 <v-chip
+                                    density="compact"
                                     :style="{ 'background-color': data!.color }"
                                 >
                                     {{ data!.title }}

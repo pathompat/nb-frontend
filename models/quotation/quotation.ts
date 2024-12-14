@@ -32,6 +32,7 @@ export interface CreateQuotation {
     appointmentAt: Date | null
     items: QuotationItem[]
     remark?: string
+    status?: string
 }
 export interface QuotationResultApi extends Quotation {
     production?: Production
