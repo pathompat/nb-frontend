@@ -1,5 +1,5 @@
 <template>
-    <UtilsBasePage path="/">
+    <UtilsBasePage :path="`/production/${param.id}`">
         <template #header>
             เอกสารใบสั่งผลิต {{ `${param.id}`.padStart(5, '0') }}
         </template>
@@ -15,6 +15,7 @@
 import { productionPdf } from '~/pdfForm/productionForm'
 import { toastPluginSymbol } from '~/plugins/toast'
 const route = useRoute()
+
 const param = computed(() => route.params)
 const pdf = productionPdf()
 const toast = inject(toastPluginSymbol)!

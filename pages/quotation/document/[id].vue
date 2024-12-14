@@ -1,5 +1,5 @@
 <template>
-    <UtilsBasePage path="/">
+    <UtilsBasePage :path="`/quotation/${param.id}`">
         <template #header>
             <h1>เอกสารใบเสนอราคา {{ `${param.id}`.padStart(5, '0') }}</h1>
         </template>

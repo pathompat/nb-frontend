@@ -717,7 +717,7 @@ onMounted(async () => {
     }
 })
 const props = defineProps<{
-    id?: number
+    id?: string
 }>()
 const emit = defineEmits<{
     (e: 'status', status: string): void
