@@ -54,3 +54,8 @@ export interface QuotationItem {
 export interface CreateQuotationItem extends Omit<QuotationItem, 'status'> {
     id?: string
 }
+export interface FilterQuotation {
+    school: string[]
+    store: string[]
+    status: string[]
+}

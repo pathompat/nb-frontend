@@ -1,55 +1,11 @@
 <template>
     <v-card :loading="loading">
         <v-card-title>
-            <v-menu :close-on-content-click="false">
-                <template v-slot:activator="{ props }">
-                    <div class="d-flex justify-end">
-                        <v-btn color="primary" v-bind="props" variant="flat">
-                            กรองข้อมูลเพิ่มเติม
-                        </v-btn>
-                    </div>
-                </template>
-                <v-card width="400">
-                    <v-card-title>กรองข้อมูลเพิ่มเติม</v-card-title>
-                    <v-card-text class="d-flex flex-column ga-4">
-                        <v-container>
-                            <v-row dense>
-                                <v-col class="d-flex align-center">
-                                    <v-label>โรงเรียน</v-label>
-                                </v-col>
-                                <v-col cols="9" class="d-flex align-center">
-                                    <v-select label="เลือกโรงเรียน"></v-select
-                                ></v-col>
-                            </v-row>
-                            <v-row dense>
-                                <v-col class="d-flex align-center">
-                                    <v-label>ร้านค้า</v-label></v-col
-                                >
-                                <v-col cols="9" class="d-flex align-center">
-                                    <v-select label="เลือกร้านค้า"></v-select
-                                ></v-col>
-                            </v-row>
-                            <v-row dense>
-                                <v-col class="d-flex align-center">
-                                    <v-label>เลือกสถานะ</v-label></v-col
-                                >
-                                <v-col cols="9" class="d-flex align-center">
-                                    <v-select label="เลือกสถานะ"></v-select
-                                ></v-col>
-                            </v-row>
-                        </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="error" variant="plain">ล้างข้อมูล</v-btn>
-                        <v-btn color="primary" variant="flat">ค้นหา</v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-menu>
+            <QuotationFilterMenu />
         </v-card-title>
         <v-data-table
             :loading="loading"
-            :items="quotations"
+            :items="filterQuotation"
             :expand-on-click="true"
             show-expand
             :headers="headers"
@@ -68,12 +24,35 @@
                         @click="toggleExpand(internalItem)"
                         class="cursor-pointer"
                     >
-                        <v-icon class="mr-4">{{
-                            isExpanded(internalItem)
-                                ? 'mdi-chevron-up'
-                                : 'mdi-chevron-down'
-                        }}</v-icon>
-                        <!-- {{ item.date }} -->
+                        <v-icon class="mr-4"
+                            >{{
+                                isExpanded(internalItem)
+                                    ? 'mdi-chevron-up'
+                                    : 'mdi-chevron-down'
+                            }}
+                        </v-icon>
+                        {{ formatDate(new Date(item.dueDateAt!)) }}
+                    </td>
+                    <td>
+                        <utils-return-data-slot
+                            :data="
+                                !item.productionId
+                                    ? statuses.find(
+                                          (x) => x.value == TYPE.QUOTATION
+                                      )
+                                    : statuses.find(
+                                          (x) => x.value == TYPE.PRODUCTION
+                                      )
+                            "
+                        >
+                            <template #default="{ data }">
+                                <v-chip
+                                    :style="{ 'background-color': data!.color }"
+                                >
+                                    {{ data!.title }}
+                                </v-chip>
+                            </template>
+                        </utils-return-data-slot>
                     </td>
                     <td>{{ item.schoolName }}</td>
                     <td>
@@ -105,11 +84,11 @@
                             >รายละเอียด</v-btn
                         >
                     </td>
+                    <td></td>
                 </tr>
             </template>
 
             <template #expanded-row="{ item }">
-                {{ item.production!.items }}
                 <tr>
                     <td colspan="12">
                         <v-data-table
@@ -167,11 +146,21 @@
     </v-card>
 </template>
 <script setup lang="ts">
+import { TYPE } from '~/models/enum/enum'
 import { toastPluginSymbol } from '~/plugins/toast'
+import filterMenuQuotationState, {
+    filterMenuQuotationStateSymbol,
+} from '@/components/quotation/filterMenu/state'
+import type { FilterQuotation } from '~/models/quotation/quotation'
 const { getStatusTitle, statusColors } = useShare()
-const { plates, lines } = useShare()
+const { plates, lines, statuses } = useShare()
+const { formatDate } = useFormatDate()
+const stateFilter = filterMenuQuotationState()
+provide(filterMenuQuotationStateSymbol, stateFilter)
 const headers = ref([
     { title: 'วันที่', key: 'dueDateAt' },
+    { title: 'ประเภท', key: 'type' },
+
     { title: 'โรงเรียน', key: 'schoolName' },
     { title: 'ร้านค้า', key: 'storeName' },
     { title: 'สถานะ', key: 'status' },
@@ -189,6 +178,24 @@ const quotationStore = useQuotationStore()
 const toast = inject(toastPluginSymbol)!
 const { fetchQuotations } = quotationStore
 const { quotations } = storeToRefs(quotationStore)
+const filterQuotation = computed(() =>
+    quotations.value.filter(
+        (x) =>
+            filter.value.status.length === 0 ||
+            filter.value.status.includes(x.status)
+    )
+)
+const filter = ref<FilterQuotation>({
+    store: [],
+    status: [],
+    school: [],
+})
+stateFilter.setCallback(async (param: FilterQuotation) => {
+    filter.value = param
+    // stateFilter.setCallback(async (param: FilterQuotation) => {
+    //     filter.value = param
+    // })
+})
 onMounted(async () => {
     loading.value = true
     try {

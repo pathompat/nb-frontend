@@ -60,9 +60,9 @@ export function productionPdf() {
                                 production.value!.items.length > 12
                                     ? 'before'
                                     : undefined,
-                            text: 'รายการสินค้า',
+                            text: 'รายการวัตถุดิบ',
                             fontSize: 17,
-                            margin: [0, 0, 0, 10], // เว้นระยะด้านล่าง
+                            margin: [0, 20, 0, 0],
                         },
                         {
                             table: {
@@ -75,14 +75,10 @@ export function productionPdf() {
                                         { text: 'จำนวน', bold: true },
                                         { text: 'หน่วย', bold: true },
                                     ],
-                                    ...Array(
-                                        production.value!.items.length > 12
-                                            ? 27
-                                            : 12
-                                    ).fill(['', '', '', '']),
+                                    ['', '', '', ''],
                                 ],
                             },
-                            layout: 'lightHorizontalLines', // ใช้เส้นแบ่งแบบบาง
+                            layout: 'lightHorizontalLines',
                         },
                     ],
                     styles: {
