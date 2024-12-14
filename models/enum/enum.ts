@@ -7,17 +7,7 @@ export enum PLATE {
     SMALL = 2,
     EXTRA = 3,
 }
-// export enum ITEM_STATUS {
-//     REVIEWING = 'REVIEWING',
-//     APPROVED = 'APPROVED',
-//     CANCELED = 'CANCELED',
-//     OUTBOUND = 'OUTBOUND',
-//     PRINT = 'PRINT',
-//     SEWING = 'SEWING',
-//     PACK = 'PACK',
-//     READY = 'READY',
-//     DONE = 'DONE',
-// }
+
 export enum TYPE {
     QUOTATION = 'QUOTATION',
     PRODUCTION = 'PRODUCTION',
