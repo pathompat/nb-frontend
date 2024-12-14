@@ -127,7 +127,11 @@
                                 >
                                     <template #default="{ data }">
                                         <v-btn
-                                            v-if="data != null"
+                                            v-if="
+                                                data != null &&
+                                                userProfile?.role ===
+                                                    SYSTEM_ROLE.ADMIN
+                                            "
                                             size="small"
                                             variant="flat"
                                             @click="
@@ -173,10 +177,12 @@ import {
 } from '@/models/production/production'
 import { useProductionStore } from '@/stores/production'
 import { useShare } from '~/composables/useShare'
-import { STATUS } from '~/models/enum/enum'
+import { STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
 import { toastPluginSymbol } from '~/plugins/toast'
 const { lines, plates, getStatusTitle, itemStatuses, getNextStatus } =
     useShare()
+const authStore = useAuthStore()
+const { userProfile } = storeToRefs(authStore)
 const toast = inject(toastPluginSymbol)!
 const { getProductionById, updateProductionItem } = useProductionStore()
 const loading = ref(false)
