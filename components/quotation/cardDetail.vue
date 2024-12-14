@@ -6,7 +6,6 @@
                     variant="flat"
                     v-if="props.id"
                     color="success"
-                    target="_blank"
                     :to="`/quotation/document/${props.id}`"
                     >ดาวน์โหลดเอกสาร</v-btn
                 >

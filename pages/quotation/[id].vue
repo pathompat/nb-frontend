@@ -1,10 +1,12 @@
 <template>
-    <UtilsBasePage
-        :title="`แบบฟอร์มเสนอราคา ${
-            id ? `#QT${id!.toString().padStart(5, '0')}` : ''
-        }`"
-        path="/"
-    >
+    <UtilsBasePage path="/">
+        <template #header>
+            <h1>
+                แบบฟอร์มเสนอราคา
+                {{ id ? `#QT${id!.toString().padStart(5, '0')}` : '' }}
+            </h1>
+            <!-- <v-chip></v-chip> -->
+        </template>
         <CardDetail :id="+id" />
     </UtilsBasePage>
 </template>
