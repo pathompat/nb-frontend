@@ -37,15 +37,11 @@
                             ></v-autocomplete
                         ></v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row dense v-if="userProfile.role == SYSTEM_ROLE.ADMIN">
                         <v-col class="d-flex align-center">
                             <v-label>ร้านค้า</v-label></v-col
                         >
-                        <v-col
-                            cols="9"
-                            class="d-flex align-center"
-                            v-if="userProfile.role == SYSTEM_ROLE.ADMIN"
-                        >
+                        <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
                                 multiple
                                 :items="storeList"
