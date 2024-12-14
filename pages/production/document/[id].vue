@@ -1,9 +1,9 @@
 <template>
-    <UtilsBasePage :path="`/production/${param.id}`">
+    <UtilsBasePage :path="`/production/${id}`">
         <template #header>
-            เอกสารใบสั่งผลิต {{ `${param.id}`.padStart(5, '0') }}
+            <h1>เอกสารใบสั่งผลิต {{ `${id}`.padStart(5, '0') }}</h1>
         </template>
-        <div class="d-flex ga-4 align-center">
+        <div class="d-flex ga-4 align-center pa-8">
             <span> ดาวน์โหลดเอกสารไม่สำเร็จ ? </span>
             <v-btn variant="flat" @click="pdf.download()"
                 >ลองดาวน์โหลดอีกครั้ง</v-btn
@@ -15,15 +15,15 @@
 import { productionPdf } from '~/pdfForm/productionForm'
 import { toastPluginSymbol } from '~/plugins/toast'
 const route = useRoute()
-
-const param = computed(() => route.params)
+const id = ref('')
 const pdf = productionPdf()
 const toast = inject(toastPluginSymbol)!
 
 onMounted(async () => {
     nextTick(() => {
         try {
-            pdf.setItem(param.value.id as string)
+            id.value = route.params.id as string
+            pdf.setItem(id.value as string)
             pdf.download()
         } catch (error) {
             toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
