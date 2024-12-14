@@ -1,12 +1,7 @@
 <template>
     <main>
         <div class="d-flex justify-space-between mx-8">
-            <h1>
-                แบบฟอร์มสั่งผลิต
-                {{
-                    props.id ? `#PR${props.id.toString().padStart(5, '0')}` : ''
-                }}
-            </h1>
+            <v-spacer></v-spacer>
             <div class="d-flex ga-2">
                 <v-btn
                     variant="flat"
@@ -220,11 +215,14 @@ async function updateStatus(
 ) {
     loading.value = true
     try {
+        const oldStatus = item.status
         const res = await updateProductionItem(productionId, item.id!, {
             status: status,
         })
         item.status = res.status
-        toast.success('อัพเดทสถานะสำเร็จ')
+        toast.success(
+            `อัพเดทสถานะสำเร็จ จาก ${itemStatuses.value.find((x) => x.value == oldStatus)?.title} เป็น ${itemStatuses.value.find((x) => x.value == res.status)?.title}`
+        )
     } catch (error) {
         toast.success(`อัพเดทสถานะไม่สำเร็จ ${error}`)
     }
