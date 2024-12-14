@@ -39,7 +39,7 @@ export interface QuotationResultApi extends Quotation {
     productionId: string | null
 }
 export interface QuotationItem {
-    id?: string
+    id?: String
     category: string
     options: string
     hasReference: boolean
@@ -52,7 +52,8 @@ export interface QuotationItem {
     pattern: string
     page: number
 }
-export interface CreateQuotationItem extends Omit<QuotationItem, 'status'> {
+export interface CreateQuotationItem
+    extends Omit<Partial<QuotationItem>, 'status'> {
     id?: string
 }
 export interface FilterQuotation {

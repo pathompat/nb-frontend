@@ -50,9 +50,15 @@ export function useRules() {
                 return 'กรุณากรอกข้อมูล'
             }
             const thaiPhoneRegex = /^(06|08|09)\d{8}$/
+            const zeroPhoneRegex = /^(02)\d{7}$/
             if (!value.trim()) {
                 return 'กรุณากรอกเบอร์มือถือ'
-            } else if (!thaiPhoneRegex.test(value.trim())) {
+            } else if (
+                !(
+                    thaiPhoneRegex.test(value.trim()) ||
+                    zeroPhoneRegex.test(value.trim())
+                )
+            ) {
                 return 'กรุณากรอกเบอร์มือถือที่ถูกต้อง (เช่น 08xxxxxxxx)'
             }
             return true
@@ -62,7 +68,8 @@ export function useRules() {
     const noEmojiOrEscapeCharacterRule = [
         (v: string) => v != null || 'กรุณากรอกข้อมูล',
         (v: string) =>
-            !/[^\x00-\x7F]/.test(v?.trim() || '') || 'ไม่สามารถใช้ emoji ได้',
+            !/[\uD83C-\uDBFF\uDC00-\uDFFF]+/.test(v?.trim() || '') ||
+            'ไม่สามารถใช้ emoji ได้',
         (v: string) =>
             !/[\\]/.test(v?.trim() || '') ||
             'ไม่สามารถใช้ escape character \\ ได้',

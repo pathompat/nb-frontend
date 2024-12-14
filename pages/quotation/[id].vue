@@ -19,7 +19,7 @@
                 </template>
             </UtilsReturnDataSlot>
         </template>
-        <CardDetail :id="+id" @status="(e) => (status = e)" />
+        <CardDetail :id="id" @status="(e) => (status = e)" />
     </UtilsBasePage>
 </template>
 <script setup lang="ts">

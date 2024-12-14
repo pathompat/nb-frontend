@@ -18,17 +18,17 @@ export default function dialogItemQuotationState() {
     }
     function defaultQuotationItem(): CreateQuotationItem {
         return {
-            id: '',
-            category: '',
-            options: '',
-            plate: '',
-            gram: 0,
-            color: '',
-            page: 0,
-            pattern: '',
+            id: undefined,
+            category: undefined,
+            options: undefined,
+            plate: undefined,
+            gram: undefined,
+            color: undefined,
+            page: undefined,
+            pattern: undefined,
             hasReference: false,
-            quantity: 0,
-            price: 0,
+            quantity: undefined,
+            price: undefined,
         }
     }
     const openDialog = async (id?: string): Promise<CreateQuotationItem> => {
@@ -51,7 +51,6 @@ export default function dialogItemQuotationState() {
         setItemAndOpen(item: CreateQuotationItem) {
             loading.value = false
             quotationItem.value = item
-            handlerByItemPriceRef(quotationItem.value, prices.value)
             dialogOpen.value = true
             return new Promise<CreateQuotationItem>((resolve) => {
                 resolveFn = resolve

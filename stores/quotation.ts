@@ -60,7 +60,7 @@ export const useQuotationStore = defineStore('quotation', () => {
         }
     }
 
-    const getQuotationById = async (id: number) => {
+    const getQuotationById = async (id: string) => {
         try {
             const response = await getRequest<ApiResult<QuotationResultApi>>(
                 `${controller}/${id}`

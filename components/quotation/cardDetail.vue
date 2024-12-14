@@ -11,6 +11,7 @@
                 >
             </div>
         </div>
+
         <section class="py-8">
             <v-card :loading="loading">
                 <v-card-text>
@@ -122,9 +123,7 @@
                                 <v-col cols="3">
                                     <v-text-field
                                         label="ที่อยู่ *"
-                                        :model-value="
-                                            quotationForm?.schoolAddress
-                                        "
+                                        v-model="quotationForm.schoolAddress"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col>
@@ -132,9 +131,7 @@
                                     <v-text-field
                                         label="เบอร์ติดต่อ *"
                                         :rules="phoneNumberRule"
-                                        :model-value="
-                                            quotationForm?.schoolTelephone
-                                        "
+                                        v-model="quotationForm.schoolTelephone"
                                         :hide-details="false"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
@@ -249,7 +246,7 @@
                                             <!-- {{ item.price / item.quantity }} -->
                                         </td>
                                         <td>
-                                            {{ item.price * item.quantity }}
+                                            {{ item.price! * item.quantity! }}
                                         </td>
                                         <td
                                             v-if="
@@ -385,7 +382,8 @@
                                             quotationForm.items.reduce(
                                                 (sum, item) =>
                                                     sum +
-                                                    item.price * item.quantity,
+                                                    item.price! *
+                                                        item.quantity!,
                                                 0
                                             ) - discount
                                         }}
@@ -411,7 +409,8 @@
                 <v-card-actions
                     v-if="
                         quotationForm.status != STATUS.APPROVED &&
-                        quotationForm.status != STATUS.CANCELED
+                        quotationForm.status != STATUS.CANCELED &&
+                        userProfile?.role === SYSTEM_ROLE.ADMIN
                     "
                 >
                     <v-spacer></v-spacer>
@@ -459,7 +458,7 @@ import dialogItemQuotationState, {
 
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
-import type { QuotationForm } from '~/models/quotation/quotation'
+import type { QuotationForm, QuotationItem } from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
 const stateDialogCreateNewSchool = dialogSchoolState()
 const statedialogItemQuotation = dialogItemQuotationState()
@@ -538,6 +537,7 @@ const storeSelect = computed(() => {
 watch(
     () => quotationForm.value.schoolId,
     async (newValue) => {
+        if (quotationForm.value.status != undefined) return
         const school = schools.value.find((school) => school.id === newValue)!
         quotationForm.value.schoolAddress = school?.address
         quotationForm.value.schoolName = school?.name
@@ -585,8 +585,8 @@ async function create() {
                 page: item.page,
                 pattern: item.pattern,
                 hasReference: item.hasReference,
-                quantity: +item.quantity,
-                price: +item.price,
+                quantity: +item.quantity!,
+                price: +item.price!,
                 status: '',
                 options: item.options,
                 category: item.category,
@@ -594,8 +594,22 @@ async function create() {
         })
         const { id } = await createQuotation({
             ...quotationForm.value,
-            items,
-
+            items: items.map<QuotationItem>((x) => {
+                return {
+                    category: x.category!,
+                    color: x.color!,
+                    gram: x.gram!,
+                    hasReference: x.hasReference!,
+                    options: x.options || '',
+                    page: x.page!,
+                    pattern: x.pattern!,
+                    plate: x.plate!,
+                    status: '',
+                    quantity: +x.quantity!,
+                    price: +x.price!,
+                }
+            }),
+            schoolTelephone: quotationForm.value.schoolTelephone.trim(),
             appointmentAt: quotationForm.value.appointmentAt
                 ? new Date(quotationForm.value.appointmentAt)
                 : null,
@@ -613,7 +627,6 @@ async function create() {
 async function createNewSchool() {
     try {
         const newSchool = await stateDialogCreateNewSchool.openDialog()
-        console.log(newSchool)
         await schoolStore.createSchool(quotationForm.value.userId, newSchool)
         stateDialogCreateNewSchool.closeDialog()
         toast.success('เพิ่มโรงเรียนสำเร็จ')
@@ -626,6 +639,7 @@ async function createNewSchool() {
 async function addItem() {
     try {
         const newItems = await statedialogItemQuotation.openDialog()
+        newItems.id = undefined
         statedialogItemQuotation.closeDialog()
         quotationForm.value.items.push(newItems)
     } catch (e) {
@@ -638,8 +652,12 @@ async function editItem(index: number) {
             JSON.parse(JSON.stringify(quotationForm.value.items[index]))
         )
         statedialogItemQuotation.closeDialog()
+
         if (editItem) {
             quotationForm.value.items[index] = editItem
+            if (editItem.id == undefined) {
+                return
+            }
             await quotationStore.updateQuotationItem(
                 `${quotation.value.id}`,
                 editItem.id!,
@@ -703,7 +721,27 @@ onMounted(async () => {
         if (!props.id) return
         await getQuotationById(props.id)
         quotationForm.value = {
-            ...quotation.value,
+            userId: quotation.value.userId,
+            schoolId: quotation.value.schoolId,
+            remark: quotation.value.remark,
+            items: quotation.value.items.map((x) => {
+                return {
+                    category: x.category,
+                    color: x.color,
+                    gram: x.gram,
+                    hasReference: x.hasReference,
+                    options: x.options,
+                    page: x.page,
+                    pattern: x.pattern,
+                    plate: x.plate,
+                    price: x.price!,
+                    quantity: x.quantity!,
+                }
+            }),
+            status: quotation.value.status,
+            schoolAddress: quotation.value.schoolAddress,
+            schoolTelephone: quotation.value.schoolTelephone,
+            schoolName: quotation.value.schoolName,
             appointmentAt: quotation.value.appointmentAt
                 ? new Date(quotation.value.appointmentAt)
                 : null,
@@ -717,7 +755,7 @@ onMounted(async () => {
     }
 })
 const props = defineProps<{
-    id?: number
+    id?: string
 }>()
 const emit = defineEmits<{
     (e: 'status', status: string): void

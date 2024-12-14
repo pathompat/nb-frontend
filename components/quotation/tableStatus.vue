@@ -138,7 +138,7 @@
                                             )?.color || 'gray',
                                     }"
                                 >
-                                    {{ getStatusTitle(item.status) }}
+                                    {{ getStatusTitle(item.status!) }}
                                 </v-chip>
                             </template>
                             <template #item.description="{ item }">
@@ -165,7 +165,7 @@
     </v-card>
 </template>
 <script setup lang="ts">
-import { TYPE } from '~/models/enum/enum'
+import { SYSTEM_ROLE, TYPE } from '~/models/enum/enum'
 import { toastPluginSymbol } from '~/plugins/toast'
 import filterMenuQuotationState, {
     filterMenuQuotationStateSymbol,
@@ -174,16 +174,27 @@ const { getStatusTitle, itemStatuses } = useShare()
 const { plates, lines, statuses, getMaxStatus } = useShare()
 const { formatDate } = useFormatDate()
 const stateFilter = filterMenuQuotationState()
+const authStore = useAuthStore()
+const { userProfile } = storeToRefs(authStore)
 provide(filterMenuQuotationStateSymbol, stateFilter)
-const headers = ref([
-    { title: 'วันที่', key: 'dueDateAt' },
-    { title: 'ประเภท', key: 'type' },
+const headers = computed(() => {
+    const headers = [
+        { title: 'วันที่', key: 'dueDateAt' },
+        { title: 'ประเภท', key: 'type' },
 
-    { title: 'โรงเรียน', key: 'schoolName' },
-    { title: 'ร้านค้า', key: 'storeName' },
-    { title: 'สถานะ', key: 'status' },
-    { title: '#', key: 'action' },
-])
+        { title: 'โรงเรียน', key: 'schoolName' },
+        { title: 'ร้านค้า', key: 'storeName' },
+        { title: 'สถานะ', key: 'status' },
+        { title: '#', key: 'action' },
+    ]
+    return headers.filter(
+        (x) =>
+            !(
+                userProfile.value!.role == SYSTEM_ROLE.CUSTOMER &&
+                x.key == 'storeName'
+            )
+    )
+})
 const headerExpanded = ref([
     { title: 'No.', value: 'index' },
     { title: 'เพรท/แกรม/สี/แผ่น/เส้น', value: 'description' },
@@ -199,13 +210,21 @@ const { quotations } = storeToRefs(quotationStore)
 const filterQuotation = computed(() =>
     quotations.value.filter(
         (x) =>
-            // filter.value.status.length === 0 ||
-            stateFilter.filter.value.type == null ||
-            // filter.value.status.includes(x.status) ||
+            (stateFilter.filter.value.type == null &&
+                stateFilter.filter.value.status.length === 0 &&
+                stateFilter.filter.value.school.length === 0 &&
+                stateFilter.filter.value.store.length === 0) ||
+            stateFilter.filter.value.status.some((s) =>
+                !x.productionId
+                    ? s == x.status
+                    : x.production!.items.some((y) => y.status == s)
+            ) ||
             (stateFilter.filter.value.type == TYPE.QUOTATION &&
                 x.productionId == null) ||
             (stateFilter.filter.value.type == TYPE.PRODUCTION &&
-                x.productionId != null)
+                x.productionId != null) ||
+            stateFilter.filter.value.school.includes(x.schoolName) ||
+            stateFilter.filter.value.store.includes(x.storeName)
     )
 )
 
@@ -213,6 +232,12 @@ onMounted(async () => {
     loading.value = true
     try {
         await fetchQuotations()
+        stateFilter.storeList.value = [
+            ...new Set(quotations.value.map((x) => x.storeName)),
+        ]
+        stateFilter.schoolList.value = [
+            ...new Set(quotations.value.map((x) => x.schoolName)),
+        ]
     } catch (error) {
         toast.error(`${error}`)
     }
