@@ -132,8 +132,16 @@
                                 >
                                     <template #default="{ data }">
                                         <v-btn
+                                            v-if="data != null"
                                             size="small"
                                             variant="flat"
+                                            @click="
+                                                updateStatus(
+                                                    `${production.id}`,
+                                                    item,
+                                                    data.value!
+                                                )
+                                            "
                                             :color="
                                                 data == null
                                                     ? 'gray'
@@ -145,9 +153,7 @@
                                             "
                                         >
                                             {{
-                                                getStatusTitle(
-                                                    data?.value || ''
-                                                )
+                                                getStatusTitle(data.value || '')
                                             }}
                                         </v-btn>
                                     </template>
@@ -166,9 +172,14 @@
     </main>
 </template>
 <script setup lang="ts">
-import { type Production } from '@/models/production/production'
+import {
+    type Production,
+    type ProductionItem,
+} from '@/models/production/production'
 import { useProductionStore } from '@/stores/production'
 import { useShare } from '~/composables/useShare'
+import { STATUS } from '~/models/enum/enum'
+import { toastPluginSymbol } from '~/plugins/toast'
 const {
     lines,
     plates,
@@ -177,7 +188,8 @@ const {
     itemStatuses,
     getNextStatus,
 } = useShare()
-const { getProductionById } = useProductionStore()
+const toast = inject(toastPluginSymbol)!
+const { getProductionById, updateProductionItem } = useProductionStore()
 const loading = ref(false)
 function defaultForm(): Partial<Production> {
     return {
@@ -201,6 +213,24 @@ const headers = ref([
     { title: 'สถานะ', key: 'status' },
     { title: 'อัพเดท', key: 'action' },
 ])
+async function updateStatus(
+    productionId: string,
+    item: ProductionItem,
+    status: STATUS
+) {
+    loading.value = true
+    try {
+        const res = await updateProductionItem(productionId, item.id!, {
+            status: status,
+        })
+        item.status = res.status
+        toast.success('อัพเดทสถานะสำเร็จ')
+    } catch (error) {
+        toast.success(`อัพเดทสถานะไม่สำเร็จ ${error}`)
+    }
+
+    loading.value = false
+}
 onMounted(async () => {
     defaultForm()
     if (props.id) {

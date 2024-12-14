@@ -1,42 +1,58 @@
 import useBaseApi from '~/composables/useBaseApi'
 import type { ApiResult } from '~/models/api/api'
-import type { Production } from '~/models/production/production'
+import type { Production, ProductionItem } from '~/models/production/production'
 
 export const useProductionStore = defineStore('production', () => {
     const productions = ref<Production[]>([])
     const production = ref<Production | null>(null)
+    const controller = 'production'
+    const { getRequest, putRequest, postRequest } = useBaseApi()
     async function fetchAllProductions() {
-        const { getRequest } = useBaseApi()
         try {
-            const response = await getRequest<Production[]>('production')
+            const response = await getRequest<Production[]>(controller)
             productions.value = response
         } catch (error) {
             throw error
         }
     }
     async function createProduction(production: Production) {
-        const { postRequest } = useBaseApi()
         try {
-            const response = await postRequest<Production>(
-                'production',
+            const response = await postRequest<ApiResult<Production>>(
+                controller,
                 production
             )
-            productions.value.push(response)
+            productions.value.push(response.data)
         } catch (error) {
             throw error
         }
     }
     async function getProductionById(id: string) {
-        const { getRequest } = useBaseApi()
         try {
             production.value = (
-                await getRequest<ApiResult<Production>>(`production/${id}`)
+                await getRequest<ApiResult<Production>>(`${controller}/${id}`)
             ).data
             return production.value
         } catch (error) {
             throw error
         }
     }
+
+    const updateProductionItem = async (
+        productionId: string,
+        id: string,
+        item: Partial<ProductionItem>
+    ) => {
+        try {
+            const response = await putRequest<ApiResult<ProductionItem>>(
+                `${controller}/${productionId}/item/${id}`,
+                item
+            )
+            return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
     async function updateProduction(production: Production) {
         const index = productions.value.findIndex((p) => p.id === production.id)
         if (index !== -1) {
@@ -49,6 +65,7 @@ export const useProductionStore = defineStore('production', () => {
         fetchAllProductions,
         createProduction,
         getProductionById,
+        updateProductionItem,
         updateProduction,
     }
 })
