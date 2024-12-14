@@ -622,6 +622,7 @@ async function createNewSchool() {
 async function addItem() {
     try {
         const newItems = await statedialogItemQuotation.openDialog()
+        newItems.id = undefined
         statedialogItemQuotation.closeDialog()
         quotationForm.value.items.push(newItems)
     } catch (e) {
@@ -634,8 +635,13 @@ async function editItem(index: number) {
             JSON.parse(JSON.stringify(quotationForm.value.items[index]))
         )
         statedialogItemQuotation.closeDialog()
+        console.log(editItem)
+
         if (editItem) {
             quotationForm.value.items[index] = editItem
+            if (editItem.id == undefined) {
+                return
+            }
             await quotationStore.updateQuotationItem(
                 `${quotation.value.id}`,
                 editItem.id!,
