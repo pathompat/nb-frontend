@@ -1,7 +1,9 @@
 <template>
-    <UtilsBasePage :path="`/quotation/${id}`">
+    <UtilsBasePage :path="`/quotation/${route.params.id}`">
         <template #header>
-            <h1>เอกสารใบเสนอราคา {{ `${id}`.padStart(5, '0') }}</h1>
+            <h1>
+                เอกสารใบเสนอราคา {{ `${route.params.id}`.padStart(5, '0') }}
+            </h1>
         </template>
         <div class="d-flex ga-4 align-center pa-8">
             <span> ดาวน์โหลดเอกสารไม่สำเร็จ ? </span>
