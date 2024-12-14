@@ -418,7 +418,7 @@
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
-import { STAT_STATUS, STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
+import { STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -633,7 +633,7 @@ async function approve() {
             `${quotation.value.id!}`,
             {
                 ...quotation.value,
-                status: STAT_STATUS.APPROVED,
+                status: STATUS.APPROVED,
             }
         )
         toast.success('อนุมัติสำเร็จ')
@@ -646,7 +646,7 @@ async function cancel() {
     try {
         await quotationStore.updateQuotation(`${quotation.value.id!}`, {
             ...quotation.value,
-            status: STAT_STATUS.CANCELED,
+            status: STATUS.CANCELED,
         })
         toast.success('ยกเลิกสำเร็จ')
         router.push(`/`)

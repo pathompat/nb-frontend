@@ -7,28 +7,28 @@ export enum PLATE {
     SMALL = 2,
     EXTRA = 3,
 }
-export enum ITEM_STATUS {
-    REVIEWING = 'REVIEWING',
-    APPROVED = 'APPROVED',
-    CANCELED = 'CANCELED',
-    OUTBOUND = 'OUTBOUND',
-    PRINT = 'PRINT',
-    SEWING = 'SEWING',
-    PACK = 'PACK',
-    READY = 'READY',
-    DONE = 'DONE',
-}
-export enum STATUS {
+// export enum ITEM_STATUS {
+//     REVIEWING = 'REVIEWING',
+//     APPROVED = 'APPROVED',
+//     CANCELED = 'CANCELED',
+//     OUTBOUND = 'OUTBOUND',
+//     PRINT = 'PRINT',
+//     SEWING = 'SEWING',
+//     PACK = 'PACK',
+//     READY = 'READY',
+//     DONE = 'DONE',
+// }
+export enum TYPE {
     QUOTATION = 'QUOTATION',
     PRODUCTION = 'PRODUCTION',
 }
 
-export enum STAT_STATUS {
+export enum STATUS {
     PRINTING = 'PRINTING',
     DESIGNING = 'DESIGNING',
     BOOKBINDING = 'BOOKBINDING',
-    SHIPING = 'SHIPING',
-    PACK = 'PACK',
+    TRANSPORTING = 'TRANSPORTING ',
+    PACKING = 'PACKING ',
 
     APPROVED = 'APPROVED',
     REVIEWING = 'REVIEWING',

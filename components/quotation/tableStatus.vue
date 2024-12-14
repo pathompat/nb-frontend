@@ -109,15 +109,23 @@
             </template>
 
             <template #expanded-row="{ item }">
+                {{ item.production!.items }}
                 <tr>
                     <td colspan="12">
                         <v-data-table
                             hide-default-footer
                             :items="
-                                item.items.map((item, index) => ({
-                                    ...item,
-                                    index: index + 1,
-                                }))
+                                !item.productionId
+                                    ? item.items.map((item, index) => ({
+                                          ...item,
+                                          index: index + 1,
+                                      }))
+                                    : item.production!.items.map(
+                                          (item, index) => ({
+                                              ...item,
+                                              index: index + 1,
+                                          })
+                                      )
                             "
                             :headers="headerExpanded"
                         >
