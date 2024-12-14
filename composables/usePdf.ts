@@ -59,7 +59,6 @@ export function usePdf() {
 
                 window.open(pdfUrl, '_blank')
             } catch (ex) {
-                console.log(ex)
                 throw ex
             }
         },

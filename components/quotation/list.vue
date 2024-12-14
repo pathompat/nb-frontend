@@ -67,6 +67,5 @@ const { quotationStat } = storeToRefs(quotationStore)
 const { statAndIconColor, statuses } = useShare()
 onMounted(async () => {
     await quotationStore.fetchQuotationsState()
-    console.log(quotationStat.value)
 })
 </script>

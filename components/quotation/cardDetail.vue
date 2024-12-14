@@ -625,7 +625,6 @@ async function create() {
 async function createNewSchool() {
     try {
         const newSchool = await stateDialogCreateNewSchool.openDialog()
-        console.log(newSchool)
         await schoolStore.createSchool(quotationForm.value.userId, newSchool)
         stateDialogCreateNewSchool.closeDialog()
         toast.success('เพิ่มโรงเรียนสำเร็จ')
@@ -651,7 +650,6 @@ async function editItem(index: number) {
             JSON.parse(JSON.stringify(quotationForm.value.items[index]))
         )
         statedialogItemQuotation.closeDialog()
-        console.log(editItem)
 
         if (editItem) {
             quotationForm.value.items[index] = editItem

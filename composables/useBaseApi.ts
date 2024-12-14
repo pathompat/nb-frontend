@@ -26,7 +26,6 @@ export default function useBaseApi() {
             const data = await result.json()
             return data as T
         } catch (error) {
-            console.log(error)
             throw error
         }
     }

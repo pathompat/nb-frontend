@@ -105,7 +105,6 @@ async function onCreate() {
     try {
         const user = await modal.value?.openDialog()
         const res = await createUser(user)
-        console.log(res)
         modal.value?.closeDialog()
         toast.success('สร้างสำเร็จ')
         await init()

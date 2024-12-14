@@ -83,8 +83,4 @@ const items = ref<MenuItem[]>([
         role: [SYSTEM_ROLE.ADMIN],
     },
 ])
-onMounted(async () => {
-    // await refresh()
-    console.log(userProfile?.role)
-})
 </script>
