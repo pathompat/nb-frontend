@@ -1,7 +1,7 @@
 <template>
     <UtilsBasePage path="/">
         <template #header>
-            เอกสารใบสั่งผลิต {{ `${id}`.padStart(5, '0') }}
+            เอกสารใบสั่งผลิต {{ `${param.id}`.padStart(5, '0') }}
         </template>
         <div class="d-flex ga-4 align-center">
             <span> ดาวน์โหลดเอกสารไม่สำเร็จ ? </span>
@@ -15,16 +15,18 @@
 import { productionPdf } from '~/pdfForm/productionForm'
 import { toastPluginSymbol } from '~/plugins/toast'
 const route = useRoute()
-const { id } = route.params
+const param = computed(() => route.params)
 const pdf = productionPdf()
 const toast = inject(toastPluginSymbol)!
 
 onMounted(async () => {
-    try {
-        await pdf.setItem(id as string)
-        await pdf.download()
-    } catch (error) {
-        toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
-    }
+    nextTick(() => {
+        try {
+            pdf.setItem(param.value.id as string)
+            pdf.download()
+        } catch (error) {
+            toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
+        }
+    })
 })
 </script>

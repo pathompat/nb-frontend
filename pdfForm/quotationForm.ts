@@ -6,7 +6,7 @@ export function quotationPdf() {
     return {
         async setItem(id: string) {
             try {
-                await quotationStore.getQuotationById(+id)
+                await quotationStore.getQuotationById(id)
             } catch (error) {
                 throw error
             }

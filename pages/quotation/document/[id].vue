@@ -1,7 +1,7 @@
 <template>
     <UtilsBasePage path="/">
         <template #header>
-            <h1>เอกสารใบเสนอราคา {{ `${id}`.padStart(5, '0') }}</h1>
+            <h1>เอกสารใบเสนอราคา {{ `${param.id}`.padStart(5, '0') }}</h1>
         </template>
         <div class="d-flex ga-4 align-center pa-8">
             <span> ดาวน์โหลดเอกสารไม่สำเร็จ ? </span>
@@ -15,16 +15,18 @@
 import { quotationPdf } from '~/pdfForm/quotationForm'
 import { toastPluginSymbol } from '~/plugins/toast'
 const route = useRoute()
-const { id } = route.params
+const param = computed(() => route.params)
 const pdf = quotationPdf()
 const toast = inject(toastPluginSymbol)!
 
 onMounted(async () => {
-    try {
-        await pdf.setItem(id as string)
-        await pdf.download()
-    } catch (error) {
-        toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
-    }
+    nextTick(() => {
+        try {
+            pdf.setItem(param.value.id as string)
+            pdf.download()
+        } catch (error) {
+            toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
+        }
+    })
 })
 </script>
