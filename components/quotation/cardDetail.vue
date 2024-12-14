@@ -135,6 +135,7 @@
                                         :model-value="
                                             quotationForm?.schoolTelephone
                                         "
+                                        :hide-details="false"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col> </v-row
