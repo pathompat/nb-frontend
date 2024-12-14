@@ -1,5 +1,4 @@
 import { SYSTEM_ROLE } from '~/models/enum/enum'
-import { toastPluginSymbol } from '~/plugins/toast'
 
 export default defineNuxtRouteMiddleware((to, from) => {
     const user = useAuthStore()
