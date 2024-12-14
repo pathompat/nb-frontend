@@ -49,10 +49,16 @@ export function useRules() {
             if (value == null) {
                 return 'กรุณากรอกข้อมูล'
             }
-            const thaiPhoneRegex = /^(06|08|09|02)\d{8}$/
+            const thaiPhoneRegex = /^(06|08|09)\d{8}$/
+            const zeroPhoneRegex = /^(02)\d{7}$/
             if (!value.trim()) {
                 return 'กรุณากรอกเบอร์มือถือ'
-            } else if (!thaiPhoneRegex.test(value.trim())) {
+            } else if (
+                !(
+                    thaiPhoneRegex.test(value.trim()) ||
+                    zeroPhoneRegex.test(value.trim())
+                )
+            ) {
                 return 'กรุณากรอกเบอร์มือถือที่ถูกต้อง (เช่น 08xxxxxxxx)'
             }
             return true
