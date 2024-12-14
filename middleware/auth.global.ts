@@ -8,7 +8,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         return
     }
     const authStore = useAuthStore()
-    const { setProfile } = useAuthStore()
     const token = localStorage.getItem(LOCALSTORAGE_KEY.AUTH_TOKEN)
     if (!token) {
         return navigateTo('/login')
