@@ -1,12 +1,7 @@
 <template>
     <main>
         <div class="d-flex justify-space-between mx-8">
-            <h1>
-                แบบฟอร์มสั่งผลิต
-                {{
-                    props.id ? `#PR${props.id.toString().padStart(5, '0')}` : ''
-                }}
-            </h1>
+            <v-spacer></v-spacer>
             <div class="d-flex ga-2">
                 <v-btn
                     variant="flat"
@@ -78,9 +73,6 @@
                     <div class="mt-4">
                         <div class="d-flex justify-space-between align-center">
                             <h2>รายการสินค้า</h2>
-                            <v-btn variant="text" icon color="primary">
-                                <v-icon>mdi-plus</v-icon>
-                            </v-btn>
                         </div>
                         <v-data-table
                             class="my-4"
@@ -93,6 +85,7 @@
                             </template>
                             <template #item.hasPlan="{ item }">
                                 <v-checkbox
+                                    disabled
                                     v-model="item.hasReference"
                                 ></v-checkbox>
                             </template>
@@ -114,8 +107,8 @@
                                     class="text-white"
                                     :style="{
                                         backgroundColor:
-                                            statusColors.find(
-                                                (s) => s.id === item.status
+                                            itemStatuses.find(
+                                                (s) => s.value === item.status
                                             )?.color || 'gray',
                                     }"
                                 >
@@ -123,21 +116,48 @@
                                 </v-chip></template
                             >
                             <template #item.action="{ item }">
-                                <v-btn
-                                    size="small"
-                                    variant="flat"
-                                    :color="
-                                        statusColors.find(
-                                            (s) => s.id === item.status + 1
-                                        )?.color || 'gray'
+                                <utils-return-data-slot
+                                    :data="
+                                        getNextStatus(
+                                            itemStatuses.find(
+                                                (x) => x.value == item.status
+                                            )?.value!
+                                        )
                                     "
                                 >
-                                    {{ getStatusTitle(item.status + 1) }}
-                                </v-btn>
+                                    <template #default="{ data }">
+                                        <v-btn
+                                            v-if="data != null"
+                                            size="small"
+                                            variant="flat"
+                                            @click="
+                                                updateStatus(
+                                                    `${production.id}`,
+                                                    item,
+                                                    data.value!
+                                                )
+                                            "
+                                            :color="
+                                                data == null
+                                                    ? 'gray'
+                                                    : itemStatuses.find(
+                                                          (s) =>
+                                                              s.value ===
+                                                              data.value
+                                                      )?.color || 'gray'
+                                            "
+                                        >
+                                            {{
+                                                getStatusTitle(data.value || '')
+                                            }}
+                                        </v-btn>
+                                    </template>
+                                </utils-return-data-slot>
                             </template>
                         </v-data-table>
                         <v-textarea
                             label="หมายเหตุ"
+                            disabled
                             v-model="production.remark"
                         ></v-textarea>
                     </div>
@@ -147,13 +167,19 @@
     </main>
 </template>
 <script setup lang="ts">
-import { type Production } from '@/models/production/production'
+import {
+    type Production,
+    type ProductionItem,
+} from '@/models/production/production'
 import { useProductionStore } from '@/stores/production'
 import { useShare } from '~/composables/useShare'
-const { lines, plates, getStatusTitle, statusColors } = useShare()
-const { getProductionById } = useProductionStore()
+import { STATUS } from '~/models/enum/enum'
+import { toastPluginSymbol } from '~/plugins/toast'
+const { lines, plates, getStatusTitle, itemStatuses, getNextStatus } =
+    useShare()
+const toast = inject(toastPluginSymbol)!
+const { getProductionById, updateProductionItem } = useProductionStore()
 const loading = ref(false)
-const router = useRouter()
 function defaultForm(): Partial<Production> {
     return {
         schoolName: '',
@@ -176,6 +202,27 @@ const headers = ref([
     { title: 'สถานะ', key: 'status' },
     { title: 'อัพเดท', key: 'action' },
 ])
+async function updateStatus(
+    productionId: string,
+    item: ProductionItem,
+    status: STATUS
+) {
+    loading.value = true
+    try {
+        const oldStatus = item.status
+        const res = await updateProductionItem(productionId, item.id!, {
+            status: status,
+        })
+        item.status = res.status
+        toast.success(
+            `อัพเดทสถานะสำเร็จ จาก ${itemStatuses.value.find((x) => x.value == oldStatus)?.title} เป็น ${itemStatuses.value.find((x) => x.value == res.status)?.title}`
+        )
+    } catch (error) {
+        toast.success(`อัพเดทสถานะไม่สำเร็จ ${error}`)
+    }
+
+    loading.value = false
+}
 onMounted(async () => {
     defaultForm()
     if (props.id) {

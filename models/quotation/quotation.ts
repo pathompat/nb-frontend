@@ -32,6 +32,7 @@ export interface CreateQuotation {
     appointmentAt: Date | null
     items: QuotationItem[]
     remark?: string
+    status?: string
 }
 export interface QuotationResultApi extends Quotation {
     production?: Production
@@ -53,4 +54,10 @@ export interface QuotationItem {
 }
 export interface CreateQuotationItem extends Omit<QuotationItem, 'status'> {
     id?: string
+}
+export interface FilterQuotation {
+    school: string[]
+    store: string[]
+    status: string[]
+    type: string | null
 }

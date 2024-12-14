@@ -1,8 +1,8 @@
 <template>
-    <UtilsBasePage
-        :title="`เอกสารใบเสนอราคา ${id.toString().padStart(5, '0')}`"
-        path="/"
-    >
+    <UtilsBasePage path="/">
+        <template #header>
+            <h1>เอกสารใบเสนอราคา {{ `${id}`.padStart(5, '0') }}</h1>
+        </template>
         <div class="d-flex ga-4 align-center pa-8">
             <span> ดาวน์โหลดเอกสารไม่สำเร็จ ? </span>
             <v-btn variant="flat" @click="pdf.download()"

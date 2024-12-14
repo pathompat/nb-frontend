@@ -6,7 +6,6 @@
                     variant="flat"
                     v-if="props.id"
                     color="success"
-                    target="_blank"
                     :to="`/quotation/document/${props.id}`"
                     >ดาวน์โหลดเอกสาร</v-btn
                 >
@@ -136,6 +135,7 @@
                                         :model-value="
                                             quotationForm?.schoolTelephone
                                         "
+                                        :hide-details="false"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col> </v-row
@@ -251,14 +251,25 @@
                                         <td>
                                             {{ item.price * item.quantity }}
                                         </td>
-                                        <td>
+                                        <td
+                                            v-if="
+                                                quotationForm.status !=
+                                                    STATUS.APPROVED &&
+                                                quotationForm.status !=
+                                                    STATUS.CANCELED
+                                            "
+                                        >
                                             <v-btn
                                                 variant="text"
                                                 icon
                                                 v-if="
                                                     !props.id ||
-                                                    userProfile?.role ===
-                                                        SYSTEM_ROLE.ADMIN
+                                                    (userProfile?.role ===
+                                                        SYSTEM_ROLE.ADMIN &&
+                                                        quotationForm.status !=
+                                                            STATUS.APPROVED &&
+                                                        quotationForm.status !=
+                                                            STATUS.CANCELED)
                                                 "
                                                 color="primary"
                                                 @click="editItem(index)"
@@ -268,7 +279,13 @@
                                             <v-btn
                                                 variant="text"
                                                 icon
-                                                v-if="!props.id"
+                                                v-if="
+                                                    !props.id &&
+                                                    quotationForm.status !=
+                                                        STATUS.APPROVED &&
+                                                    quotationForm.status !=
+                                                        STATUS.CANCELED
+                                                "
                                                 color="error"
                                                 @click="deleteItem(index)"
                                             >
@@ -344,7 +361,11 @@
                                         <v-text-field
                                             :disabled="
                                                 userProfile?.role !==
-                                                SYSTEM_ROLE.ADMIN
+                                                    SYSTEM_ROLE.ADMIN ||
+                                                quotationForm.status ==
+                                                    STATUS.APPROVED ||
+                                                quotationForm.status ==
+                                                    STATUS.CANCELED
                                             "
                                             v-model="discount"
                                             type="number"
@@ -377,13 +398,22 @@
                                 :rules="noEmojiOrEscapeCharacterRule"
                                 label="หมายเหตุ"
                                 :hide-details="false"
-                                :disabled="props.id != undefined"
+                                :disabled="
+                                    props.id != undefined ||
+                                    quotationForm.status == STATUS.APPROVED ||
+                                    quotationForm.status == STATUS.CANCELED
+                                "
                                 v-model="quotationForm.remark"
                             ></v-textarea>
                         </div>
                     </v-form>
                 </v-card-text>
-                <v-card-actions>
+                <v-card-actions
+                    v-if="
+                        quotationForm.status != STATUS.APPROVED &&
+                        quotationForm.status != STATUS.CANCELED
+                    "
+                >
                     <v-spacer></v-spacer>
 
                     <v-btn
@@ -418,7 +448,7 @@
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
-import { STAT_STATUS, STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
+import { STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -488,7 +518,14 @@ const headerItems = computed(() => {
     ]
     return headers.filter(
         (header) =>
-            !(header.key == 'plate' && userProfile?.role !== SYSTEM_ROLE.ADMIN)
+            !(
+                header.key == 'plate' && userProfile?.role !== SYSTEM_ROLE.ADMIN
+            ) &&
+            !(
+                header.key == 'action' &&
+                (quotationForm.value.status == STATUS.APPROVED ||
+                    quotationForm.value.status == STATUS.CANCELED)
+            )
     )
 })
 const toast = inject(toastPluginSymbol)!
@@ -633,7 +670,7 @@ async function approve() {
             `${quotation.value.id!}`,
             {
                 ...quotation.value,
-                status: STAT_STATUS.APPROVED,
+                status: STATUS.APPROVED,
             }
         )
         toast.success('อนุมัติสำเร็จ')
@@ -646,7 +683,7 @@ async function cancel() {
     try {
         await quotationStore.updateQuotation(`${quotation.value.id!}`, {
             ...quotation.value,
-            status: STAT_STATUS.CANCELED,
+            status: STATUS.CANCELED,
         })
         toast.success('ยกเลิกสำเร็จ')
         router.push(`/`)
@@ -672,7 +709,7 @@ onMounted(async () => {
                 : null,
             dueDateAt: new Date(quotation.value.dueDateAt!),
         }
-        console.log(quotationForm.value)
+        emit('status', quotationForm.value.status!)
     } catch (error) {
         toast.error(`${error}`)
     } finally {
@@ -681,5 +718,8 @@ onMounted(async () => {
 })
 const props = defineProps<{
     id?: number
+}>()
+const emit = defineEmits<{
+    (e: 'status', status: string): void
 }>()
 </script>

@@ -1,55 +1,11 @@
 <template>
     <v-card :loading="loading">
         <v-card-title>
-            <v-menu :close-on-content-click="false">
-                <template v-slot:activator="{ props }">
-                    <div class="d-flex justify-end">
-                        <v-btn color="primary" v-bind="props" variant="flat">
-                            กรองข้อมูลเพิ่มเติม
-                        </v-btn>
-                    </div>
-                </template>
-                <v-card width="400">
-                    <v-card-title>กรองข้อมูลเพิ่มเติม</v-card-title>
-                    <v-card-text class="d-flex flex-column ga-4">
-                        <v-container>
-                            <v-row dense>
-                                <v-col class="d-flex align-center">
-                                    <v-label>โรงเรียน</v-label>
-                                </v-col>
-                                <v-col cols="9" class="d-flex align-center">
-                                    <v-select label="เลือกโรงเรียน"></v-select
-                                ></v-col>
-                            </v-row>
-                            <v-row dense>
-                                <v-col class="d-flex align-center">
-                                    <v-label>ร้านค้า</v-label></v-col
-                                >
-                                <v-col cols="9" class="d-flex align-center">
-                                    <v-select label="เลือกร้านค้า"></v-select
-                                ></v-col>
-                            </v-row>
-                            <v-row dense>
-                                <v-col class="d-flex align-center">
-                                    <v-label>เลือกสถานะ</v-label></v-col
-                                >
-                                <v-col cols="9" class="d-flex align-center">
-                                    <v-select label="เลือกสถานะ"></v-select
-                                ></v-col>
-                            </v-row>
-                        </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="error" variant="plain">ล้างข้อมูล</v-btn>
-                        <v-btn color="primary" variant="flat">ค้นหา</v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-menu>
+            <QuotationFilterMenu />
         </v-card-title>
         <v-data-table
             :loading="loading"
-            :items="quotations"
+            :items="filterQuotation"
             :expand-on-click="true"
             show-expand
             :headers="headers"
@@ -68,12 +24,36 @@
                         @click="toggleExpand(internalItem)"
                         class="cursor-pointer"
                     >
-                        <v-icon class="mr-4">{{
-                            isExpanded(internalItem)
-                                ? 'mdi-chevron-up'
-                                : 'mdi-chevron-down'
-                        }}</v-icon>
-                        <!-- {{ item.date }} -->
+                        <v-icon class="mr-4"
+                            >{{
+                                isExpanded(internalItem)
+                                    ? 'mdi-chevron-up'
+                                    : 'mdi-chevron-down'
+                            }}
+                        </v-icon>
+                        {{ formatDate(new Date(item.dueDateAt!)) }}
+                    </td>
+                    <td>
+                        <utils-return-data-slot
+                            :data="
+                                !item.productionId
+                                    ? statuses.find(
+                                          (x) => x.value == TYPE.QUOTATION
+                                      )
+                                    : statuses.find(
+                                          (x) => x.value == TYPE.PRODUCTION
+                                      )
+                            "
+                        >
+                            <template #default="{ data }">
+                                <v-chip
+                                    density="compact"
+                                    :style="{ 'background-color': data!.color }"
+                                >
+                                    {{ data!.title }}
+                                </v-chip>
+                            </template>
+                        </utils-return-data-slot>
                     </td>
                     <td>{{ item.schoolName }}</td>
                     <td>
@@ -85,12 +65,30 @@
                             class="text-white"
                             :style="{
                                 backgroundColor:
-                                    statusColors.find(
-                                        (s) => s.id == item.status
+                                    itemStatuses.find(
+                                        (s) =>
+                                            s.value ==
+                                            (item.production == undefined
+                                                ? item.status
+                                                : getMaxStatus(
+                                                      item.production!.items.map(
+                                                          (x) => x.status
+                                                      )
+                                                  ))
                                     )?.color || 'gray',
                             }"
                         >
-                            {{ getStatusTitle(item.status) }}
+                            {{
+                                item.production == undefined
+                                    ? getStatusTitle(item.status)
+                                    : getStatusTitle(
+                                          getMaxStatus(
+                                              item.production!.items.map(
+                                                  (x) => x.status
+                                              )
+                                          )
+                                      )
+                            }}
                         </v-chip>
                     </td>
                     <td>
@@ -105,6 +103,7 @@
                             >รายละเอียด</v-btn
                         >
                     </td>
+                    <td></td>
                 </tr>
             </template>
 
@@ -114,10 +113,17 @@
                         <v-data-table
                             hide-default-footer
                             :items="
-                                item.items.map((item, index) => ({
-                                    ...item,
-                                    index: index + 1,
-                                }))
+                                !item.productionId
+                                    ? item.items.map((item, index) => ({
+                                          ...item,
+                                          index: index + 1,
+                                      }))
+                                    : item.production!.items.map(
+                                          (item, index) => ({
+                                              ...item,
+                                              index: index + 1,
+                                          })
+                                      )
                             "
                             :headers="headerExpanded"
                         >
@@ -127,8 +133,8 @@
                                     class="text-white"
                                     :style="{
                                         backgroundColor:
-                                            statusColors.find(
-                                                (s) => s.id === item.status
+                                            itemStatuses.find(
+                                                (s) => s.value === item.status
                                             )?.color || 'gray',
                                     }"
                                 >
@@ -159,11 +165,20 @@
     </v-card>
 </template>
 <script setup lang="ts">
+import { TYPE } from '~/models/enum/enum'
 import { toastPluginSymbol } from '~/plugins/toast'
-const { getStatusTitle, statusColors } = useShare()
-const { plates, lines } = useShare()
+import filterMenuQuotationState, {
+    filterMenuQuotationStateSymbol,
+} from '@/components/quotation/filterMenu/state'
+const { getStatusTitle, itemStatuses } = useShare()
+const { plates, lines, statuses, getMaxStatus } = useShare()
+const { formatDate } = useFormatDate()
+const stateFilter = filterMenuQuotationState()
+provide(filterMenuQuotationStateSymbol, stateFilter)
 const headers = ref([
     { title: 'วันที่', key: 'dueDateAt' },
+    { title: 'ประเภท', key: 'type' },
+
     { title: 'โรงเรียน', key: 'schoolName' },
     { title: 'ร้านค้า', key: 'storeName' },
     { title: 'สถานะ', key: 'status' },
@@ -181,6 +196,19 @@ const quotationStore = useQuotationStore()
 const toast = inject(toastPluginSymbol)!
 const { fetchQuotations } = quotationStore
 const { quotations } = storeToRefs(quotationStore)
+const filterQuotation = computed(() =>
+    quotations.value.filter(
+        (x) =>
+            // filter.value.status.length === 0 ||
+            stateFilter.filter.value.type == null ||
+            // filter.value.status.includes(x.status) ||
+            (stateFilter.filter.value.type == TYPE.QUOTATION &&
+                x.productionId == null) ||
+            (stateFilter.filter.value.type == TYPE.PRODUCTION &&
+                x.productionId != null)
+    )
+)
+
 onMounted(async () => {
     loading.value = true
     try {

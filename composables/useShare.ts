@@ -1,39 +1,81 @@
-import {
-    ITEM_CATEGORY,
-    ITEM_STATUS,
-    STAT_STATUS,
-    STATUS,
-} from '~/models/enum/enum'
+import { ITEM_CATEGORY, STATUS, TYPE } from '~/models/enum/enum'
 import { ITEM_OPTION } from '~/models/object/object'
 
 export function useShare() {
     const itemStatuses = ref([
-        { title: 'รออนุมัติ', value: ITEM_STATUS.REVIEWING },
-        { title: 'อนุมัติแล้ว', value: ITEM_STATUS.APPROVED },
-        { title: 'ยกเลิก', value: ITEM_STATUS.CANCELED },
-        { title: 'สำเร็จ', value: ITEM_STATUS.DONE },
+        {
+            order: 1,
+            title: 'รออนุมัติ',
+            value: STATUS.REVIEWING,
+            color: '#FF9800',
+        },
+        {
+            order: 2,
+            title: 'อนุมัติแล้ว',
+            value: STATUS.APPROVED,
+            color: '#00b300',
+        },
+        { order: 3, title: 'ยกเลิก', value: STATUS.CANCELED, color: '#b30000' },
 
-        { title: 'ออกเเบบ', value: ITEM_STATUS.OUTBOUND },
-        { title: 'พิมพ์', value: ITEM_STATUS.PRINT },
-        { title: 'เย็บเข้าเล่ม', value: ITEM_STATUS.SEWING },
-        { title: 'แพ็ค', value: ITEM_STATUS.PACK },
-        { title: 'พร้อมจัดส่ง', value: ITEM_STATUS.READY },
+        {
+            order: 4,
+            title: 'ออกเเบบ',
+            value: STATUS.DESIGNING,
+            color: '#B0BEC5',
+        },
+        { order: 5, title: 'พิมพ์', value: STATUS.PRINTING, color: '#FF9800' },
+        {
+            order: 6,
+            title: 'เย็บเข้าเล่ม',
+            value: STATUS.BOOKBINDING,
+            color: '#2196F3',
+        },
+        { order: 7, title: 'แพ็ค', value: STATUS.PACKING, color: '#9C27B0' },
+        {
+            order: 8,
+            title: 'พร้อมจัดส่ง',
+            value: STATUS.TRANSPORTING,
+            color: '#2A9D8F',
+        },
+
+        { order: 9, title: 'สำเร็จ', value: STATUS.DONE, color: '#4CAF50' },
     ])
+
+    const getNextStatus = (text: string) => {
+        const currentitem = itemStatuses.value.find((x) => x.value === text)
+        if (!currentitem) return null
+        const nextItem = itemStatuses.value.find(
+            (x) => x.order === currentitem?.order + 1
+        )
+        return nextItem
+    }
+
+    const getMaxStatus = (text: string[]) => {
+        const result = text.map((item) => {
+            const index = itemStatuses.value.findIndex((x) => x.value === item)
+            return {
+                title: item,
+                value: index,
+            }
+        })
+        if (result.length === 0) return 'ไม่ทราบสถานะ'
+        return result.sort((a, b) => b.value - a.value)[0].title
+    }
     const statuses = ref([
-        { title: 'ใบเสนอราคา', value: STATUS.QUOTATION, color: '#C6E7FF' },
-        { title: 'ใบสั่งผลิต', value: STATUS.PRODUCTION, color: '#D0E8C5' },
+        { title: 'ใบเสนอราคา', value: TYPE.QUOTATION, color: '#C6E7FF' },
+        { title: 'ใบสั่งผลิต', value: TYPE.PRODUCTION, color: '#D0E8C5' },
     ])
     const statAndIconColor = ref([
         {
             title: 'รออนุมัติ',
-            value: STAT_STATUS.REVIEWING,
+            value: STATUS.REVIEWING,
             icon: 'mdi-format-list-bulleted',
             color: '#FCC737',
             type: 'QUOTATION',
         },
         {
             title: 'ออกเเบบ',
-            value: STAT_STATUS.DESIGNING,
+            value: STATUS.DESIGNING,
             icon: 'mdi-pencil-ruler',
             color: '#5E60CE',
             type: 'PRODUCTION',
@@ -42,42 +84,32 @@ export function useShare() {
             title: 'พิมพ์',
             icon: 'mdi-printer',
             color: '#4C566A',
-            value: STAT_STATUS.PRINTING,
+            value: STATUS.PRINTING,
             type: 'PRODUCTION',
         },
         {
             title: 'เย็บเข้าเล่ม',
-            value: STAT_STATUS.BOOKBINDING,
+            value: STATUS.BOOKBINDING,
             icon: 'mdi-book-open-blank-variant',
             color: '#0081A7',
             type: 'PRODUCTION',
         },
         {
             title: 'แพ็ค',
-            value: STAT_STATUS.PACK,
+            value: STATUS.PACKING,
             icon: 'mdi-package-variant',
             color: '#F4A261',
             type: 'PRODUCTION',
         },
         {
             title: 'พร้อมจัดส่ง',
-            value: STAT_STATUS.SHIPING,
+            value: STATUS.TRANSPORTING,
             icon: 'mdi-truck-delivery',
             color: '#2A9D8F',
             type: 'PRODUCTION',
         },
     ])
-    const statusColors = ref([
-        { id: ITEM_STATUS.REVIEWING, color: '#FF9800' },
-        { id: ITEM_STATUS.APPROVED, color: '#00b300' },
-        { id: ITEM_STATUS.CANCELED, color: '#b30000' },
 
-        { id: ITEM_STATUS.PRINT, color: '#FF9800' },
-        { id: ITEM_STATUS.OUTBOUND, color: '#B0BEC5' },
-        { id: ITEM_STATUS.SEWING, color: '#2196F3' },
-        { id: ITEM_STATUS.PACK, color: '#9C27B0' },
-        { id: ITEM_STATUS.READY, color: '#4CAF50' },
-    ])
     const itemCategories = ref([
         {
             title: 'ตัด9',
@@ -117,7 +149,7 @@ export function useShare() {
     const getStatusTitle = computed(
         () => (value: string) =>
             itemStatuses.value.find((status) => status.value === value)
-                ?.title || 'ไม่ทราบสถานะ'
+                ?.title || 'ไม่พบสถานะ'
     )
     const itemOptions = ref([
         {
@@ -283,16 +315,16 @@ export function useShare() {
     return {
         itemStatuses,
         tiers,
-        ITEM_STATUS,
-        statusColors,
         lines,
         pages,
+        getMaxStatus,
         statAndIconColor,
         grams,
         colors,
         statuses,
         plates,
         getStatusTitle,
+        getNextStatus,
         quotationStatuses,
         itemOptions,
         itemCategories,
