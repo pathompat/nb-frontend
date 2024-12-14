@@ -21,8 +21,24 @@
                     </v-btn>
                 </div>
             </v-card-title>
-            <v-card-text class="d-flex flex-column ga-4">
+            <v-divider></v-divider>
+            <v-card-text class="d-flex flex-column">
                 <v-container>
+                    <v-row dense>
+                        <v-col class="d-flex align-center">
+                            <v-label>เลือกประเภท</v-label></v-col
+                        >
+                        <v-col cols="9" class="d-flex align-center">
+                            <v-select
+                                clearable
+                                :loading="loading"
+                                label="เลือกประเภท"
+                                :items="statuses"
+                                v-model="filter.type"
+                            >
+                            </v-select
+                        ></v-col>
+                    </v-row>
                     <v-row dense>
                         <v-col class="d-flex align-center">
                             <v-label>โรงเรียน</v-label>
@@ -64,21 +80,6 @@
                                 v-model="filter.status"
                             >
                             </v-autocomplete
-                        ></v-col>
-                    </v-row>
-                    <v-row dense>
-                        <v-col class="d-flex align-center">
-                            <v-label>เลือกประเภท</v-label></v-col
-                        >
-                        <v-col cols="9" class="d-flex align-center">
-                            <v-select
-                                clearable
-                                :loading="loading"
-                                label="เลือกประเภท"
-                                :items="statuses"
-                                v-model="filter.type"
-                            >
-                            </v-select
                         ></v-col>
                     </v-row>
                 </v-container>
