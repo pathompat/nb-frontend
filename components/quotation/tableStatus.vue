@@ -65,9 +65,9 @@
                             class="text-white"
                             :style="{
                                 backgroundColor:
-                                    statusColors.find(
+                                    itemStatuses.find(
                                         (s) =>
-                                            s.id ==
+                                            s.value ==
                                             (item.production == undefined
                                                 ? item.status
                                                 : getMaxStatus(
@@ -133,8 +133,8 @@
                                     class="text-white"
                                     :style="{
                                         backgroundColor:
-                                            statusColors.find(
-                                                (s) => s.id === item.status
+                                            itemStatuses.find(
+                                                (s) => s.value === item.status
                                             )?.color || 'gray',
                                     }"
                                 >
@@ -171,7 +171,7 @@ import filterMenuQuotationState, {
     filterMenuQuotationStateSymbol,
 } from '@/components/quotation/filterMenu/state'
 import type { FilterQuotation } from '~/models/quotation/quotation'
-const { getStatusTitle, statusColors } = useShare()
+const { getStatusTitle, itemStatuses } = useShare()
 const { plates, lines, statuses, getMaxStatus } = useShare()
 const { formatDate } = useFormatDate()
 const stateFilter = filterMenuQuotationState()

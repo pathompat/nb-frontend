@@ -693,7 +693,7 @@ onMounted(async () => {
                 : null,
             dueDateAt: new Date(quotation.value.dueDateAt!),
         }
-        console.log(quotationForm.value)
+        emit('status', quotationForm.value.status!)
     } catch (error) {
         toast.error(`${error}`)
     } finally {
@@ -702,5 +702,8 @@ onMounted(async () => {
 })
 const props = defineProps<{
     id?: number
+}>()
+const emit = defineEmits<{
+    (e: 'status', status: string): void
 }>()
 </script>

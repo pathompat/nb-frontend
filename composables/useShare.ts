@@ -3,17 +3,42 @@ import { ITEM_OPTION } from '~/models/object/object'
 
 export function useShare() {
     const itemStatuses = ref([
-        { order: 1, title: 'รออนุมัติ', value: STATUS.REVIEWING },
-        { order: 2, title: 'อนุมัติแล้ว', value: STATUS.APPROVED },
-        { order: 3, title: 'ยกเลิก', value: STATUS.CANCELED },
+        {
+            order: 1,
+            title: 'รออนุมัติ',
+            value: STATUS.REVIEWING,
+            color: '#FF9800',
+        },
+        {
+            order: 2,
+            title: 'อนุมัติแล้ว',
+            value: STATUS.APPROVED,
+            color: '#00b300',
+        },
+        { order: 3, title: 'ยกเลิก', value: STATUS.CANCELED, color: '#b30000' },
 
-        { order: 4, title: 'ออกเเบบ', value: STATUS.DESIGNING },
-        { order: 5, title: 'พิมพ์', value: STATUS.PRINTING },
-        { order: 6, title: 'เย็บเข้าเล่ม', value: STATUS.BOOKBINDING },
-        { order: 7, title: 'แพ็ค', value: STATUS.PACKING },
-        { order: 8, title: 'พร้อมจัดส่ง', value: STATUS.TRANSPORTING },
+        {
+            order: 4,
+            title: 'ออกเเบบ',
+            value: STATUS.DESIGNING,
+            color: '#B0BEC5',
+        },
+        { order: 5, title: 'พิมพ์', value: STATUS.PRINTING, color: '#FF9800' },
+        {
+            order: 6,
+            title: 'เย็บเข้าเล่ม',
+            value: STATUS.BOOKBINDING,
+            color: '#2196F3',
+        },
+        { order: 7, title: 'แพ็ค', value: STATUS.PACKING, color: '#9C27B0' },
+        {
+            order: 8,
+            title: 'พร้อมจัดส่ง',
+            value: STATUS.TRANSPORTING,
+            color: '#2A9D8F',
+        },
 
-        { order: 9, title: 'สำเร็จ', value: STATUS.DONE },
+        { order: 9, title: 'สำเร็จ', value: STATUS.DONE, color: '#4CAF50' },
     ])
 
     const getNextStatus = (text: string) => {
@@ -84,19 +109,7 @@ export function useShare() {
             type: 'PRODUCTION',
         },
     ])
-    const statusColors = ref([
-        { id: STATUS.REVIEWING, color: '#FF9800' },
-        { id: STATUS.APPROVED, color: '#00b300' },
-        { id: STATUS.CANCELED, color: '#b30000' },
 
-        { id: STATUS.PRINTING, color: '#FF9800' },
-        { id: STATUS.DESIGNING, color: '#B0BEC5' },
-        { id: STATUS.BOOKBINDING, color: '#2196F3' },
-        { id: STATUS.PACKING, color: '#9C27B0' },
-        { id: STATUS.TRANSPORTING, color: '#2A9D8F' },
-
-        { id: STATUS.DONE, color: '#4CAF50' },
-    ])
     const itemCategories = ref([
         {
             title: 'ตัด9',
@@ -302,7 +315,6 @@ export function useShare() {
     return {
         itemStatuses,
         tiers,
-        statusColors,
         lines,
         pages,
         getMaxStatus,

@@ -107,8 +107,8 @@
                                     class="text-white"
                                     :style="{
                                         backgroundColor:
-                                            statusColors.find(
-                                                (s) => s.id === item.status
+                                            itemStatuses.find(
+                                                (s) => s.value === item.status
                                             )?.color || 'gray',
                                     }"
                                 >
@@ -140,9 +140,9 @@
                                             :color="
                                                 data == null
                                                     ? 'gray'
-                                                    : statusColors.find(
+                                                    : itemStatuses.find(
                                                           (s) =>
-                                                              s.id ===
+                                                              s.value ===
                                                               data.value
                                                       )?.color || 'gray'
                                             "
@@ -175,14 +175,8 @@ import { useProductionStore } from '@/stores/production'
 import { useShare } from '~/composables/useShare'
 import { STATUS } from '~/models/enum/enum'
 import { toastPluginSymbol } from '~/plugins/toast'
-const {
-    lines,
-    plates,
-    getStatusTitle,
-    statusColors,
-    itemStatuses,
-    getNextStatus,
-} = useShare()
+const { lines, plates, getStatusTitle, itemStatuses, getNextStatus } =
+    useShare()
 const toast = inject(toastPluginSymbol)!
 const { getProductionById, updateProductionItem } = useProductionStore()
 const loading = ref(false)
