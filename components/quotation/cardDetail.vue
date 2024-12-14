@@ -609,6 +609,7 @@ async function create() {
                     price: +x.price!,
                 }
             }),
+            schoolTelephone: quotationForm.value.schoolTelephone.trim(),
             appointmentAt: quotationForm.value.appointmentAt
                 ? new Date(quotationForm.value.appointmentAt)
                 : null,
