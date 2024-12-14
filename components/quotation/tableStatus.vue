@@ -165,7 +165,7 @@
     </v-card>
 </template>
 <script setup lang="ts">
-import { TYPE } from '~/models/enum/enum'
+import { SYSTEM_ROLE, TYPE } from '~/models/enum/enum'
 import { toastPluginSymbol } from '~/plugins/toast'
 import filterMenuQuotationState, {
     filterMenuQuotationStateSymbol,
@@ -174,16 +174,27 @@ const { getStatusTitle, itemStatuses } = useShare()
 const { plates, lines, statuses, getMaxStatus } = useShare()
 const { formatDate } = useFormatDate()
 const stateFilter = filterMenuQuotationState()
+const authStore = useAuthStore()
+const { userProfile } = storeToRefs(authStore)
 provide(filterMenuQuotationStateSymbol, stateFilter)
-const headers = ref([
-    { title: 'วันที่', key: 'dueDateAt' },
-    { title: 'ประเภท', key: 'type' },
+const headers = computed(() => {
+    const headers = [
+        { title: 'วันที่', key: 'dueDateAt' },
+        { title: 'ประเภท', key: 'type' },
 
-    { title: 'โรงเรียน', key: 'schoolName' },
-    { title: 'ร้านค้า', key: 'storeName' },
-    { title: 'สถานะ', key: 'status' },
-    { title: '#', key: 'action' },
-])
+        { title: 'โรงเรียน', key: 'schoolName' },
+        { title: 'ร้านค้า', key: 'storeName' },
+        { title: 'สถานะ', key: 'status' },
+        { title: '#', key: 'action' },
+    ]
+    return headers.filter(
+        (x) =>
+            !(
+                userProfile.value!.role == SYSTEM_ROLE.CUSTOMER &&
+                x.key == 'storeName'
+            )
+    )
+})
 const headerExpanded = ref([
     { title: 'No.', value: 'index' },
     { title: 'เพรท/แกรม/สี/แผ่น/เส้น', value: 'description' },
