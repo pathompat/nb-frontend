@@ -11,7 +11,6 @@
                 >
             </div>
         </div>
-
         <section class="py-8">
             <v-card :loading="loading">
                 <v-card-text>
@@ -663,6 +662,7 @@ async function editItem(index: number) {
 
         if (editItem) {
             quotationForm.value.items[index] = editItem
+            console.log(editItem)
             if (editItem.id == undefined) {
                 return
             }
@@ -734,6 +734,7 @@ onMounted(async () => {
             remark: quotation.value.remark,
             items: quotation.value.items.map((x) => {
                 return {
+                    id: `${x.id}`,
                     category: x.category,
                     color: x.color,
                     gram: x.gram,
