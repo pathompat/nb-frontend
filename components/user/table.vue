@@ -7,7 +7,7 @@
                     :disabled="loading"
                     v-model="search"
                     label="ค้นหา"
-                    placeholder="username,ร้านค้า"
+                    placeholder="id,username,ร้านค้า"
                 ></v-text-field>
             </div>
             <v-btn
@@ -143,7 +143,8 @@ const userFilter = computed(() => {
     return users.value?.filter((v) => {
         return (
             v.username.toLowerCase().includes(search.value.toLowerCase()) ||
-            v.storeName.toLowerCase().includes(search.value.toLowerCase())
+            v.storeName.toLowerCase().includes(search.value.toLowerCase()) ||
+            v.id.toLowerCase().includes(search.value.toLowerCase())
         )
     })
 })
