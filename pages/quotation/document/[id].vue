@@ -14,17 +14,17 @@
 <script setup lang="ts">
 import { quotationPdf } from '~/pdfForm/quotationForm'
 import { toastPluginSymbol } from '~/plugins/toast'
-const route = useRoute()
+const route = useRouter().currentRoute;
 const id = ref('')
 const pdf = quotationPdf()
 const toast = inject(toastPluginSymbol)!
 
 onMounted(async () => {
-    nextTick(() => {
+    nextTick(async() => {
         try {
-            id.value = route.params.id as string
-            pdf.setItem(id.value)
-            pdf.download()
+            id.value = route.value.params.id as string
+            await pdf.setItem(id.value)
+            await pdf.download()
         } catch (error) {
             toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
         }
