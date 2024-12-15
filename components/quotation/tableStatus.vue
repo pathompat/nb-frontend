@@ -70,7 +70,7 @@
                                             s.value ==
                                             (item.production == undefined
                                                 ? item.status
-                                                : getMaxStatus(
+                                                : getMinStatus(
                                                       item.production!.items.map(
                                                           (x) => x.status
                                                       )
@@ -82,7 +82,7 @@
                                 item.production == undefined
                                     ? getStatusTitle(item.status)
                                     : getStatusTitle(
-                                          getMaxStatus(
+                                          getMinStatus(
                                               item.production!.items.map(
                                                   (x) => x.status
                                               )
@@ -171,7 +171,7 @@ import filterMenuQuotationState, {
     filterMenuQuotationStateSymbol,
 } from '@/components/quotation/filterMenu/state'
 const { getStatusTitle, itemStatuses } = useShare()
-const { plates, lines, statuses, getMaxStatus } = useShare()
+const { plates, lines, statuses, getMinStatus } = useShare()
 const { formatDate } = useFormatDate()
 const stateFilter = filterMenuQuotationState()
 const authStore = useAuthStore()
@@ -207,26 +207,33 @@ const quotationStore = useQuotationStore()
 const toast = inject(toastPluginSymbol)!
 const { fetchQuotations } = quotationStore
 const { quotations } = storeToRefs(quotationStore)
-const filterQuotation = computed(() =>
-    quotations.value.filter(
+const filterQuotation = computed(() => {
+    let result = quotations.value
+
+    const { type, status, school, store } = stateFilter.filter.value
+
+    result = result.filter(
         (x) =>
-            (stateFilter.filter.value.type == null &&
-                stateFilter.filter.value.status.length === 0 &&
-                stateFilter.filter.value.school.length === 0 &&
-                stateFilter.filter.value.store.length === 0) ||
-            stateFilter.filter.value.status.some((s) =>
-                !x.productionId
-                    ? s == x.status
-                    : x.production!.items.some((y) => y.status == s)
-            ) ||
-            (stateFilter.filter.value.type == TYPE.QUOTATION &&
-                x.productionId == null) ||
-            (stateFilter.filter.value.type == TYPE.PRODUCTION &&
-                x.productionId != null) ||
-            stateFilter.filter.value.school.includes(x.schoolName) ||
-            stateFilter.filter.value.store.includes(x.storeName)
+            (type === TYPE.QUOTATION && x.productionId == null) ||
+            (type === TYPE.PRODUCTION && x.productionId != null) ||
+            type == null
     )
-)
+    result = result.filter(
+        (x) => store.includes(x.storeName) || store.length === 0
+    )
+    result = result.filter(
+        (x) => school.includes(x.schoolName) || school.length === 0
+    )
+    result = result.filter(
+        (x) =>
+            status.some((h) =>
+                x.production == undefined
+                    ? h == x.status
+                    : x.production.items.some((s) => s.status == h)
+            ) || status.length === 0
+    )
+    return result
+})
 
 onMounted(async () => {
     loading.value = true

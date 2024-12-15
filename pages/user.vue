@@ -9,4 +9,7 @@
 </template>
 <script setup lang="ts">
 import Table from '@/components/user/table.vue'
+definePageMeta({
+    middleware: 'adminonly',
+})
 </script>
