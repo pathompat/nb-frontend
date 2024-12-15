@@ -6,7 +6,7 @@
                 <v-btn
                     variant="flat"
                     color="success"
-                    :to="`/quotation/document/${production.id}`"
+                    :to="`/quotation/document/${production.quotationId}`"
                     >ใบเสนอราคา</v-btn
                 >
                 <v-btn
