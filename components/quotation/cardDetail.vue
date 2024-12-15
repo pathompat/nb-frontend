@@ -720,8 +720,6 @@ async function cancel() {
 onMounted(async () => {
     if (userProfile?.role !== SYSTEM_ROLE.ADMIN) {
         quotationForm.value.userId = userProfile!.id
-        await getSchools()
-        await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
     }
     loading.value = true
     try {
@@ -756,6 +754,8 @@ onMounted(async () => {
                 : null,
             dueDateAt: new Date(quotation.value.dueDateAt!),
         }
+        await getSchools()
+        await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
         emit('status', quotationForm.value.status!)
     } catch (error) {
         toast.error(`${error}`)
