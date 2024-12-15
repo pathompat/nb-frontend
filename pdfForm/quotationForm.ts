@@ -2,7 +2,8 @@ export function quotationPdf() {
     const pdf = usePdf()
     const quotationStore = useQuotationStore()
     const { quotation } = storeToRefs(quotationStore)
-
+    const { itemCategories, lines } = useShare()
+    const { formatDate } = useFormatDate()
     return {
         async setItem(id: string) {
             try {
@@ -36,7 +37,9 @@ export function quotationPdf() {
                                     ...quotation.value.items.map(
                                         (item, index) => [
                                             index + 1,
-                                            item.category +
+                                            itemCategories.value.find(
+                                                (x) => x.value == item.category
+                                            )?.title +
                                                 '/' +
                                                 item.gram +
                                                 '/' +
@@ -44,7 +47,10 @@ export function quotationPdf() {
                                                 '/' +
                                                 item.page +
                                                 '/' +
-                                                item.pattern,
+                                                lines.value.find(
+                                                    (x) =>
+                                                        x.value == item.pattern
+                                                )?.title,
                                             item.options,
                                             item.hasReference ? 'มี' : 'ไม่มี',
                                             item.quantity,
@@ -76,7 +82,7 @@ export function quotationPdf() {
                 },
                 {
                     appointmentDate: '90',
-                    duedate: quotation.value.appointmentAt?.toString() || '',
+                    duedate: formatDate(new Date(quotation.value.dueDateAt!)),
                     quotationId: quotation.value.id.toString(),
                     schoolname: quotation.value.schoolName,
                     shopname: quotation.value.storeName,
