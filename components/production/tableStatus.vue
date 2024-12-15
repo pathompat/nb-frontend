@@ -143,7 +143,7 @@
 //         headerProps: { style: { fontWeight: 'bold' } },
 //     },
 //     {
-//         title: 'มีเเบบ',
+//         title: 'มีแบบ',
 //         value: 'hasPlan',
 //         headerProps: { style: { fontWeight: 'bold' } },
 //     },

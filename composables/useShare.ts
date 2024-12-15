@@ -19,7 +19,7 @@ export function useShare() {
 
         {
             order: 4,
-            title: 'ออกเเบบ',
+            title: 'ออกแบบ',
             value: STATUS.DESIGNING,
             color: '#B0BEC5',
         },
@@ -85,7 +85,7 @@ export function useShare() {
             type: 'QUOTATION',
         },
         {
-            title: 'ออกเเบบ',
+            title: 'ออกแบบ',
             value: STATUS.DESIGNING,
             icon: 'mdi-pencil-ruler',
             color: '#5E60CE',

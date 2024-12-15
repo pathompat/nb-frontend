@@ -198,7 +198,7 @@ const headers = computed(() => {
 const headerExpanded = ref([
     { title: 'No.', value: 'index' },
     { title: 'เพรท/แกรม/สี/แผ่น/เส้น', value: 'description' },
-    { title: 'มีเเบบ', value: 'hasReference' },
+    { title: 'มีแบบ', value: 'hasReference' },
     { title: 'จำนวน', value: 'quantity' },
     { title: 'สถานะงานพิมพ์', value: 'status' },
 ])
