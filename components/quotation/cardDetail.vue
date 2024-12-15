@@ -57,7 +57,14 @@
                                             quotationForm.userId === '' ||
                                             props.id != undefined
                                         "
-                                        v-model="quotationForm.schoolId"
+                                        @update:model-value="
+                                            updateCustomerSelectSchool
+                                        "
+                                        :model-value="
+                                            !quotationForm.schoolId
+                                                ? quotationForm.schoolName
+                                                : quotationForm.schoolId
+                                        "
                                     >
                                         <template v-slot:prepend-item>
                                             <v-list-item
@@ -537,16 +544,14 @@ const storeSelect = computed(() => {
     return users.value.find((user) => user.id === quotationForm.value.userId)
         ?.storeName
 })
-watch(
-    () => quotationForm.value.schoolId,
-    async (newValue) => {
-        if (quotationForm.value.status != undefined) return
-        const school = schools.value.find((school) => school.id === newValue)!
-        quotationForm.value.schoolAddress = school?.address
-        quotationForm.value.schoolName = school?.name
-        quotationForm.value.schoolTelephone = school?.telephone
-    }
-)
+function updateCustomerSelectSchool(value: string) {
+    quotationForm.value.schoolId = value
+    if (quotationForm.value.status != undefined) return
+    const school = schools.value.find((school) => school.id === value)!
+    quotationForm.value.schoolAddress = school?.address
+    quotationForm.value.schoolName = school?.name
+    quotationForm.value.schoolTelephone = school?.telephone
+}
 
 const updateCustomDate = (value: boolean | null) => {
     isCustomDate.value = value!
@@ -558,7 +563,7 @@ const updateCustomerSelect = async (value: string) => {
         priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId),
         getSchools(),
     ])
-    quotationForm.value.schoolId = ''
+    updateCustomerSelectSchool('')
 }
 watch(
     () => prices.value,
