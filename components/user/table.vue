@@ -104,7 +104,7 @@ async function onEdit(id: string) {
 async function onCreate() {
     try {
         const user = await modal.value?.openDialog()
-        const res = await createUser(user)
+        await createUser(user)
         modal.value?.closeDialog()
         toast.success('สร้างสำเร็จ')
         await init()
