@@ -2,6 +2,8 @@ export function productionPdf() {
     const pdf = usePdf()
     const productionStore = useProductionStore()
     const { production } = storeToRefs(productionStore)
+    const { itemCategories, lines } = useShare()
+    const { formatDate } = useFormatDate()
 
     return {
         async setItem(id: string) {
@@ -36,7 +38,9 @@ export function productionPdf() {
                                     ...production.value!.items.map(
                                         (item, index) => [
                                             index + 1,
-                                            item.category +
+                                            itemCategories.value.find(
+                                                (x) => x.value == item.category
+                                            )?.title +
                                                 '/' +
                                                 item.gram +
                                                 '/' +
@@ -44,7 +48,10 @@ export function productionPdf() {
                                                 '/' +
                                                 item.page +
                                                 '/' +
-                                                item.pattern,
+                                                lines.value.find(
+                                                    (x) =>
+                                                        x.value == item.pattern
+                                                )?.title,
                                             item.options,
                                             item.hasReference ? 'มี' : 'ไม่มี',
                                             item.quantity,
@@ -102,7 +109,7 @@ export function productionPdf() {
                 },
                 {
                     appointmentDate: '90',
-                    duedate: production.value!.dueDateAt?.toString() || '',
+                    duedate: formatDate(new Date(production.value!.dueDateAt!)),
                     productionId: production.value!.id.toString(),
                     schoolname: production.value!.schoolName,
                     shopname: production.value!.storeName,

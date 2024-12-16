@@ -11,7 +11,6 @@
                 >
             </div>
         </div>
-
         <section class="py-8">
             <v-card :loading="loading">
                 <v-card-text>
@@ -57,7 +56,14 @@
                                             quotationForm.userId === '' ||
                                             props.id != undefined
                                         "
-                                        v-model="quotationForm.schoolId"
+                                        @update:model-value="
+                                            updateCustomerSelectSchool
+                                        "
+                                        :model-value="
+                                            !quotationForm.schoolId
+                                                ? quotationForm.schoolName
+                                                : quotationForm.schoolId
+                                        "
                                     >
                                         <template v-slot:prepend-item>
                                             <v-list-item
@@ -537,16 +543,14 @@ const storeSelect = computed(() => {
     return users.value.find((user) => user.id === quotationForm.value.userId)
         ?.storeName
 })
-watch(
-    () => quotationForm.value.schoolId,
-    async (newValue) => {
-        if (quotationForm.value.status != undefined) return
-        const school = schools.value.find((school) => school.id === newValue)!
-        quotationForm.value.schoolAddress = school?.address
-        quotationForm.value.schoolName = school?.name
-        quotationForm.value.schoolTelephone = school?.telephone
-    }
-)
+function updateCustomerSelectSchool(value: string) {
+    quotationForm.value.schoolId = value
+    if (quotationForm.value.status != undefined) return
+    const school = schools.value.find((school) => school.id === value)!
+    quotationForm.value.schoolAddress = school?.address
+    quotationForm.value.schoolName = school?.name
+    quotationForm.value.schoolTelephone = school?.telephone
+}
 
 const updateCustomDate = (value: boolean | null) => {
     isCustomDate.value = value!
@@ -558,7 +562,7 @@ const updateCustomerSelect = async (value: string) => {
         priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId),
         getSchools(),
     ])
-    quotationForm.value.schoolId = ''
+    updateCustomerSelectSchool('')
 }
 watch(
     () => prices.value,
@@ -658,6 +662,7 @@ async function editItem(index: number) {
 
         if (editItem) {
             quotationForm.value.items[index] = editItem
+            console.log(editItem)
             if (editItem.id == undefined) {
                 return
             }
@@ -715,8 +720,6 @@ async function cancel() {
 onMounted(async () => {
     if (userProfile?.role !== SYSTEM_ROLE.ADMIN) {
         quotationForm.value.userId = userProfile!.id
-        await getSchools()
-        await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
     }
     loading.value = true
     try {
@@ -729,6 +732,7 @@ onMounted(async () => {
             remark: quotation.value.remark,
             items: quotation.value.items.map((x) => {
                 return {
+                    id: `${x.id}`,
                     category: x.category,
                     color: x.color,
                     gram: x.gram,
@@ -750,6 +754,8 @@ onMounted(async () => {
                 : null,
             dueDateAt: new Date(quotation.value.dueDateAt!),
         }
+        await getSchools()
+        await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
         emit('status', quotationForm.value.status!)
     } catch (error) {
         toast.error(`${error}`)

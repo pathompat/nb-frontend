@@ -26,7 +26,7 @@
                 <v-container>
                     <v-row dense>
                         <v-col class="d-flex align-center">
-                            <v-label>เลือกประเภท</v-label></v-col
+                            <v-label>ประเภท</v-label></v-col
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-select
@@ -69,7 +69,7 @@
                     </v-row>
                     <v-row dense>
                         <v-col class="d-flex align-center">
-                            <v-label>เลือกสถานะ</v-label></v-col
+                            <v-label>สถานะ</v-label></v-col
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
@@ -96,10 +96,4 @@ const { storeList, schoolList, filter, dialogMenu, loading } = inject(
 const { itemStatuses, statuses } = useShare()
 const authStore = useAuthStore()
 const { userProfile } = storeToRefs(authStore)!
-const schoolStore = useSchoolStore()
-onMounted(async () => {
-    loading.value = true
-    await schoolStore.fetchAllSchoolsWithCustomer(userProfile.value!.id)
-    loading.value = false
-})
 </script>
