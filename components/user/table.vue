@@ -96,10 +96,17 @@ const search = ref('')
 const { updateUser, createUser, disableUser, fetchAllUsers } = userStore
 const { users } = storeToRefs(userStore)
 async function onEdit(id: string) {
-    const user = await modal.value?.openDialog(id)
-    await updateUser(id, user)
-    modal.value?.closeDialog()
-    await init()
+    try {
+        const user = await modal.value?.openDialog(id)
+        await updateUser(id, user)
+        modal.value?.closeDialog()
+        toast.success('สร้างสำเร็จ')
+        await init()
+    } catch (e) {
+        toast.error(`${e}`)
+    } finally {
+        modal.value?.setLoadingOff()
+    }
 }
 async function onCreate() {
     try {

@@ -6,8 +6,8 @@ export const useUserStore = defineStore('users', () => {
     const users = ref<User[]>([])
     const user = ref<User>({} as User)
     const controller = 'user'
+    const api = useBaseApi()
     async function fetchAllUsers(): Promise<User[]> {
-        const api = useBaseApi()
         try {
             const allUsers = await api.getRequest<ApiResult<User[]>>(controller)
             const result = allUsers.data.filter(
@@ -20,7 +20,6 @@ export const useUserStore = defineStore('users', () => {
         }
     }
     async function fetchUserById(id: string) {
-        const api = useBaseApi()
         try {
             user.value = (
                 await api.getRequest<ApiResult<User>>(`${controller}/${id}`)
@@ -30,7 +29,6 @@ export const useUserStore = defineStore('users', () => {
         }
     }
     async function createUser(user: CreateUser): Promise<User> {
-        const api = useBaseApi()
         try {
             return await api.postRequest<User>(controller, user)
         } catch (error) {
@@ -41,15 +39,16 @@ export const useUserStore = defineStore('users', () => {
         id: string,
         updatedUser: CreateUser
     ): Promise<User> {
-        const api = useBaseApi()
         try {
-            return await api.postRequest<User>(controller, updatedUser)
+            return await api.putRequest<User>(
+                `${controller}/${id}`,
+                updatedUser
+            )
         } catch (error) {
             throw error
         }
     }
     async function deleteUser(id: string): Promise<boolean> {
-        const api = useBaseApi()
         try {
             return await api.deleteRequest<boolean>(`${controller}/${id}`)
         } catch (error) {
