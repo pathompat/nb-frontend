@@ -30,15 +30,11 @@ async function download() {
     loading.value = false
 }
 onMounted(async () => {
-    loading.value = true
-    nextTick(async () => {
-        try {
-            id.value = route.value.params.id as string
-            await download()
-        } catch (error) {
-            toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
-        }
-    })
-    loading.value = false
+    try {
+        id.value = route.value.params.id as string
+        await download()
+    } catch (error) {
+        toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
+    }
 })
 </script>
