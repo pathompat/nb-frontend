@@ -27,7 +27,6 @@ async function download() {
     loading.value = true
     await pdf.setItem(id.value)
     await pdf.download()
-    loading.value = false
 }
 onMounted(async () => {
     try {
@@ -35,6 +34,8 @@ onMounted(async () => {
         await download()
     } catch (error) {
         toast.error(`ดาวน์โหลดเอกสารไม่สำเร็จ ${error}`)
+    } finally {
+        loading.value = false
     }
 })
 </script>
