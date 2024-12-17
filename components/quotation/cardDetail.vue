@@ -97,7 +97,11 @@
                                             ></v-radio>
                                             <v-radio
                                                 label="กำหนดส่ง"
-                                                :value="true"
+                                                :value="
+                                                    true ||
+                                                    quotationForm.appointmentAt !=
+                                                        null
+                                                "
                                             ></v-radio>
                                         </v-radio-group>
                                     </div>
@@ -112,7 +116,7 @@
                                             props.id != undefined
                                         "
                                         :hide-details="false"
-                                        v-model="quotationForm.dueDateAt"
+                                        v-model="quotationForm.appointmentAt"
                                         label="วันที่พร้อมรับสินค้า"
                                     ></v-date-input>
                                 </v-col>
@@ -120,7 +124,7 @@
                                     <v-date-input
                                         :rules="emtpyRule"
                                         :hide-details="false"
-                                        v-model="quotationForm.appointmentAt"
+                                        v-model="quotationForm.dueDateAt"
                                         label="วันที่ต้องส่ง"
                                         :disabled="props.id != undefined"
                                     ></v-date-input
@@ -554,7 +558,7 @@ function updateCustomerSelectSchool(value: string) {
 
 const updateCustomDate = (value: boolean | null) => {
     isCustomDate.value = value!
-    if (!value) quotationForm.value.dueDateAt = null
+    if (!value) quotationForm.value.appointmentAt = null
 }
 const updateCustomerSelect = async (value: string) => {
     quotationForm.value.userId = value

@@ -17,6 +17,7 @@
                 >
             </div>
         </div>
+
         <section class="pa-8">
             <v-card :loading="loading">
                 <v-card-text
@@ -46,13 +47,15 @@
                             <v-col cols="3">
                                 <v-date-input
                                     disabled
-                                    label="Select a date"
+                                    :model-value="production.appointmentAt"
+                                    label="วันที่พร้อมรับสินค้า"
                                 ></v-date-input>
                             </v-col>
                             <v-col cols="3">
                                 <v-date-input
                                     disabled
-                                    label="Select a date"
+                                    :model-value="production.dueDateAt"
+                                    label="วันที่ต้องส่ง"
                                 ></v-date-input
                             ></v-col>
                             <v-col cols="3">
