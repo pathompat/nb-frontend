@@ -2,7 +2,7 @@
     <UtilsBasePage path="/">
         <template #header>
             <h1>
-                แบบฟอร์มเสนอราคา
+                แบบฟอร์มสั่งผลิต
                 {{ `${id ? `#PR${id!.toString().padStart(5, '0')}` : ''}` }}
             </h1>
         </template>

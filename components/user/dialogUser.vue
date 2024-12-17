@@ -25,7 +25,13 @@
                                 v-model="initFormEdit.password"
                                 :disabled="loading"
                                 :loading="loading"
-                                :rules="!userId ? passwordRule : []"
+                                :rules="
+                                    !userId
+                                        ? passwordRule
+                                        : initFormEdit.password.length == 0
+                                          ? []
+                                          : passwordRule
+                                "
                                 :hide-details="false"
                                 label="Password"
                                 required

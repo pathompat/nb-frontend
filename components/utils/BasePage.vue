@@ -1,9 +1,9 @@
 <template>
     <div class="d-flex ga-2 align-center">
         <v-btn
-            v-if="props.path"
+            v-if="path"
             variant="text"
-            @click="router.push({ path: props.path })"
+            @click="handleClick"
             icon
             color="black"
         >
@@ -16,9 +16,21 @@
         <slot></slot>
     </div>
 </template>
+
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
 const router = useRouter()
+
 const props = defineProps<{
-    path?: string
+    path?: string | (() => void)
 }>()
+
+function handleClick() {
+    if (typeof props.path === 'string') {
+        router.push({ path: props.path })
+    } else if (typeof props.path === 'function') {
+        props.path()
+    }
+}
 </script>
