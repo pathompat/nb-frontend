@@ -1,5 +1,5 @@
 <template>
-    <UtilsBasePage :path="`/quotation/${id}`">
+    <UtilsBasePage :path="handleBack">
         <template #header>
             <h1>เอกสารใบเสนอราคา {{ `${id}`.padStart(5, '0') }}</h1>
         </template>
@@ -38,4 +38,12 @@ onMounted(async () => {
         loading.value = false
     }
 })
+const router = useRouter()
+function handleBack() {
+    if (window.history.length > 1) {
+        router.back()
+    } else {
+        router.push(`/quotation/${id}`)
+    }
+}
 </script>
