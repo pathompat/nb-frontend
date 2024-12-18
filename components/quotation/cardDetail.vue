@@ -715,8 +715,8 @@ async function cancel() {
             ...quotation.value,
             status: STATUS.CANCELED,
         })
+        router.push({ path: '/' })
         toast.success('ยกเลิกสำเร็จ')
-        router.push(`/`)
     } catch (e) {
         toast.error(`${e}`)
     }
