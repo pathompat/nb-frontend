@@ -728,6 +728,7 @@ onMounted(async () => {
     loading.value = true
     try {
         await userStore.fetchAllUsers()
+        await getSchools()
         if (!props.id) return
         await getQuotationById(props.id)
         quotationForm.value = {
@@ -758,7 +759,6 @@ onMounted(async () => {
                 : null,
             dueDateAt: new Date(quotation.value.dueDateAt!),
         }
-        await getSchools()
         await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
         emit('status', quotationForm.value.status!)
     } catch (error) {
