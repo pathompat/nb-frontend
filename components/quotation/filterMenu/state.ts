@@ -16,6 +16,12 @@ export default function filterMenuQuotationState() {
         store: [],
         status: [],
         type: null,
+        category: null,
+        color: null,
+        gram: null,
+        page: null,
+        pattern: null,
+        plate: null,
     })
     const loading = ref(false)
     let callback: ((param: FilterQuotation) => void) | null = null

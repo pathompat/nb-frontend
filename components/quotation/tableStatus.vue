@@ -143,8 +143,15 @@
                             </template>
                             <template #item.description="{ item }">
                                 {{
-                                    plates.find((p) => p.value === item.plate)
-                                        ?.title || ''
+                                    userProfile!.role == SYSTEM_ROLE.ADMIN
+                                        ? (plates.find(
+                                              (p) => p.value === item.plate
+                                          )?.title || 'ไม่พบ') + '/'
+                                        : ''
+                                }}{{
+                                    itemCategories.find(
+                                        (x) => x.value == item.category
+                                    )?.title
                                 }}/{{ item.gram }}/{{ item.color }}/{{
                                     item.page
                                 }}/{{
@@ -171,7 +178,7 @@ import filterMenuQuotationState, {
     filterMenuQuotationStateSymbol,
 } from '@/components/quotation/filterMenu/state'
 const { getStatusTitle, itemStatuses } = useShare()
-const { plates, lines, statuses, getMinStatus } = useShare()
+const { plates, lines, statuses, getMinStatus, itemCategories } = useShare()
 const { formatDate } = useFormatDate()
 const stateFilter = filterMenuQuotationState()
 const authStore = useAuthStore()
@@ -195,13 +202,20 @@ const headers = computed(() => {
             )
     )
 })
-const headerExpanded = ref([
-    { title: 'No.', value: 'index' },
-    { title: 'เพรท/แกรม/สี/แผ่น/เส้น', value: 'description' },
-    { title: 'มีแบบ', value: 'hasReference' },
-    { title: 'จำนวน', value: 'quantity' },
-    { title: 'สถานะงานพิมพ์', value: 'status' },
-])
+const headerExpanded = computed(() => {
+    const header = [
+        { title: 'No.', value: 'index' },
+        { title: 'เพลท/ประเภท/แกรม/สี/แผ่น/เส้น', value: 'description' },
+        { title: 'มีแบบ', value: 'hasReference' },
+        { title: 'จำนวน', value: 'quantity' },
+        { title: 'สถานะงานพิมพ์', value: 'status' },
+    ]
+    if (userProfile.value!.role != SYSTEM_ROLE.ADMIN) {
+        header.find((x) => x.value == 'description')!.title =
+            'ประเภท/แกรม/สี/แผ่น/เส้น'
+    }
+    return header
+})
 const loading = ref(false)
 const quotationStore = useQuotationStore()
 const toast = inject(toastPluginSymbol)!
@@ -210,7 +224,18 @@ const { quotations } = storeToRefs(quotationStore)
 const filterQuotation = computed(() => {
     let result = quotations.value
 
-    const { type, status, school, store } = stateFilter.filter.value
+    const {
+        type,
+        status,
+        school,
+        store,
+        category,
+        color,
+        gram,
+        page,
+        pattern,
+        plate,
+    } = stateFilter.filter.value
 
     result = result.filter(
         (x) =>
@@ -231,6 +256,24 @@ const filterQuotation = computed(() => {
                     ? h == x.status
                     : x.production.items.some((s) => s.status == h)
             ) || status.length === 0
+    )
+    result = result.filter(
+        (x) => category == null || x.items.some((s) => s.category == category)
+    )
+    result = result.filter(
+        (x) => color == null || x.items.some((s) => s.color == color)
+    )
+    result = result.filter(
+        (x) => gram == null || x.items.some((s) => s.gram == gram)
+    )
+    result = result.filter(
+        (x) => page == null || x.items.some((s) => s.page == page)
+    )
+    result = result.filter(
+        (x) => plate == null || x.items.some((s) => s.plate == plate)
+    )
+    result = result.filter(
+        (x) => pattern == null || x.items.some((s) => s.pattern == pattern)
     )
     return result
 })

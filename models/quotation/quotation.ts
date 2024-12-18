@@ -61,4 +61,10 @@ export interface FilterQuotation {
     store: string[]
     status: string[]
     type: string | null
+    plate: string | null
+    page: number | null
+    color: string | null
+    pattern: string | null
+    gram: number | null
+    category: string | null
 }
