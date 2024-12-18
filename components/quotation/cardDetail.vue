@@ -724,11 +724,13 @@ async function cancel() {
 onMounted(async () => {
     if (userProfile?.role !== SYSTEM_ROLE.ADMIN) {
         quotationForm.value.userId = userProfile!.id
+        await getSchools()
+        return
     }
     loading.value = true
     try {
         await userStore.fetchAllUsers()
-        await getSchools()
+
         if (!props.id) return
         await getQuotationById(props.id)
         quotationForm.value = {
@@ -759,6 +761,7 @@ onMounted(async () => {
                 : null,
             dueDateAt: new Date(quotation.value.dueDateAt!),
         }
+        await getSchools()
         if (
             userProfile!.role !== SYSTEM_ROLE.ADMIN &&
             userProfile!.id !== quotationForm.value.userId
