@@ -100,7 +100,7 @@ async function onEdit(id: string) {
         const user = await modal.value?.openDialog(id)
         await updateUser(id, user)
         modal.value?.closeDialog()
-        toast.success('สร้างสำเร็จ')
+        toast.success('แก้ไขสำเร็จ')
         await init()
     } catch (e) {
         toast.error(`${e}`)
