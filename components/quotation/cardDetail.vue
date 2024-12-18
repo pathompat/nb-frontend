@@ -759,6 +759,13 @@ onMounted(async () => {
                 : null,
             dueDateAt: new Date(quotation.value.dueDateAt!),
         }
+        if (
+            userProfile!.role !== SYSTEM_ROLE.ADMIN &&
+            userProfile!.id !== quotationForm.value.userId
+        ) {
+            router.push('/')
+            return
+        }
         await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
         emit('status', quotationForm.value.status!)
     } catch (error) {

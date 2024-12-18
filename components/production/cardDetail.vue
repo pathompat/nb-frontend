@@ -24,11 +24,14 @@
                     ><v-layout class="pt-4"
                         ><v-row>
                             <v-col cols="4">
-                                <v-text-field
+                                <v-select
                                     label="User"
+                                    item-title="username"
+                                    item-value="id"
                                     disabled
-                                    v-model="production.id"
-                                ></v-text-field>
+                                    :items="users"
+                                    v-model="production.userId"
+                                ></v-select>
                             </v-col>
                             <v-col cols="4">
                                 <v-text-field
@@ -198,6 +201,8 @@ function defaultForm(): Partial<Production> {
         items: [],
     }
 }
+const userStore = useUserStore()
+const { users } = storeToRefs(userStore)
 const production = ref<Partial<Production>>(defaultForm())
 const headers = ref([
     { title: 'ลำดับ', key: 'id' },
@@ -232,12 +237,33 @@ async function updateStatus(
 
     loading.value = false
 }
+const loadingSchool = ref(false)
+const schoolStore = useSchoolStore()
+const router = useRouter()
+async function getSchools() {
+    loadingSchool.value = true
+    try {
+        await schoolStore.fetchAllSchoolsWithCustomer(production.value.userId!)
+    } catch (e) {
+        toast.error(`${e}`)
+    }
+    loadingSchool.value = false
+}
 onMounted(async () => {
     defaultForm()
     if (props.id) {
         loading.value = true
         try {
+            await userStore.fetchAllUsers()
             production.value = await getProductionById(`${props.id}`)
+            if (
+                userProfile.value!.role !== SYSTEM_ROLE.ADMIN &&
+                userProfile.value!.id !== production.value.userId
+            ) {
+                router.push('/')
+                return
+            }
+            await getSchools()
         } catch (error) {
         } finally {
             loading.value = false

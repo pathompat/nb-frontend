@@ -12,6 +12,7 @@ export interface Production {
     appointmentAt: string | null
     items: ProductionItem[]
     remark?: string
+    userId: string
 }
 export interface ProductionItem {
     id?: string
