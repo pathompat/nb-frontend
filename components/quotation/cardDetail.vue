@@ -715,8 +715,8 @@ async function cancel() {
             ...quotation.value,
             status: STATUS.CANCELED,
         })
+        router.push({ path: '/' })
         toast.success('ยกเลิกสำเร็จ')
-        router.push(`/`)
     } catch (e) {
         toast.error(`${e}`)
     }
@@ -728,6 +728,7 @@ onMounted(async () => {
     loading.value = true
     try {
         await userStore.fetchAllUsers()
+        await getSchools()
         if (!props.id) return
         await getQuotationById(props.id)
         quotationForm.value = {
@@ -758,7 +759,13 @@ onMounted(async () => {
                 : null,
             dueDateAt: new Date(quotation.value.dueDateAt!),
         }
-        await getSchools()
+        if (
+            userProfile!.role !== SYSTEM_ROLE.ADMIN &&
+            userProfile!.id !== quotationForm.value.userId
+        ) {
+            router.push('/')
+            return
+        }
         await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
         emit('status', quotationForm.value.status!)
     } catch (error) {
