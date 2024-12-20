@@ -151,12 +151,12 @@
                                 }}{{
                                     itemCategories.find(
                                         (x) => x.value == item.category
-                                    )?.title
+                                    )?.title || 'ไม่พบ'
                                 }}/{{ item.gram }}/{{ item.color }}/{{
                                     item.page
                                 }}/{{
                                     lines.find((l) => l.value === item.pattern)
-                                        ?.title || ''
+                                        ?.title || 'ไม่พบ'
                                 }}
                             </template>
                             <template #item.hasReference="{ item }">
