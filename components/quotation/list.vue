@@ -51,7 +51,7 @@
                                         backgroundColor: data?.color,
                                     }"
                                 >
-                                    {{ data?.title }}
+                                    {{ data?.title || 'ไม่พบ' }}
                                 </div>
                             </template>
                         </utils-return-data-slot>

@@ -98,13 +98,13 @@
                             <template #item.plate="{ item }">
                                 {{
                                     plates.find((p) => p.value === item.plate)
-                                        ?.title
+                                        ?.title || 'ไม่พบ'
                                 }}
                             </template>
                             <template #item.line="{ item }">
                                 {{
                                     lines.find((l) => l.value === item.pattern)
-                                        ?.title
+                                        ?.title || 'ไม่พบ'
                                 }}
                             </template>
                             <template #item.status="{ item }">

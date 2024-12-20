@@ -39,18 +39,21 @@ export function quotationPdf() {
                                             index + 1,
                                             itemCategories.value.find(
                                                 (x) => x.value == item.category
-                                            )?.title +
-                                                '/' +
-                                                item.gram +
-                                                '/' +
-                                                item.color +
-                                                '/' +
-                                                item.page +
-                                                '/' +
-                                                lines.value.find(
-                                                    (x) =>
-                                                        x.value == item.pattern
-                                                )?.title,
+                                            )?.title ||
+                                                'ไม่พบ' +
+                                                    '/' +
+                                                    item.gram +
+                                                    '/' +
+                                                    item.color +
+                                                    '/' +
+                                                    item.page +
+                                                    '/' +
+                                                    lines.value.find(
+                                                        (x) =>
+                                                            x.value ==
+                                                            item.pattern
+                                                    )?.title ||
+                                                'ไม่พบ',
                                             item.options,
                                             item.hasReference ? 'มี' : 'ไม่มี',
                                             item.quantity,

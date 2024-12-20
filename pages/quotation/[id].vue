@@ -14,7 +14,7 @@
                         class="text-white"
                         :style="{ backgroundColor: data?.color }"
                     >
-                        <span>{{ data?.title }}</span>
+                        <span>{{ data?.title || 'ไม่พบ' }}</span>
                     </v-chip>
                 </template>
             </UtilsReturnDataSlot>

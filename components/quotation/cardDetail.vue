@@ -186,7 +186,7 @@
                                                 itemCategories.find(
                                                     (x) =>
                                                         x.value == item.category
-                                                )?.title
+                                                )?.title || 'ไม่พบ'
                                             }}
                                         </td>
                                         <td
@@ -201,7 +201,7 @@
                                                         (p) =>
                                                             p.value ==
                                                             item.plate
-                                                    )?.title
+                                                    )?.title || 'ไม่พบ'
                                                 }}
                                             </div>
                                         </td>
@@ -227,7 +227,7 @@
                                                         (l) =>
                                                             l.value ==
                                                             item.pattern
-                                                    )?.title
+                                                    )?.title || 'ไม่พบ'
                                                 }}
                                             </div>
                                         </td>
