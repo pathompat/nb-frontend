@@ -6,6 +6,7 @@
                     color="white"
                     variant="text"
                     @click.stop="drawer = !drawer"
+                    data-testid="drawer-button"
                 >
                 </v-app-bar-nav-icon>
             </template>
@@ -15,6 +16,7 @@
             <v-menu>
                 <template v-slot:activator="{ props }">
                     <v-btn
+                        data-testid="user-button"
                         v-bind="props"
                         icon
                         class="text-black bg-white mr-6"
@@ -25,7 +27,7 @@
                 </template>
 
                 <v-list>
-                    <v-list-item @click="logout">
+                    <v-list-item @click="logout" data-testid="logout-button">
                         <v-list-item-title>ออกจากระบบ</v-list-item-title>
                     </v-list-item>
                 </v-list>
@@ -35,6 +37,7 @@
         <v-navigation-drawer :model-value="drawer">
             <v-list>
                 <v-list-item
+                    :data-testid="`menu-${item.title}`"
                     v-for="item in ItemByRole"
                     :key="item.title"
                     :to="item.value"

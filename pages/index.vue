@@ -3,7 +3,12 @@
         <div class="d-flex justify-space-between">
             <h1>รายการสั่งผลิต</h1>
             <div class="d-flex ga-2">
-                <v-btn variant="flat" color="success" to="/quotation/create">
+                <v-btn
+                    variant="flat"
+                    data-testid="add-quotation-button"
+                    color="success"
+                    to="/quotation/create"
+                >
                     เพิ่มรายการสั่งผลิต
                 </v-btn>
             </div>

@@ -3,6 +3,7 @@
         <div class="d-flex justify-end">
             <div class="d-flex ga-2">
                 <v-btn
+                    data-testid="quotation-download-button"
                     variant="flat"
                     v-if="props.id"
                     color="success"
@@ -19,6 +20,7 @@
                             ><v-row>
                                 <v-col cols="4">
                                     <v-select
+                                        data-testid="quotation-user-field"
                                         item-title="username"
                                         item-value="id"
                                         label="User"
@@ -38,6 +40,7 @@
                                 </v-col>
                                 <v-col cols="4">
                                     <v-text-field
+                                        data-testid="quotation-store-field"
                                         label="ร้าน *"
                                         disabled
                                         :model-value="storeSelect"
@@ -45,6 +48,7 @@
                                 </v-col>
                                 <v-col cols="4">
                                     <v-autocomplete
+                                        data-testid="quotation-school-field"
                                         label="โรงเรียน *"
                                         :loading="loadingSchool"
                                         item-title="name"
@@ -67,6 +71,7 @@
                                     >
                                         <template v-slot:prepend-item>
                                             <v-list-item
+                                                data-testid="quotation-add-new-school"
                                                 @click="createNewSchool"
                                             >
                                                 <template v-slot:prepend>
@@ -84,6 +89,7 @@
                                 <v-col cols="2">
                                     <div>
                                         <v-radio-group
+                                            data-testid="quotation-appointment-radio-group"
                                             inline
                                             :disabled="props.id != undefined"
                                             :model-value="isCustomDate"
@@ -92,10 +98,12 @@
                                             "
                                         >
                                             <v-radio
+                                                data-testid="quotation-appointment-now-radio"
                                                 label="ส่งทันที"
                                                 :value="false"
                                             ></v-radio>
                                             <v-radio
+                                                data-testid="quotation-appointment-custom-radio"
                                                 label="กำหนดส่ง"
                                                 :value="
                                                     true ||
@@ -108,6 +116,7 @@
                                 </v-col>
                                 <v-col cols="2">
                                     <v-date-input
+                                        data-testid="quotation-appointment-date-field"
                                         :rules="
                                             isCustomDate ? emtpyRule : [true]
                                         "
@@ -122,6 +131,7 @@
                                 </v-col>
                                 <v-col cols="2">
                                     <v-date-input
+                                        data-testid="quotation-due-date-field"
                                         :rules="emtpyRule"
                                         :hide-details="false"
                                         v-model="quotationForm.dueDateAt"
@@ -132,6 +142,7 @@
 
                                 <v-col cols="3">
                                     <v-text-field
+                                        data-testid="quotation-address-field"
                                         label="ที่อยู่ *"
                                         v-model="quotationForm.schoolAddress"
                                         :disabled="props.id != undefined"
@@ -139,6 +150,7 @@
                                 </v-col>
                                 <v-col cols="3">
                                     <v-text-field
+                                        data-testid="quotation-telephone-field"
                                         label="เบอร์ติดต่อ *"
                                         :rules="phoneNumberRule"
                                         v-model="quotationForm.schoolTelephone"
@@ -153,6 +165,7 @@
                             >
                                 <h2>รายการสินค้า</h2>
                                 <v-btn
+                                    data-testid="quotation-add-item-button"
                                     variant="flat"
                                     @click="addItem"
                                     color="primary"
@@ -233,6 +246,7 @@
                                         </td>
                                         <td>
                                             <v-checkbox
+                                                data-testid="quotation-reference-item-checkbox"
                                                 :disabled="true"
                                                 v-model="item.hasReference"
                                             ></v-checkbox>
@@ -267,6 +281,7 @@
                                             "
                                         >
                                             <v-btn
+                                                data-testid="quotation-edit-item-button"
                                                 variant="text"
                                                 icon
                                                 v-if="
@@ -284,6 +299,7 @@
                                                 <v-icon>mdi-pencil</v-icon>
                                             </v-btn>
                                             <v-btn
+                                                data-testid="quotation-delete-item-button"
                                                 variant="text"
                                                 icon
                                                 v-if="
@@ -366,6 +382,7 @@
                                     <p>ส่วนลดท้ายบิล:</p>
                                     <div>
                                         <v-text-field
+                                            data-testid="quotation-discount-field"
                                             :disabled="
                                                 userProfile?.role !==
                                                     SYSTEM_ROLE.ADMIN ||
@@ -403,6 +420,7 @@
 
                             <v-divider class="my-4"></v-divider>
                             <v-textarea
+                                data-testid="quotation-remark-field"
                                 :rules="noEmojiOrEscapeCharacterRule"
                                 label="หมายเหตุ"
                                 :hide-details="false"
@@ -434,6 +452,7 @@
                     >
 
                     <v-btn
+                        data-testid="quotation-cancle-button"
                         variant="flat"
                         v-if="
                             props.id && userProfile?.role === SYSTEM_ROLE.ADMIN
@@ -444,6 +463,7 @@
                     >
                     <v-btn
                         variant="flat"
+                        data-testid="quotation-approve-button"
                         v-if="
                             props.id && userProfile?.role === SYSTEM_ROLE.ADMIN
                         "

@@ -93,6 +93,7 @@
                     </td>
                     <td>
                         <v-btn
+                            data-testid="quotation-detail-button"
                             variant="outlined"
                             class="text-primary"
                             :to="

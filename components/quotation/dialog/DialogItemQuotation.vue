@@ -5,6 +5,7 @@
                 <span>เพิ่มรายการใหม่</span>
                 <v-spacer></v-spacer>
                 <v-btn
+                    data-testid="close-dialog-button"
                     icon
                     variant="text"
                     @click="dialogOpen = false"
@@ -24,6 +25,7 @@
                                 v-if="userProfile?.role == SYSTEM_ROLE.ADMIN"
                             >
                                 <v-select
+                                    data-testid="plate-select"
                                     :rules="emtpyRule"
                                     item-title="title"
                                     item-value="value"
@@ -44,6 +46,7 @@
                             </v-col>
                             <v-col cols="3">
                                 <v-select
+                                    data-testid="gram-select"
                                     :rules="emtpyRule"
                                     label="แกรม"
                                     :disabled="!openFormEdit"
@@ -63,6 +66,7 @@
                             </v-col>
                             <v-col cols="3">
                                 <v-select
+                                    data-testid="color-select"
                                     :rules="emtpyRule"
                                     label="สี"
                                     :disabled="!openFormEdit"
@@ -82,6 +86,7 @@
                             </v-col>
                             <v-col cols="3">
                                 <v-select
+                                    data-testid="page-select"
                                     :rules="emtpyRule"
                                     label="แผ่น"
                                     :items="pages"
@@ -102,6 +107,7 @@
 
                             <v-col cols="3">
                                 <v-select
+                                    data-testid="category-select"
                                     :items="itemCategories"
                                     item-text="title"
                                     item-value="value"
@@ -123,6 +129,7 @@
                             </v-col>
                             <v-col cols="3">
                                 <v-select
+                                    data-testid="line-select"
                                     :rules="emtpyRule"
                                     :items="lines"
                                     label="เส้น"
@@ -145,6 +152,7 @@
                         <v-row dense>
                             <v-col cols="2">
                                 <v-checkbox
+                                    data-testid="reference-checkbox"
                                     label="มีแบบ"
                                     :disabled="!openFormEdit"
                                     :model-value="quotationItem.hasReference"
@@ -161,6 +169,7 @@
                             </v-col>
                             <v-col cols="10">
                                 <v-select
+                                    data-testid="option-select"
                                     :disabled="!openFormEdit"
                                     multiple
                                     clearable
@@ -185,6 +194,7 @@
                         <v-row dense>
                             <v-col cols="6">
                                 <v-text-field
+                                    data-testid="quantity-field"
                                     type="number"
                                     min="1"
                                     :disabled="!openFormEdit"
@@ -196,6 +206,7 @@
                             </v-col>
                             <v-col cols="6"
                                 ><v-text-field
+                                    data-testid="price-field"
                                     min="1"
                                     :hide-details="false"
                                     :rules="
@@ -219,6 +230,7 @@
 
             <v-card-actions
                 ><v-btn
+                    data-testid="save-item-button"
                     :disabled="loading || !valid"
                     :loading="loading"
                     variant="flat"

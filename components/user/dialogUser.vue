@@ -10,6 +10,7 @@
                     <v-row>
                         <v-col>
                             <v-text-field
+                                data-testid="username-field"
                                 v-model="initFormEdit.username"
                                 label="Username"
                                 :rules="userNameRule"
@@ -22,6 +23,7 @@
                         <v-col>
                             <v-text-field
                                 type="password"
+                                data-testid="password-field"
                                 v-model="initFormEdit.password"
                                 :disabled="loading"
                                 :loading="loading"
@@ -41,6 +43,7 @@
                     <v-row>
                         <v-col>
                             <v-text-field
+                                data-testid="store-name-field"
                                 v-model="initFormEdit.storeName"
                                 :disabled="loading"
                                 :loading="loading"
@@ -54,6 +57,7 @@
                     <v-row>
                         <v-col>
                             <v-select
+                                data-testid="tier-field"
                                 v-model="initFormEdit.tierId"
                                 :items="tiers"
                                 item-title="id"
@@ -71,6 +75,7 @@
 
             <v-card-actions
                 ><v-btn
+                    data-testid="save-user-button"
                     :disabled="!valid || loading"
                     :loading="loading"
                     variant="flat"

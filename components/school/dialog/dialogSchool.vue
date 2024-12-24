@@ -8,6 +8,7 @@
                     <v-row>
                         <v-col cols="12">
                             <v-text-field
+                                data-testid="school-name-field"
                                 v-model="initFormEdit.name"
                                 label="ชื่อโรงเรียน"
                                 :rules="emtpyRule"
@@ -19,6 +20,7 @@
                         </v-col>
                         <v-col cols="12">
                             <v-text-field
+                                data-testid="school-address-field"
                                 v-model="initFormEdit.address"
                                 :disabled="loading"
                                 :rules="emtpyRule"
@@ -30,6 +32,7 @@
                         </v-col>
                         <v-col cols="12">
                             <v-text-field
+                                data-testid="school-phone-field"
                                 :rules="phoneNumberRule"
                                 v-model="initFormEdit.telephone"
                                 :disabled="loading"
@@ -45,6 +48,7 @@
 
             <v-card-actions
                 ><v-btn
+                    data-testid="save-school-button"
                     :disabled="loading || !valid"
                     :loading="loading"
                     variant="flat"

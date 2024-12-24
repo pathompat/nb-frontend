@@ -4,12 +4,14 @@
             <v-spacer></v-spacer>
             <div class="d-flex ga-2">
                 <v-btn
+                    data-testid="quotation-document-download-button"
                     variant="flat"
                     color="success"
                     :to="`/quotation/document/${production.quotationId}`"
                     >ใบเสนอราคา</v-btn
                 >
                 <v-btn
+                    data-testid="production-document-download-button"
                     variant="flat"
                     color="purple"
                     :to="`/production/document/${production.id}`"
@@ -25,6 +27,7 @@
                         ><v-row>
                             <v-col cols="4">
                                 <v-select
+                                    data-testid="user-select"
                                     label="User"
                                     item-title="username"
                                     item-value="id"
@@ -35,6 +38,7 @@
                             </v-col>
                             <v-col cols="4">
                                 <v-text-field
+                                    data-testid="store-name-field"
                                     label="ร้าน *"
                                     disabled
                                     v-model="production.storeName"
@@ -42,6 +46,7 @@
                             </v-col>
                             <v-col cols="4">
                                 <v-select
+                                    data-testid="school-select"
                                     label="โรงเรียน *"
                                     disabled
                                     v-model="production.schoolName"
@@ -49,6 +54,7 @@
                             </v-col>
                             <v-col cols="3">
                                 <v-date-input
+                                    data-testid="appointment-date-input"
                                     disabled
                                     :model-value="production.appointmentAt"
                                     label="วันที่พร้อมรับสินค้า"
@@ -57,12 +63,14 @@
                             <v-col cols="3">
                                 <v-date-input
                                     disabled
+                                    data-testid="due-date-input"
                                     :model-value="production.dueDateAt"
                                     label="วันที่ต้องส่ง"
                                 ></v-date-input
                             ></v-col>
                             <v-col cols="3">
                                 <v-select
+                                    data-testid="address-select"
                                     label="ที่อยู่ *"
                                     disabled
                                     v-model="production.schoolAddress"
@@ -70,7 +78,8 @@
                             </v-col>
                             <v-col cols="3">
                                 <v-select
-                                    label="ที่อยู่ *"
+                                    data-testid="telephone-select"
+                                    label="เบอร์ติดต่อ *"
                                     disabled
                                     v-model="production.schoolTelephone"
                                 ></v-select>
@@ -133,6 +142,7 @@
                                 >
                                     <template #default="{ data }">
                                         <v-btn
+                                            data-testid="update-status-production-button"
                                             v-if="
                                                 data != null &&
                                                 userProfile?.role ===
@@ -166,6 +176,7 @@
                             </template>
                         </v-data-table>
                         <v-textarea
+                            data-testid="remark-textarea"
                             label="หมายเหตุ"
                             disabled
                             v-model="production.remark"
