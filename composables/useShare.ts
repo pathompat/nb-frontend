@@ -190,7 +190,7 @@ export function useShare() {
     ])
     const tiers = ref([1, 2, 3])
     const grams = ref([40, 50, 55, 60, 70, 80, 120, 150])
-    const colors = ref(['1', '1ก', '1ล', '1ส', '1อ', '4'])
+    const colors = ref(['1', '2', '4'])
     const pages = ref([30, 40, 50, 70, 80])
     const lines = ref([
         {

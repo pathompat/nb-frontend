@@ -151,7 +151,7 @@
                         <div class="my-4">ข้อมูลเพิ่มเติม</div>
                         <v-row dense>
                             <v-col cols="2">
-                                <v-checkbox
+                                <v-switch
                                     data-testid="reference-checkbox"
                                     label="มีแบบ"
                                     :disabled="!openFormEdit"
@@ -165,7 +165,7 @@
                                             )
                                         }
                                     "
-                                ></v-checkbox>
+                                ></v-switch>
                             </v-col>
                             <v-col cols="10">
                                 <v-select
