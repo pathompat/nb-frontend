@@ -35,7 +35,7 @@
         </v-app-bar>
 
         <v-navigation-drawer :model-value="drawer">
-            <v-list>
+            <v-list class="d-flex flex-column h-100">
                 <v-list-item
                     :data-testid="`menu-${item.title}`"
                     v-for="item in ItemByRole"
@@ -50,6 +50,18 @@
                     <v-list-item-title>
                         <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item-title>
+                </v-list-item>
+                <v-spacer></v-spacer>
+                <v-list-item>
+                    <v-btn
+                        class="w-100"
+                        @click="logout"
+                        data-testid="logout-button"
+                        color="red"
+                    >
+                        <v-icon>mdi-logout</v-icon>
+                        ออกจากระบบ
+                    </v-btn>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
