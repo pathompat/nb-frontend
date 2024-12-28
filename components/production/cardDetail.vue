@@ -131,48 +131,89 @@
                                 </v-chip></template
                             >
                             <template #item.action="{ item }">
-                                <utils-return-data-slot
-                                    :data="
-                                        getNextStatus(
-                                            itemStatuses.find(
-                                                (x) => x.value == item.status
-                                            )?.value!
-                                        )
-                                    "
-                                >
-                                    <template #default="{ data }">
-                                        <v-btn
-                                            data-testid="update-status-production-button"
-                                            v-if="
-                                                data != null &&
-                                                userProfile?.role ===
-                                                    SYSTEM_ROLE.ADMIN
-                                            "
-                                            size="small"
-                                            variant="flat"
-                                            @click="
-                                                updateStatus(
-                                                    `${production.id}`,
-                                                    item,
-                                                    data.value!
-                                                )
-                                            "
-                                            :color="
-                                                data == null
-                                                    ? 'gray'
-                                                    : itemStatuses.find(
-                                                          (s) =>
-                                                              s.value ===
-                                                              data.value
-                                                      )?.color || 'gray'
-                                            "
-                                        >
-                                            {{
-                                                getStatusTitle(data.value || '')
-                                            }}
-                                        </v-btn>
-                                    </template>
-                                </utils-return-data-slot>
+                                <div class="d-flex ga-4 align-center">
+                                    <utils-return-data-slot
+                                        :data="
+                                            getNextStatus(
+                                                itemStatuses.find(
+                                                    (x) =>
+                                                        x.value == item.status
+                                                )?.value!
+                                            )
+                                        "
+                                    >
+                                        <template #default="{ data }">
+                                            <v-btn
+                                                data-testid="update-status-production-button"
+                                                v-if="
+                                                    data != null &&
+                                                    userProfile?.role ===
+                                                        SYSTEM_ROLE.ADMIN
+                                                "
+                                                size="small"
+                                                variant="flat"
+                                                @click="
+                                                    updateStatus(
+                                                        `${production.id}`,
+                                                        item,
+                                                        data.value!
+                                                    )
+                                                "
+                                                :color="
+                                                    data == null
+                                                        ? 'gray'
+                                                        : itemStatuses.find(
+                                                              (s) =>
+                                                                  s.value ===
+                                                                  data.value
+                                                          )?.color || 'gray'
+                                                "
+                                            >
+                                                {{
+                                                    getStatusTitle(
+                                                        data.value || ''
+                                                    )
+                                                }}
+                                            </v-btn>
+                                        </template>
+                                    </utils-return-data-slot>
+                                    <utils-return-data-slot
+                                        :data="
+                                            getPrevStatus(
+                                                itemStatuses.find(
+                                                    (x) =>
+                                                        x.value == item.status
+                                                )?.value!
+                                            )
+                                        "
+                                    >
+                                        <template #default="{ data }">
+                                            <div
+                                                class="d-flex ga-4 align-center"
+                                            >
+                                                <v-btn
+                                                    v-if="
+                                                        data != null &&
+                                                        userProfile?.role ===
+                                                            SYSTEM_ROLE.ADMIN
+                                                    "
+                                                    variant="text"
+                                                    @click="
+                                                        updateStatus(
+                                                            `${production.id}`,
+                                                            item,
+                                                            data.value!
+                                                        )
+                                                    "
+                                                >
+                                                    <v-icon
+                                                        >mdi-backup-restore</v-icon
+                                                    >
+                                                </v-btn>
+                                            </div>
+                                        </template>
+                                    </utils-return-data-slot>
+                                </div>
                             </template>
                         </v-data-table>
                         <v-textarea
@@ -186,6 +227,12 @@
             </v-card>
         </section>
     </main>
+    <utils-dialog-confirm ref="dialogConfirm">
+        <template #header>ต้องการเปลี่ยนสถานะหรือไม่?</template>
+        <template #body
+            >หากกดตกลงเเล้วจะมีการเปลี่ยนแปลงสถานะของรายการสินค้า</template
+        >
+    </utils-dialog-confirm>
 </template>
 <script setup lang="ts">
 import {
@@ -196,10 +243,18 @@ import { useProductionStore } from '@/stores/production'
 import { useShare } from '~/composables/useShare'
 import { STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
 import { toastPluginSymbol } from '~/plugins/toast'
-const { lines, plates, getStatusTitle, itemStatuses, getNextStatus } =
-    useShare()
+import DialogConfirm from '@/components/utils/DialogConfirm.vue'
+const {
+    lines,
+    plates,
+    getStatusTitle,
+    itemStatuses,
+    getNextStatus,
+    getPrevStatus,
+} = useShare()
 const authStore = useAuthStore()
 const { userProfile } = storeToRefs(authStore)
+const dialogConfirm = ref<InstanceType<typeof DialogConfirm> | null>(null)
 const toast = inject(toastPluginSymbol)!
 const { getProductionById, updateProductionItem } = useProductionStore()
 const loading = ref(false)
@@ -225,13 +280,17 @@ const headers = ref([
     { title: 'มีแบบ', key: 'hasPlan' },
     { title: 'จำนวน', key: 'amount' },
     { title: 'สถานะ', key: 'status' },
-    { title: 'อัพเดท', key: 'action' },
+    { title: 'ดำเนินการ', key: 'action' },
 ])
 async function updateStatus(
     productionId: string,
     item: ProductionItem,
     status: STATUS
 ) {
+    const result = await dialogConfirm.value!.openConfirm()
+    if (!result) {
+        return
+    }
     loading.value = true
     try {
         const oldStatus = item.status

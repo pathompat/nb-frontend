@@ -49,6 +49,14 @@ export function useShare() {
         )
         return nextItem
     }
+    const getPrevStatus = (text: string) => {
+        const currentitem = itemStatuses.value.find((x) => x.value === text)
+        if (!currentitem) return null
+        const nextItem = itemStatuses.value.find(
+            (x) => x.order === currentitem?.order + -1
+        )
+        return nextItem
+    }
 
     const getMaxStatus = (text: string[]) => {
         const result = text.map((item) => {
@@ -338,6 +346,7 @@ export function useShare() {
         getStatusTitle,
         getNextStatus,
         quotationStatuses,
+        getPrevStatus,
         itemOptions,
         itemCategories,
     }

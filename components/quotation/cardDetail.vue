@@ -572,9 +572,9 @@ function updateCustomerSelectSchool(value: string) {
     quotationForm.value.schoolId = value
     if (quotationForm.value.status != undefined) return
     const school = schools.value.find((school) => school.id === value)!
-    quotationForm.value.schoolAddress = school?.address
+    quotationForm.value.schoolAddress = school?.address!
     quotationForm.value.schoolName = school?.name
-    quotationForm.value.schoolTelephone = school?.telephone
+    quotationForm.value.schoolTelephone = school?.telephone!
 }
 
 const updateCustomDate = (value: boolean | null) => {
