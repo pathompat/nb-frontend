@@ -118,6 +118,7 @@
                                 <v-col cols="2">
                                     <v-date-input
                                         data-testid="quotation-appointment-date-field"
+                                        :allowed-dates="disablePastDates"
                                         :rules="
                                             isCustomDate ? emtpyRule : [true]
                                         "
@@ -132,6 +133,7 @@
                                 </v-col>
                                 <v-col cols="2">
                                     <v-date-input
+                                        :allowed-dates="disablePastDates"
                                         data-testid="quotation-due-date-field"
                                         :rules="emtpyRule"
                                         :hide-details="false"
@@ -576,7 +578,12 @@ function updateCustomerSelectSchool(value: string) {
     quotationForm.value.schoolName = school?.name
     quotationForm.value.schoolTelephone = school?.telephone!
 }
-
+function disablePastDates(date: string) {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const selectedDate = new Date(date)
+    return selectedDate >= today
+}
 const updateCustomDate = (value: boolean | null) => {
     isCustomDate.value = value!
     if (!value) quotationForm.value.appointmentAt = null
