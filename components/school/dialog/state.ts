@@ -11,6 +11,7 @@ export default function dialogSchoolState() {
         address: '',
         name: '',
         telephone: '',
+        contact: '',
     })
     const loading = ref(false)
     const schoolId = ref<string>('')
@@ -26,6 +27,7 @@ export default function dialogSchoolState() {
             address: '',
             name: '',
             telephone: '',
+            contact: '',
         }
         loading.value = true
         dialogOpen.value = true

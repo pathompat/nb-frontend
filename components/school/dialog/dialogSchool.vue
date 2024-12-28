@@ -23,7 +23,6 @@
                                 data-testid="school-address-field"
                                 v-model="initFormEdit.address"
                                 :disabled="loading"
-                                :rules="emtpyRule"
                                 :loading="loading"
                                 :hide-details="false"
                                 label="ที่อยู่จัดส่ง"
@@ -33,12 +32,27 @@
                         <v-col cols="12">
                             <v-text-field
                                 data-testid="school-phone-field"
-                                :rules="phoneNumberRule"
                                 v-model="initFormEdit.telephone"
                                 :disabled="loading"
                                 :loading="loading"
+                                :rules="
+                                    !initFormEdit.telephone ||
+                                    initFormEdit.telephone.length == 0
+                                        ? []
+                                        : phoneNumberRule
+                                "
                                 :hide-details="false"
                                 label="เบอร์โทรติดต่อ"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                            <v-text-field
+                                data-testid="quotation-contact-field"
+                                v-model="initFormEdit.contact"
+                                :disabled="loading"
+                                :loading="loading"
+                                :hide-details="false"
+                                label="ชื่อผู้ติดต่อ"
                             ></v-text-field>
                         </v-col>
                     </v-row>

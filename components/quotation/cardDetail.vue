@@ -18,7 +18,7 @@
                     <v-form v-model="valid">
                         <v-layout class="pt-4"
                             ><v-row>
-                                <v-col cols="2">
+                                <v-col cols="4">
                                     <v-select
                                         data-testid="quotation-user-field"
                                         item-title="username"
@@ -38,14 +38,7 @@
                                         :items="users"
                                     ></v-select>
                                 </v-col>
-                                <v-col cols="2">
-                                    <v-text-field
-                                        data-testid="quotation-address-field"
-                                        label="ชื่อผู้ติดต่อ"
-                                        v-model="quotationForm.schoolAddress"
-                                        :disabled="props.id != undefined"
-                                    ></v-text-field>
-                                </v-col>
+
                                 <v-col cols="4">
                                     <v-text-field
                                         data-testid="quotation-store-field"
