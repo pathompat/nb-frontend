@@ -1,5 +1,6 @@
 import { ITEM_CATEGORY, STATUS, TYPE } from '~/models/enum/enum'
 import { ITEM_OPTION } from '~/models/object/object'
+import type { TemplateCategory } from '~/models/share/share'
 
 export function useShare() {
     const itemStatuses = ref([
@@ -330,7 +331,90 @@ export function useShare() {
             value: 'PAIR',
         },
     ])
-
+    const templateItems = ref<TemplateCategory[]>([
+        {
+            gram: 55,
+            line: 'SINGLE',
+            page: 20,
+            price: 3.4,
+            category: ITEM_CATEGORY.CUT_NINE,
+        },
+        {
+            gram: 55,
+            line: 'SINGLE',
+            page: 30,
+            price: 4.2,
+            category: ITEM_CATEGORY.CUT_NINE,
+        },
+        {
+            gram: 55,
+            line: 'SINGLE',
+            page: 40,
+            category: ITEM_CATEGORY.CUT_NINE,
+            price: 5.1,
+        },
+        {
+            gram: 55,
+            line: 'SINGLE',
+            page: 60,
+            category: ITEM_CATEGORY.CUT_NINE,
+            price: 7.5,
+        },
+        {
+            gram: 55,
+            line: 'SINGLE',
+            page: 80,
+            category: ITEM_CATEGORY.CUT_NINE,
+            price: 10,
+        },
+        {
+            gram: 55,
+            line: 'HALF',
+            page: 20,
+            category: ITEM_CATEGORY.CUT_NINE,
+            price: 3.4,
+        },
+        {
+            gram: 55,
+            line: 'HALF',
+            page: 30,
+            category: ITEM_CATEGORY.CUT_NINE,
+            price: 4.2,
+        },
+        {
+            gram: 55,
+            line: 'HALF',
+            page: 40,
+            category: ITEM_CATEGORY.CUT_NINE,
+            price: 5.1,
+        },
+        {
+            gram: 55,
+            line: 'HALF',
+            page: 60,
+            category: ITEM_CATEGORY.CUT_NINE,
+            price: 7.5,
+        },
+        {
+            gram: 55,
+            line: 'HALF',
+            page: 80,
+            category: ITEM_CATEGORY.CUT_NINE,
+            price: 10,
+        },
+    ])
+    function getListDropdownTemplate(
+        category: ITEM_CATEGORY
+    ): { label: string; value: TemplateCategory }[] {
+        return templateItems.value
+            .filter((f) => f.category == category)
+            .map((x) => {
+                return {
+                    label: `${x.gram} แกรม เส้น ${lines.value.find((c) => c.value == x.line)?.title} จำนวน ${x.page} หน้า ราคา ${x.price} บาท`,
+                    value: x,
+                }
+            })
+    }
     return {
         itemStatuses,
         tiers,
@@ -347,6 +431,7 @@ export function useShare() {
         getNextStatus,
         quotationStatuses,
         getPrevStatus,
+        getListDropdownTemplate,
         itemOptions,
         itemCategories,
     }

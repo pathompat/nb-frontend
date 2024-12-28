@@ -18,6 +18,44 @@
             <v-card-text>
                 <v-form v-model="valid">
                     <v-container fulid>
+                        <div class="mb-4">ข้อมูลประเภท</div>
+                        <v-row dense>
+                            <v-col cols="3">
+                                <v-select
+                                    data-testid="category-select"
+                                    :items="itemCategories"
+                                    item-text="title"
+                                    item-value="value"
+                                    :disabled="!openFormEdit"
+                                    label="ประเภท"
+                                    :rules="emtpyRule"
+                                    :model-value="quotationItem.category"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.category = e
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
+                                    :hide-details="false"
+                                ></v-select>
+                            </v-col>
+                            <v-col>
+                                <v-autocomplete
+                                    :items="
+                                        getListDropdownTemplate(
+                                            quotationItem.category as any
+                                        )
+                                    "
+                                    item-title="label"
+                                    item-value="value"
+                                    v-model="templateSelect"
+                                    label="เลือกรูปแบบ"
+                                ></v-autocomplete>
+                            </v-col>
+                        </v-row>
                         <div class="mb-4">ข้อมูลพื้นฐาน</div>
                         <v-row dense>
                             <v-col
@@ -105,28 +143,6 @@
                                 ></v-select>
                             </v-col>
 
-                            <v-col cols="3">
-                                <v-select
-                                    data-testid="category-select"
-                                    :items="itemCategories"
-                                    item-text="title"
-                                    item-value="value"
-                                    :disabled="!openFormEdit"
-                                    label="ประเภท"
-                                    :rules="emtpyRule"
-                                    :model-value="quotationItem.category"
-                                    @update:model-value="
-                                        (e) => {
-                                            quotationItem.category = e
-                                            handlerByItemPriceRef(
-                                                quotationItem,
-                                                prices
-                                            )
-                                        }
-                                    "
-                                    :hide-details="false"
-                                ></v-select>
-                            </v-col>
                             <v-col cols="3">
                                 <v-select
                                     data-testid="line-select"
@@ -248,14 +264,32 @@
 <script lang="ts" setup>
 import { SYSTEM_ROLE } from '~/models/enum/enum'
 import { dialogItemQuotationStateSymbol } from './state'
+import type { TemplateCategory } from '~/models/share/share'
 const valid = ref(false)
 const { userProfile } = useAuthStore()
 const { emtpyRule, morethanZeroRule } = useRules()
-const { plates, lines, grams, pages, colors, itemOptions, itemCategories } =
-    useShare()
+const {
+    plates,
+    lines,
+    grams,
+    pages,
+    colors,
+    itemOptions,
+    itemCategories,
+    getListDropdownTemplate,
+} = useShare()
 const openFormEdit = computed(
     () => quotationItem.value.id === '' || quotationItem.value.id == undefined
 )
+const templateSelect = ref<TemplateCategory | null>(null)
+watch(templateSelect, (value) => {
+    if (value) {
+        quotationItem.value.gram = value.gram
+        quotationItem.value.page = value.page
+        quotationItem.value.price = value.price
+        quotationItem.value.pattern = value.line
+    }
+})
 const { handlerByItemPriceRef } = useCalculatorQuotationItem()
 const { prices } = storeToRefs(usePriceStore())
 const { action, dialogOpen, quotationItem, loading } = inject(
