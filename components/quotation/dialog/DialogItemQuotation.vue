@@ -150,10 +150,14 @@
                         </v-row>
                         <div class="my-4">ข้อมูลเพิ่มเติม</div>
                         <v-row dense>
-                            <v-col cols="2">
+                            <v-col cols="3">
                                 <v-switch
                                     data-testid="reference-checkbox"
-                                    label="มีแบบ"
+                                    :label="
+                                        quotationItem.hasReference
+                                            ? 'เพลทเก่า'
+                                            : 'เพลทใหม่'
+                                    "
                                     :disabled="!openFormEdit"
                                     :model-value="quotationItem.hasReference"
                                     @update:model-value="
@@ -167,7 +171,7 @@
                                     "
                                 ></v-switch>
                             </v-col>
-                            <v-col cols="10">
+                            <v-col cols="9">
                                 <v-select
                                     data-testid="option-select"
                                     :disabled="!openFormEdit"
