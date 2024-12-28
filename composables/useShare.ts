@@ -53,7 +53,7 @@ export function useShare() {
         const currentitem = itemStatuses.value.find((x) => x.value === text)
         if (!currentitem) return null
         const nextItem = itemStatuses.value.find(
-            (x) => x.order === currentitem?.order + -1
+            (x) => x.order === currentitem?.order - 1 && x.order > 3
         )
         return nextItem
     }
