@@ -33,6 +33,7 @@
                                     @update:model-value="
                                         (e) => {
                                             quotationItem.category = e
+                                            templateSelect = null
                                             handlerByItemPriceRef(
                                                 quotationItem,
                                                 prices
@@ -44,11 +45,7 @@
                             </v-col>
                             <v-col>
                                 <v-autocomplete
-                                    :items="
-                                        getListDropdownTemplate(
-                                            quotationItem.category as any
-                                        )
-                                    "
+                                    :items="itemSuggestions"
                                     item-title="label"
                                     item-value="value"
                                     v-model="templateSelect"
@@ -274,7 +271,7 @@
     >
 </template>
 <script lang="ts" setup>
-import { SYSTEM_ROLE } from '~/models/enum/enum'
+import { ITEM_CATEGORY, SYSTEM_ROLE } from '~/models/enum/enum'
 import { dialogItemQuotationStateSymbol } from './state'
 import type { TemplateCategory } from '~/models/share/share'
 import { PATTERN } from '~/models/object/object'
@@ -308,4 +305,10 @@ const { prices } = storeToRefs(usePriceStore())
 const { action, dialogOpen, quotationItem, loading } = inject(
     dialogItemQuotationStateSymbol
 )!
+const itemSuggestions = computed(() => {
+    if (!quotationItem.value.category) return []
+    return getListDropdownTemplate(
+        quotationItem.value.category as ITEM_CATEGORY
+    )
+})
 </script>
