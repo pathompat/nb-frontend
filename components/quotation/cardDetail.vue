@@ -248,6 +248,11 @@
                                             </div>
                                         </td>
                                         <td>
+                                            <div>
+                                                {{ item.printedContent }}
+                                            </div>
+                                        </td>
+                                        <td>
                                             <v-checkbox
                                                 data-testid="quotation-reference-item-checkbox"
                                                 :disabled="true"
@@ -541,6 +546,8 @@ const headerItems = computed(() => {
         { title: 'สี', key: 'color' },
         { title: 'แผ่น', key: 'page' },
         { title: 'เส้น', key: 'line' },
+        { title: 'เนื้อพิมพ์', key: 'printedContent' },
+
         { title: 'มีแบบ', key: 'hasPlan' },
         { title: 'เพิ่มเติม', key: 'options' },
 

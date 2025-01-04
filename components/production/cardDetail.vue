@@ -277,7 +277,9 @@ const headers = ref([
     { title: 'สี', key: 'color' },
     { title: 'แผ่น', key: 'page' },
     { title: 'เส้น', key: 'line' },
+    { title: 'เนื้อพิมพ์', key: 'printedContent' },
     { title: 'มีแบบ', key: 'hasPlan' },
+
     { title: 'จำนวน', key: 'amount' },
     { title: 'สถานะ', key: 'status' },
     { title: 'ดำเนินการ', key: 'action' },
