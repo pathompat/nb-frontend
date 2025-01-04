@@ -146,7 +146,7 @@
                                 <v-col cols="2">
                                     <v-text-field
                                         data-testid="quotation-address-field"
-                                        label="ที่อยู่ *"
+                                        label="ที่อยู่"
                                         v-model="quotationForm.schoolAddress"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
@@ -154,7 +154,7 @@
                                 <v-col cols="2">
                                     <v-text-field
                                         data-testid="quotation-telephone-field"
-                                        label="เบอร์ติดต่อ *"
+                                        label="เบอร์ติดต่อ"
                                         :rules="phoneNumberRule"
                                         v-model="quotationForm.schoolTelephone"
                                         :hide-details="false"
@@ -164,7 +164,7 @@
                                 <v-col cols="2">
                                     <v-text-field
                                         data-testid="quotation-telephone-contact-name"
-                                        label="ชื่อผู้ตืดต่อ *"
+                                        label="ชื่อผู้ตืดต่อ"
                                         v-model="
                                             quotationForm.schoolContactName
                                         "
