@@ -155,7 +155,6 @@
                                     <v-text-field
                                         data-testid="quotation-telephone-field"
                                         label="เบอร์ติดต่อ"
-                                        :rules="phoneNumberRule"
                                         v-model="quotationForm.schoolTelephone"
                                         :hide-details="false"
                                         :disabled="props.id != undefined"
@@ -597,6 +596,7 @@ function updateCustomerSelectSchool(value: string) {
     quotationForm.value.schoolAddress = school?.address!
     quotationForm.value.schoolName = school?.name
     quotationForm.value.schoolTelephone = school?.telephone!
+    quotationForm.value.schoolContactName = school?.contactName!
 }
 function disablePastDates(date: unknown) {
     const today = new Date()
