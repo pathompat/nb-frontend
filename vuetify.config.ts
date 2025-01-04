@@ -17,6 +17,12 @@ export default defineVuetifyConfiguration({
             variant: 'outlined',
             color: 'primary',
         },
+        VCombobox: {
+            variant: 'outlined',
+            density: 'compact',
+            hideDetails: true,
+            color: 'primary',
+        },
         VSelect: {
             variant: 'outlined',
             density: 'compact',

@@ -48,7 +48,7 @@
                         <v-col cols="12">
                             <v-text-field
                                 data-testid="quotation-contact-field"
-                                v-model="initFormEdit.contact"
+                                v-model="initFormEdit.contactName"
                                 :disabled="loading"
                                 :loading="loading"
                                 :hide-details="false"

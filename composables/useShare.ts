@@ -1,6 +1,9 @@
 import { ITEM_CATEGORY, STATUS, TYPE } from '~/models/enum/enum'
-import { ITEM_OPTION } from '~/models/object/object'
-import type { TemplateCategory } from '~/models/share/share'
+import { ITEM_OPTION, PATTERN } from '~/models/object/object'
+import type {
+    TemplateCategory,
+    TemplateCategoryGroup,
+} from '~/models/share/share'
 
 export function useShare() {
     const itemStatuses = ref([
@@ -91,42 +94,42 @@ export function useShare() {
             value: STATUS.REVIEWING,
             icon: 'mdi-format-list-bulleted',
             color: '#FCC737',
-            type: 'QUOTATION',
+            type: TYPE.QUOTATION,
         },
         {
             title: 'ออกแบบ',
             value: STATUS.DESIGNING,
             icon: 'mdi-pencil-ruler',
             color: '#5E60CE',
-            type: 'PRODUCTION',
+            type: TYPE.PRODUCTION,
         },
         {
             title: 'พิมพ์',
             icon: 'mdi-printer',
             color: '#4C566A',
             value: STATUS.PRINTING,
-            type: 'PRODUCTION',
+            type: TYPE.PRODUCTION,
         },
         {
             title: 'เย็บเข้าเล่ม',
             value: STATUS.BOOKBINDING,
             icon: 'mdi-book-open-blank-variant',
             color: '#0081A7',
-            type: 'PRODUCTION',
+            type: TYPE.PRODUCTION,
         },
         {
             title: 'แพ็ค',
             value: STATUS.PACKING,
             icon: 'mdi-package-variant',
             color: '#F4A261',
-            type: 'PRODUCTION',
+            type: TYPE.PRODUCTION,
         },
         {
             title: 'พร้อมจัดส่ง',
             value: STATUS.TRANSPORTING,
             icon: 'mdi-truck-delivery',
             color: '#2A9D8F',
-            type: 'PRODUCTION',
+            type: TYPE.PRODUCTION,
         },
     ])
 
@@ -204,213 +207,261 @@ export function useShare() {
     const lines = ref([
         {
             title: 'ตาราง',
-            value: 'TABLE',
+            value: PATTERN.TABLE,
         },
         {
             title: 'บัญชี',
-            value: 'ACCOUNTING',
+            value: PATTERN.ACCOUNTING,
         },
         {
             title: 'ผลงาน',
-            value: 'WORK',
+            value: PATTERN.WORK,
         },
         {
             title: 'กราฟเอียง',
-            value: 'SKEWED_GRAPH',
+            value: PATTERN.SKEWED_GRAPH,
         },
         {
             title: 'การบ้าน',
-            value: 'HOMEWORK',
+            value: PATTERN.HOMEWORK,
         },
         {
             title: 'ตาราง5ช่อง',
-            value: 'TABLE_5_COLUMNS',
+            value: PATTERN.TABLE_5_COLUMNS,
         },
         {
             title: 'คัดจีน',
-            value: 'CHINESE_WRITING',
+            value: PATTERN.CHINESE_WRITING,
         },
         {
             title: 'เดี่ยว',
-            value: 'SINGLE',
+            value: PATTERN.SINGLE,
         },
         {
             title: 'ครึ่ง',
-            value: 'HALF',
+            value: PATTERN.HALF,
         },
         {
             title: '5 เส้น',
-            value: 'FIVE_LINES',
+            value: PATTERN.FIVE_LINES,
         },
         {
             title: 'สมุดอังกฤษ',
-            value: 'ENGLISH_NOTEBOOK',
+            value: PATTERN.ENGLISH_NOTEBOOK,
         },
         {
             title: 'วาดเขียนใหญ่',
-            value: 'LARGE_DRAWING',
+            value: PATTERN.LARGE_DRAWING,
         },
         {
             title: 'วาดเขียนเล็ก',
-            value: 'SMALL_DRAWING',
+            value: PATTERN.SMALL_DRAWING,
         },
         {
             title: 'คัดอังกฤษ',
-            value: 'ENGLISH_WRITING',
+            value: PATTERN.ENGLISH_WRITING,
         },
         {
             title: 'เส้นพิเศษ',
-            value: 'SPECIAL_LINES',
+            value: PATTERN.SPECIAL_LINES,
         },
         {
             title: 'สมุดไดอารี่',
-            value: 'DIARY_NOTEBOOK',
+            value: PATTERN.DIARY_NOTEBOOK,
         },
         {
             title: 'โน๊ตเพลง',
-            value: 'MUSIC_NOTE',
+            value: PATTERN.MUSIC_NOTE,
         },
         {
             title: 'รายงาน',
-            value: 'REPORT',
+            value: PATTERN.REPORT,
         },
         {
             title: 'ตารางพิเศษ',
-            value: 'SPECIAL_TABLE',
+            value: PATTERN.SPECIAL_TABLE,
         },
         {
             title: 'กราฟเล็ก',
-            value: 'SMALL_GRAPH',
+            value: PATTERN.SMALL_GRAPH,
         },
         {
             title: 'คัดจีนเรา',
-            value: 'OUR_CHINESE_WRITING',
+            value: PATTERN.OUR_CHINESE_WRITING,
         },
         {
             title: 'คัดอังกฤษช่องเล็ก',
-            value: 'SMALL_BOX_ENGLISH_WRITING',
+            value: PATTERN.SMALL_BOX_ENGLISH_WRITING,
         },
         {
             title: 'คัดอังกฤษช่องใหญ่',
-            value: 'LARGE_BOX_ENGLISH_WRITING',
+            value: PATTERN.LARGE_BOX_ENGLISH_WRITING,
         },
         {
             title: 'ครึ่งบรรทัดเว้นช่อง',
-            value: 'HALF_LINE_SPACED',
+            value: PATTERN.HALF_LINE_SPACED,
         },
         {
             title: 'การอ่าน',
-            value: 'READING',
+            value: PATTERN.READING,
         },
         {
             title: 'ลูกเสือ',
-            value: 'SCOUT',
+            value: PATTERN.SCOUT,
         },
         {
             title: 'เขียนแบบ',
-            value: 'DRAWING',
+            value: PATTERN.DRAWING,
         },
         {
             title: 'วาดเขียนแบบฉีก',
-            value: 'TEAR_DRAWING',
+            value: PATTERN.TEAR_DRAWING,
         },
         {
             title: 'ไม่มีเส้น',
-            value: 'NO_LINES',
+            value: PATTERN.NO_LINES,
         },
         {
             title: 'ตาราง8ช่อง',
-            value: 'TABLE_8_COLUMNS',
+            value: PATTERN.TABLE_8_COLUMNS,
         },
         {
             title: 'สมุดฉีกไม่มีเส้น',
-            value: 'TEAR_NOTEBOOK_NO_LINES',
+            value: PATTERN.TEAR_NOTEBOOK_NO_LINES,
         },
         {
             title: 'คู่',
-            value: 'PAIR',
+            value: PATTERN.PAIR,
+        },
+        {
+            title: 'เนื้อพิมพ์',
+            value: PATTERN.PRINTING,
         },
     ])
-    const templateItems = ref<TemplateCategory[]>([
+
+    function flattenTemplateCategoryGroup(
+        groups: TemplateCategoryGroup[]
+    ): TemplateCategory[] {
+        return groups.flatMap((group) => {
+            const { gram, category, pagePriceMap, line, color, plate } = group
+
+            const effectiveLine = line.length > 0 ? line : ['']
+
+            return pagePriceMap.flatMap(({ page, price }) =>
+                effectiveLine.map((line, index) => ({
+                    gram,
+                    line,
+                    page,
+                    price,
+                    category,
+                    color: color?.[index] ?? undefined,
+                    plate: plate?.[index] ?? undefined,
+                }))
+            )
+        })
+    }
+
+    const templateItems = ref<TemplateCategoryGroup[]>([
         {
             gram: 55,
-            line: 'SINGLE',
-            page: 20,
-            price: 3.4,
+            line: [PATTERN.SINGLE, PATTERN.HALF, PATTERN.FIVE_LINES],
+            pagePriceMap: [
+                { page: 20, price: 3.4 },
+                { page: 30, price: 4.2 },
+                { page: 40, price: 5.1 },
+                { page: 60, price: 7.5 },
+                { page: 80, price: 10 },
+            ],
             category: ITEM_CATEGORY.CUT_NINE,
         },
         {
             gram: 55,
-            line: 'SINGLE',
-            page: 30,
-            price: 4.2,
+            line: [PATTERN.TABLE],
+            pagePriceMap: [
+                { page: 20, price: 3.5 },
+                { page: 30, price: 4.3 },
+                { page: 40, price: 5.3 },
+                { page: 60, price: 7.9 },
+                { page: 80, price: 10.4 },
+            ],
+            category: ITEM_CATEGORY.CUT_NINE,
+        },
+        {
+            gram: 60,
+            line: [
+                PATTERN.SINGLE,
+                PATTERN.HALF,
+                PATTERN.FIVE_LINES,
+                PATTERN.TABLE,
+            ],
+            pagePriceMap: [
+                { page: 20, price: 3.6 },
+                { page: 30, price: 4.4 },
+                { page: 40, price: 5.3 },
+                { page: 60, price: 7.8 },
+                { page: 80, price: 10.4 },
+            ],
+            category: ITEM_CATEGORY.CUT_NINE,
+        },
+        {
+            gram: 60,
+            line: [PATTERN.TABLE],
+            pagePriceMap: [
+                { page: 20, price: 3.7 },
+                { page: 30, price: 4.5 },
+                { page: 40, price: 5.5 },
+                { page: 60, price: 8.2 },
+                { page: 80, price: 10.8 },
+            ],
+            category: ITEM_CATEGORY.CUT_NINE,
+        },
+        {
+            gram: 60,
+            line: [PATTERN.PRINTING],
+            pagePriceMap: [
+                { page: 30, price: 5.5 },
+                { page: 40, price: 6.5 },
+            ],
             category: ITEM_CATEGORY.CUT_NINE,
         },
         {
             gram: 55,
-            line: 'SINGLE',
-            page: 40,
-            category: ITEM_CATEGORY.CUT_NINE,
-            price: 5.1,
+            line: [],
+            pagePriceMap: [
+                { page: 60, price: 18.5 },
+                { page: 70, price: 20.5 },
+                { page: 80, price: 22.5 },
+            ],
+            category: ITEM_CATEGORY.ACCOUNTING,
         },
         {
-            gram: 55,
-            line: 'SINGLE',
-            page: 60,
-            category: ITEM_CATEGORY.CUT_NINE,
-            price: 7.5,
+            gram: 100,
+            line: [],
+            pagePriceMap: [{ page: 10, price: 4 }],
+            category: ITEM_CATEGORY.DRAWING,
         },
         {
-            gram: 55,
-            line: 'SINGLE',
-            page: 80,
-            category: ITEM_CATEGORY.CUT_NINE,
-            price: 10,
+            gram: 120,
+            line: [],
+            pagePriceMap: [{ page: 10, price: 4.5 }],
+            category: ITEM_CATEGORY.DRAWING,
         },
         {
-            gram: 55,
-            line: 'HALF',
-            page: 20,
-            category: ITEM_CATEGORY.CUT_NINE,
-            price: 3.4,
-        },
-        {
-            gram: 55,
-            line: 'HALF',
-            page: 30,
-            category: ITEM_CATEGORY.CUT_NINE,
-            price: 4.2,
-        },
-        {
-            gram: 55,
-            line: 'HALF',
-            page: 40,
-            category: ITEM_CATEGORY.CUT_NINE,
-            price: 5.1,
-        },
-        {
-            gram: 55,
-            line: 'HALF',
-            page: 60,
-            category: ITEM_CATEGORY.CUT_NINE,
-            price: 7.5,
-        },
-        {
-            gram: 55,
-            line: 'HALF',
-            page: 80,
-            category: ITEM_CATEGORY.CUT_NINE,
-            price: 10,
+            gram: 150,
+            line: [],
+            pagePriceMap: [{ page: 10, price: 5 }],
+            category: ITEM_CATEGORY.DRAWING,
         },
     ])
     function getListDropdownTemplate(
         category: ITEM_CATEGORY
     ): { label: string; value: TemplateCategory }[] {
-        return templateItems.value
+        return flattenTemplateCategoryGroup(templateItems.value)
             .filter((f) => f.category == category)
             .map((x) => {
+                const line = lines.value.find((c) => c.value == x.line)
                 return {
-                    label: `${x.gram} แกรม เส้น ${lines.value.find((c) => c.value == x.line)?.title} จำนวน ${x.page} หน้า ราคา ${x.price} บาท`,
+                    label: `${x.gram} แกรม ${!line ? '' : `เส้น ${line.title}`} จำนวน ${x.page} หน้า ราคา ${x.price} บาท`,
                     value: x,
                 }
             })

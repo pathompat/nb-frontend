@@ -7,5 +7,5 @@ export interface CraeteSchool {
     name: string
     address?: string
     telephone?: string
-    contact?: string
+    contactName?: string
 }

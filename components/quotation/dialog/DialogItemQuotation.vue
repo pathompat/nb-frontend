@@ -83,7 +83,7 @@
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
-                                <v-select
+                                <v-combobox
                                     data-testid="gram-select"
                                     :rules="emtpyRule"
                                     label="แกรม"
@@ -100,7 +100,7 @@
                                             )
                                         }
                                     "
-                                ></v-select>
+                                ></v-combobox>
                             </v-col>
                             <v-col cols="3">
                                 <v-select
@@ -144,7 +144,7 @@
                             </v-col>
 
                             <v-col cols="3">
-                                <v-select
+                                <v-autocomplete
                                     data-testid="line-select"
                                     :rules="emtpyRule"
                                     :items="lines"
@@ -161,7 +161,19 @@
                                             )
                                         }
                                     "
-                                ></v-select>
+                                ></v-autocomplete>
+                            </v-col>
+                            <v-col
+                                cols="3"
+                                v-if="quotationItem.pattern == PATTERN.PRINTING"
+                            >
+                                <v-text-field
+                                    data-testid="printing-field"
+                                    :rules="emtpyRule"
+                                    label="เนื้อพิมพ์"
+                                    :disabled="!openFormEdit"
+                                    :hide-details="false"
+                                ></v-text-field>
                             </v-col>
                         </v-row>
                         <div class="my-4">ข้อมูลเพิ่มเติม</div>
@@ -265,6 +277,7 @@
 import { SYSTEM_ROLE } from '~/models/enum/enum'
 import { dialogItemQuotationStateSymbol } from './state'
 import type { TemplateCategory } from '~/models/share/share'
+import { PATTERN } from '~/models/object/object'
 const valid = ref(false)
 const { userProfile } = useAuthStore()
 const { emtpyRule, morethanZeroRule } = useRules()
