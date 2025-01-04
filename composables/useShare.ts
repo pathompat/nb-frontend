@@ -436,21 +436,50 @@ export function useShare() {
         },
         {
             gram: 100,
-            line: [],
+            line: [PATTERN.SMALL_DRAWING],
             pagePriceMap: [{ page: 10, price: 4 }],
             category: ITEM_CATEGORY.DRAWING,
         },
         {
+            gram: 100,
+            line: [PATTERN.LARGE_DRAWING],
+            pagePriceMap: [{ page: 10, price: 7.25 }],
+            category: ITEM_CATEGORY.DRAWING,
+        },
+        {
             gram: 120,
-            line: [],
+            line: [PATTERN.SMALL_DRAWING],
             pagePriceMap: [{ page: 10, price: 4.5 }],
             category: ITEM_CATEGORY.DRAWING,
         },
         {
+            gram: 120,
+            line: [PATTERN.LARGE_DRAWING],
+            pagePriceMap: [{ page: 10, price: 8.25 }],
+            category: ITEM_CATEGORY.DRAWING,
+        },
+        {
             gram: 150,
-            line: [],
+            line: [PATTERN.SMALL_DRAWING],
             pagePriceMap: [{ page: 10, price: 5 }],
             category: ITEM_CATEGORY.DRAWING,
+        },
+        {
+            gram: 150,
+            line: [PATTERN.LARGE_DRAWING],
+            pagePriceMap: [{ page: 10, price: 9.25 }],
+            category: ITEM_CATEGORY.DRAWING,
+        },
+        {
+            gram: 60,
+            line: [PATTERN.REPORT],
+            pagePriceMap: [
+                { page: 20, price: 8 },
+                { page: 30, price: 10 },
+                { page: 40, price: 12 },
+                { page: 50, price: 14 },
+            ],
+            category: ITEM_CATEGORY.REPORT,
         },
     ])
     function getListDropdownTemplate(
