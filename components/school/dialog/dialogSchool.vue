@@ -8,6 +8,7 @@
                     <v-row>
                         <v-col cols="12">
                             <v-text-field
+                                data-testid="school-name-field"
                                 v-model="initFormEdit.name"
                                 label="ชื่อโรงเรียน"
                                 :rules="emtpyRule"
@@ -19,9 +20,9 @@
                         </v-col>
                         <v-col cols="12">
                             <v-text-field
+                                data-testid="school-address-field"
                                 v-model="initFormEdit.address"
                                 :disabled="loading"
-                                :rules="emtpyRule"
                                 :loading="loading"
                                 :hide-details="false"
                                 label="ที่อยู่จัดส่ง"
@@ -30,12 +31,28 @@
                         </v-col>
                         <v-col cols="12">
                             <v-text-field
-                                :rules="phoneNumberRule"
+                                data-testid="school-phone-field"
                                 v-model="initFormEdit.telephone"
                                 :disabled="loading"
                                 :loading="loading"
+                                :rules="
+                                    !initFormEdit.telephone ||
+                                    initFormEdit.telephone.length == 0
+                                        ? []
+                                        : phoneNumberRule
+                                "
                                 :hide-details="false"
                                 label="เบอร์โทรติดต่อ"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                            <v-text-field
+                                data-testid="quotation-contact-field"
+                                v-model="initFormEdit.contactName"
+                                :disabled="loading"
+                                :loading="loading"
+                                :hide-details="false"
+                                label="ชื่อผู้ติดต่อ"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -45,6 +62,7 @@
 
             <v-card-actions
                 ><v-btn
+                    data-testid="save-school-button"
                     :disabled="loading || !valid"
                     :loading="loading"
                     variant="flat"

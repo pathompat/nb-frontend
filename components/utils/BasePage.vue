@@ -1,6 +1,7 @@
 <template>
     <div class="d-flex ga-2 align-center">
         <v-btn
+            data-testid="back-page-button"
             v-if="path"
             variant="text"
             @click="handleClick"

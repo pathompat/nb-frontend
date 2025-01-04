@@ -3,6 +3,7 @@
         <v-card-title class="d-flex justify-space-between pt-4">
             <div style="width: 400px">
                 <v-text-field
+                    data-testid="search-school-field"
                     :loading="loading"
                     :disabled="loading"
                     label="ค้นหา"
@@ -10,6 +11,7 @@
                 ></v-text-field>
             </div>
             <v-btn
+                data-testid="add-user-button"
                 color="primary "
                 prepend-icon="mdi-account-plus"
                 :loading="loading"
@@ -24,11 +26,13 @@
                     <v-btn
                         color="primary "
                         size="small"
+                        data-testid="edit-button"
                         @click="onEdit(item.id)"
                         >แก้ไข</v-btn
                     >
                     <v-btn
                         color="error "
+                        data-testid="disabled-button"
                         size="small"
                         @click="
                             () => {
@@ -55,10 +59,15 @@
                 จะไม่สามารถทำรายการใดๆได้อีก
             </v-card-text>
             <v-card-actions>
-                <v-btn variant="flat" color="success" @click="disableUser"
+                <v-btn
+                    data-testid="confirm-button"
+                    variant="flat"
+                    color="success"
+                    @click="disableUser"
                     >ยืนยัน</v-btn
                 >
                 <v-btn
+                    data-testid="cancle-button"
                     variant="flat"
                     color="error"
                     @click="

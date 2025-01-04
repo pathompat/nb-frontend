@@ -3,6 +3,7 @@
         <v-card-title class="d-flex justify-space-between pt-4">
             <div style="width: 400px">
                 <v-text-field
+                    data-testid="search-user-field"
                     :loading="loading"
                     :disabled="loading"
                     v-model="search"
@@ -11,6 +12,7 @@
                 ></v-text-field>
             </div>
             <v-btn
+                data-testid="add-user-button"
                 color="primary "
                 prepend-icon="mdi-account-plus"
                 :loading="loading"
@@ -27,12 +29,14 @@
             <template #item.action="{ item }">
                 <div class="d-flex ga-4">
                     <v-btn
+                        data-testid="edit-user-button"
                         color="primary "
                         size="small"
                         @click="onEdit(item.id)"
                         >แก้ไข</v-btn
                     >
                     <v-btn
+                        data-testid="cancel-user-button"
                         color="error "
                         size="small"
                         @click="
@@ -52,20 +56,25 @@
     </v-card>
     <v-dialog width="400" v-model="dialogDisable" v-if="users != undefined">
         <v-card>
-            <v-card-title
-                >ยืนยันปิดใช้งาน
-                {{ users.find((v) => v.id == userId)?.username }}
-                ?</v-card-title
-            >
+            <v-card-title>
+                ยืนยันปิดใช้งาน{{
+                    users.find((v) => v.id == userId)?.username
+                }}?
+            </v-card-title>
             <v-card-text>
                 {{ users.find((v) => v.id == userId)?.username }}
                 จะไม่สามารถทำรายการใดๆได้อีก
             </v-card-text>
             <v-card-actions>
-                <v-btn variant="flat" color="success" @click="deleteUser"
+                <v-btn
+                    variant="flat"
+                    data-testid="confirm-button"
+                    color="success"
+                    @click="deleteUser"
                     >ยืนยัน</v-btn
                 >
                 <v-btn
+                    data-testid="cancel-button"
                     variant="flat"
                     color="error"
                     @click="

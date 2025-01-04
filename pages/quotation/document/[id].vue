@@ -6,6 +6,7 @@
         <div class="d-flex ga-4 align-center pa-8">
             <span> ดาวน์โหลดเอกสารไม่สำเร็จ ? </span>
             <v-btn
+                data-testid="document-quotation-download-button"
                 variant="flat"
                 @click="download"
                 :disabled="loading"

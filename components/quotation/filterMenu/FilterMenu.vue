@@ -2,7 +2,12 @@
     <v-menu :close-on-content-click="false" v-model="dialogMenu">
         <template v-slot:activator="{ props }">
             <div class="d-flex justify-end">
-                <v-btn color="primary" v-bind="props" variant="flat">
+                <v-btn
+                    color="primary"
+                    data-testid="open-filter-button"
+                    v-bind="props"
+                    variant="flat"
+                >
                     กรองข้อมูลเพิ่มเติม
                 </v-btn>
             </div>
@@ -12,6 +17,7 @@
                 <div>กรองข้อมูลเพิ่มเติม</div>
                 <div>
                     <v-btn
+                        data-testid="close-filter-button"
                         icon
                         variant="text"
                         @click="dialogMenu = false"
@@ -30,6 +36,7 @@
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-select
+                                data-testid="plate-select"
                                 clearable
                                 :loading="loading"
                                 label="เลือกเพลท"
@@ -45,6 +52,7 @@
                         </v-col>
                         <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
+                                data-testid="category-select"
                                 clearable
                                 :loading="loading"
                                 :items="itemCategories"
@@ -59,6 +67,7 @@
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
+                                data-testid="gram-select"
                                 clearable
                                 :items="grams"
                                 :loading="loading"
@@ -73,6 +82,7 @@
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
+                                data-testid="color-select"
                                 clearable
                                 :loading="loading"
                                 label="เลือกสี"
@@ -88,6 +98,7 @@
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
+                                data-testid="page-select"
                                 clearable
                                 :loading="loading"
                                 label="เลือกแผ่น"
@@ -103,6 +114,7 @@
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
+                                data-testid="line-select"
                                 clearable
                                 :loading="loading"
                                 label="เลือกเส้น"
@@ -121,6 +133,7 @@
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-select
+                                data-testid="type-select"
                                 clearable
                                 :loading="loading"
                                 label="เลือกประเภท"
@@ -136,6 +149,7 @@
                         </v-col>
                         <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
+                                data-testid="school-select"
                                 multiple
                                 :loading="loading"
                                 :items="schoolList"
@@ -150,6 +164,7 @@
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
+                                data-testid="store-select"
                                 multiple
                                 :items="storeList"
                                 :loading="loading"
@@ -164,6 +179,7 @@
                         >
                         <v-col cols="9" class="d-flex align-center">
                             <v-autocomplete
+                                data-testid="status-select"
                                 multiple
                                 :loading="loading"
                                 label="เลือกสถานะ"

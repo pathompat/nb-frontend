@@ -5,6 +5,7 @@
                 <span>เพิ่มรายการใหม่</span>
                 <v-spacer></v-spacer>
                 <v-btn
+                    data-testid="close-dialog-button"
                     icon
                     variant="text"
                     @click="dialogOpen = false"
@@ -17,6 +18,41 @@
             <v-card-text>
                 <v-form v-model="valid">
                     <v-container fulid>
+                        <div class="mb-4">ข้อมูลประเภท</div>
+                        <v-row dense>
+                            <v-col cols="3">
+                                <v-select
+                                    data-testid="category-select"
+                                    :items="itemCategories"
+                                    item-text="title"
+                                    item-value="value"
+                                    :disabled="!openFormEdit"
+                                    label="ประเภท"
+                                    :rules="emtpyRule"
+                                    :model-value="quotationItem.category"
+                                    @update:model-value="
+                                        (e) => {
+                                            quotationItem.category = e
+                                            templateSelect = null
+                                            handlerByItemPriceRef(
+                                                quotationItem,
+                                                prices
+                                            )
+                                        }
+                                    "
+                                    :hide-details="false"
+                                ></v-select>
+                            </v-col>
+                            <v-col>
+                                <v-autocomplete
+                                    :items="itemSuggestions"
+                                    item-title="label"
+                                    item-value="value"
+                                    v-model="templateSelect"
+                                    label="เลือกรูปแบบ"
+                                ></v-autocomplete>
+                            </v-col>
+                        </v-row>
                         <div class="mb-4">ข้อมูลพื้นฐาน</div>
                         <v-row dense>
                             <v-col
@@ -24,6 +60,7 @@
                                 v-if="userProfile?.role == SYSTEM_ROLE.ADMIN"
                             >
                                 <v-select
+                                    data-testid="plate-select"
                                     :rules="emtpyRule"
                                     item-title="title"
                                     item-value="value"
@@ -43,7 +80,8 @@
                                 ></v-select>
                             </v-col>
                             <v-col cols="3">
-                                <v-select
+                                <v-combobox
+                                    data-testid="gram-select"
                                     :rules="emtpyRule"
                                     label="แกรม"
                                     :disabled="!openFormEdit"
@@ -59,10 +97,11 @@
                                             )
                                         }
                                     "
-                                ></v-select>
+                                ></v-combobox>
                             </v-col>
                             <v-col cols="3">
                                 <v-select
+                                    data-testid="color-select"
                                     :rules="emtpyRule"
                                     label="สี"
                                     :disabled="!openFormEdit"
@@ -82,6 +121,7 @@
                             </v-col>
                             <v-col cols="3">
                                 <v-select
+                                    data-testid="page-select"
                                     :rules="emtpyRule"
                                     label="แผ่น"
                                     :items="pages"
@@ -101,28 +141,8 @@
                             </v-col>
 
                             <v-col cols="3">
-                                <v-select
-                                    :items="itemCategories"
-                                    item-text="title"
-                                    item-value="value"
-                                    :disabled="!openFormEdit"
-                                    label="ประเภท"
-                                    :rules="emtpyRule"
-                                    :model-value="quotationItem.category"
-                                    @update:model-value="
-                                        (e) => {
-                                            quotationItem.category = e
-                                            handlerByItemPriceRef(
-                                                quotationItem,
-                                                prices
-                                            )
-                                        }
-                                    "
-                                    :hide-details="false"
-                                ></v-select>
-                            </v-col>
-                            <v-col cols="3">
-                                <v-select
+                                <v-autocomplete
+                                    data-testid="line-select"
                                     :rules="emtpyRule"
                                     :items="lines"
                                     label="เส้น"
@@ -138,14 +158,31 @@
                                             )
                                         }
                                     "
-                                ></v-select>
+                                ></v-autocomplete>
+                            </v-col>
+                            <v-col
+                                cols="3"
+                                v-if="quotationItem.pattern == PATTERN.PRINTING"
+                            >
+                                <v-text-field
+                                    data-testid="printing-field"
+                                    :rules="emtpyRule"
+                                    label="เนื้อพิมพ์"
+                                    :disabled="!openFormEdit"
+                                    :hide-details="false"
+                                ></v-text-field>
                             </v-col>
                         </v-row>
                         <div class="my-4">ข้อมูลเพิ่มเติม</div>
                         <v-row dense>
-                            <v-col cols="2">
-                                <v-checkbox
-                                    label="มีแบบ"
+                            <v-col cols="3">
+                                <v-switch
+                                    data-testid="reference-checkbox"
+                                    :label="
+                                        quotationItem.hasReference
+                                            ? 'เพลทเก่า'
+                                            : 'เพลทใหม่'
+                                    "
                                     :disabled="!openFormEdit"
                                     :model-value="quotationItem.hasReference"
                                     @update:model-value="
@@ -157,10 +194,11 @@
                                             )
                                         }
                                     "
-                                ></v-checkbox>
+                                ></v-switch>
                             </v-col>
-                            <v-col cols="10">
+                            <v-col cols="9">
                                 <v-select
+                                    data-testid="option-select"
                                     :disabled="!openFormEdit"
                                     multiple
                                     clearable
@@ -185,6 +223,7 @@
                         <v-row dense>
                             <v-col cols="6">
                                 <v-text-field
+                                    data-testid="quantity-field"
                                     type="number"
                                     min="1"
                                     :disabled="!openFormEdit"
@@ -196,6 +235,7 @@
                             </v-col>
                             <v-col cols="6"
                                 ><v-text-field
+                                    data-testid="price-field"
                                     min="1"
                                     :hide-details="false"
                                     :rules="
@@ -219,6 +259,7 @@
 
             <v-card-actions
                 ><v-btn
+                    data-testid="save-item-button"
                     :disabled="loading || !valid"
                     :loading="loading"
                     variant="flat"
@@ -230,19 +271,47 @@
     >
 </template>
 <script lang="ts" setup>
-import { SYSTEM_ROLE } from '~/models/enum/enum'
+import { ITEM_CATEGORY, SYSTEM_ROLE } from '~/models/enum/enum'
 import { dialogItemQuotationStateSymbol } from './state'
+import type { TemplateCategory } from '~/models/share/share'
+import { PATTERN } from '~/models/object/object'
 const valid = ref(false)
 const { userProfile } = useAuthStore()
 const { emtpyRule, morethanZeroRule } = useRules()
-const { plates, lines, grams, pages, colors, itemOptions, itemCategories } =
-    useShare()
+const {
+    plates,
+    lines,
+    grams,
+    pages,
+    colors,
+    itemOptions,
+    itemCategories,
+    getListDropdownTemplate,
+} = useShare()
 const openFormEdit = computed(
     () => quotationItem.value.id === '' || quotationItem.value.id == undefined
 )
+const templateSelect = ref<TemplateCategory | null>(null)
+watch(templateSelect, (value) => {
+    if (value) {
+        const { category, gram, line, page, price, color, plate } = value
+        if (line) {
+            quotationItem.value.pattern = value.line
+        }
+        quotationItem.value.gram = gram
+        quotationItem.value.page = page
+        quotationItem.value.price = price
+    }
+})
 const { handlerByItemPriceRef } = useCalculatorQuotationItem()
 const { prices } = storeToRefs(usePriceStore())
 const { action, dialogOpen, quotationItem, loading } = inject(
     dialogItemQuotationStateSymbol
 )!
+const itemSuggestions = computed(() => {
+    if (!quotationItem.value.category) return []
+    return getListDropdownTemplate(
+        quotationItem.value.category as ITEM_CATEGORY
+    )
+})
 </script>

@@ -5,6 +5,7 @@ export interface School extends CraeteSchool {
 }
 export interface CraeteSchool {
     name: string
-    address: string
-    telephone: string
+    address?: string
+    telephone?: string
+    contactName?: string
 }

@@ -93,6 +93,7 @@
                     </td>
                     <td>
                         <v-btn
+                            data-testid="quotation-detail-button"
                             variant="outlined"
                             class="text-primary"
                             :to="
@@ -172,7 +173,7 @@
     </v-card>
 </template>
 <script setup lang="ts">
-import { SYSTEM_ROLE, TYPE } from '~/models/enum/enum'
+import { STATUS, SYSTEM_ROLE, TYPE } from '~/models/enum/enum'
 import { toastPluginSymbol } from '~/plugins/toast'
 import filterMenuQuotationState, {
     filterMenuQuotationStateSymbol,
@@ -222,7 +223,9 @@ const toast = inject(toastPluginSymbol)!
 const { fetchQuotations } = quotationStore
 const { quotations } = storeToRefs(quotationStore)
 const filterQuotation = computed(() => {
-    let result = quotations.value
+    let result = quotations.value.filter(
+        (x) => !x.production?.items.every((x) => x.status == STATUS.DONE)
+    )
 
     const {
         type,

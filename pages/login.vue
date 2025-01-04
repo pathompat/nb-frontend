@@ -15,7 +15,7 @@
                         v-model="userform.username"
                         label="บัญชีผู้ใช้งาน"
                         type="text"
-                        id="username"
+                        data-testid="username"
                         name="username"
                         autocomplete="on"
                         :hide-details="false"
@@ -26,11 +26,17 @@
                         v-model="userform.password"
                         label="รหัสผ่าน"
                         autocomplete="on"
-                        id="password"
+                        :append-inner-icon="
+                            showPassword ? 'mdi-eye-off' : 'mdi-eye'
+                        "
+                        data-testid="password"
                         :hide-details="false"
                         name="password"
-                        type="password"
+                        :type="showPassword ? 'password' : 'text'"
                         :rules="passwordRule"
+                        @click:append-inner="
+                            () => (showPassword = !showPassword)
+                        "
                         placeholder="กรุณากรอกรหัสผ่าน"
                     ></v-text-field>
                 </div>
@@ -39,6 +45,7 @@
                     :disabled="!valid"
                     :loading="loading"
                     variant="flat"
+                    data-testid="login-button"
                     type="submit"
                 >
                     เข้าสู่ระบบ
@@ -57,7 +64,7 @@ definePageMeta({
     middleware: undefined,
 })
 const form = ref()
-
+const showPassword = ref(false)
 const userform = ref({
     username: '',
     password: '',
