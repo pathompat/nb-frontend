@@ -4,6 +4,7 @@ export interface Production {
     schoolName: string
     schoolAddress: string
     schoolTelephone: string
+    schoolContactName: string
     quotationId: number
     createdAt: string
     updatedAt: string

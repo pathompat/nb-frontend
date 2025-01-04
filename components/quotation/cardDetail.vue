@@ -143,7 +143,7 @@
                                     ></v-date-input
                                 ></v-col>
 
-                                <v-col cols="3">
+                                <v-col cols="2">
                                     <v-text-field
                                         data-testid="quotation-address-field"
                                         label="ที่อยู่ *"
@@ -151,7 +151,7 @@
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
                                 </v-col>
-                                <v-col cols="3">
+                                <v-col cols="2">
                                     <v-text-field
                                         data-testid="quotation-telephone-field"
                                         label="เบอร์ติดต่อ *"
@@ -160,8 +160,20 @@
                                         :hide-details="false"
                                         :disabled="props.id != undefined"
                                     ></v-text-field>
-                                </v-col> </v-row
-                        ></v-layout>
+                                </v-col>
+                                <v-col cols="2">
+                                    <v-text-field
+                                        data-testid="quotation-telephone-contact-name"
+                                        label="ชื่อผู้ตืดต่อ *"
+                                        v-model="
+                                            quotationForm.schoolContactName
+                                        "
+                                        :hide-details="false"
+                                        :disabled="props.id != undefined"
+                                    ></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-layout>
                         <div class="mt-4">
                             <div
                                 class="d-flex justify-space-between align-center"
@@ -517,6 +529,7 @@ const quotationForm = ref<QuotationForm>({
     schoolAddress: '',
     schoolTelephone: '',
     appointmentAt: null,
+    schoolContactName: '',
     dueDateAt: null,
     items: [],
     schoolName: '',
@@ -585,10 +598,10 @@ function updateCustomerSelectSchool(value: string) {
     quotationForm.value.schoolName = school?.name
     quotationForm.value.schoolTelephone = school?.telephone!
 }
-function disablePastDates(date: string) {
+function disablePastDates(date: unknown) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const selectedDate = new Date(date)
+    const selectedDate = new Date(date as string)
     return selectedDate >= today
 }
 const updateCustomDate = (value: boolean | null) => {
@@ -791,6 +804,7 @@ onMounted(async () => {
             schoolAddress: quotation.value.schoolAddress,
             schoolTelephone: quotation.value.schoolTelephone,
             schoolName: quotation.value.schoolName,
+            schoolContactName: quotation.value.schoolContactName,
             appointmentAt: quotation.value.appointmentAt
                 ? new Date(quotation.value.appointmentAt)
                 : null,
