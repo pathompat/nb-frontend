@@ -597,6 +597,7 @@ function updateCustomerSelectSchool(value: string) {
     quotationForm.value.schoolAddress = school?.address!
     quotationForm.value.schoolName = school?.name
     quotationForm.value.schoolTelephone = school?.telephone!
+    quotationForm.value.schoolContactName = school?.contactName!
 }
 function disablePastDates(date: unknown) {
     const today = new Date()
