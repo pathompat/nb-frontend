@@ -63,6 +63,7 @@ export default function useCalculatorQuotationItem() {
         newValue: CreateQuotationItem[],
         prices: Price[]
     ) {
+        return
         newValue.forEach((item, index) => {
             handlerByItemPriceRef(item, prices)
         })
