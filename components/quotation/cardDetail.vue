@@ -649,6 +649,7 @@ async function create() {
                 status: '',
                 options: item.options,
                 category: item.category,
+                printedContent: item.printedContent,
             }
         })
         const { id } = await createQuotation({
@@ -666,6 +667,7 @@ async function create() {
                     status: '',
                     quantity: +x.quantity!,
                     price: +x.price!,
+                    printedContent: x.printedContent,
                 }
             }),
             schoolTelephone: quotationForm.value.schoolTelephone.trim(),
