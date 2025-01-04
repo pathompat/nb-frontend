@@ -12,7 +12,7 @@ export interface MenuItem {
 }
 export interface TemplateCategory {
     gram: number
-    line: string
+    line?: string
     page: number
     price: number
     color?: string

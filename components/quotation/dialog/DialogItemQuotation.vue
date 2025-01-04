@@ -294,10 +294,13 @@ const openFormEdit = computed(
 const templateSelect = ref<TemplateCategory | null>(null)
 watch(templateSelect, (value) => {
     if (value) {
-        quotationItem.value.gram = value.gram
-        quotationItem.value.page = value.page
-        quotationItem.value.price = value.price
-        quotationItem.value.pattern = value.line
+        const { category, gram, line, page, price, color, plate } = value
+        if (line) {
+            quotationItem.value.pattern = value.line
+        }
+        quotationItem.value.gram = gram
+        quotationItem.value.page = page
+        quotationItem.value.price = price
     }
 })
 const { handlerByItemPriceRef } = useCalculatorQuotationItem()
