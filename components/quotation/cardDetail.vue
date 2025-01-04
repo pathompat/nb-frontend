@@ -155,7 +155,6 @@
                                     <v-text-field
                                         data-testid="quotation-telephone-field"
                                         label="เบอร์ติดต่อ"
-                                        :rules="phoneNumberRule"
                                         v-model="quotationForm.schoolTelephone"
                                         :hide-details="false"
                                         :disabled="props.id != undefined"
