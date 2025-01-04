@@ -800,6 +800,7 @@ onMounted(async () => {
                     plate: x.plate,
                     price: x.price!,
                     quantity: x.quantity!,
+                    printedContent: x.printedContent,
                 }
             }),
             status: quotation.value.status,
