@@ -68,21 +68,30 @@
                                     label="วันที่ต้องส่ง"
                                 ></v-date-input
                             ></v-col>
-                            <v-col cols="3">
+                            <v-col cols="2">
                                 <v-select
                                     data-testid="address-select"
-                                    label="ที่อยู่ *"
+                                    label="ที่อยู่"
                                     disabled
                                     v-model="production.schoolAddress"
                                 ></v-select>
                             </v-col>
-                            <v-col cols="3">
+                            <v-col cols="2">
                                 <v-select
                                     data-testid="telephone-select"
-                                    label="เบอร์ติดต่อ *"
+                                    label="เบอร์ติดต่อ"
                                     disabled
                                     v-model="production.schoolTelephone"
                                 ></v-select>
+                            </v-col>
+                            <v-col cols="2">
+                                <v-text-field
+                                    data-testid="quotation-telephone-contact-name"
+                                    label="ชื่อผู้ตืดต่อ"
+                                    v-model="production.schoolContactName"
+                                    :hide-details="false"
+                                    :disabled="props.id != undefined"
+                                ></v-text-field>
                             </v-col> </v-row
                     ></v-layout>
                     <div class="mt-4">
@@ -277,7 +286,9 @@ const headers = ref([
     { title: 'สี', key: 'color' },
     { title: 'แผ่น', key: 'page' },
     { title: 'เส้น', key: 'line' },
+    { title: 'เนื้อพิมพ์', key: 'printedContent' },
     { title: 'มีแบบ', key: 'hasPlan' },
+
     { title: 'จำนวน', key: 'amount' },
     { title: 'สถานะ', key: 'status' },
     { title: 'ดำเนินการ', key: 'action' },

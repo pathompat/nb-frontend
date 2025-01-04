@@ -32,7 +32,7 @@
                         data-testid="password"
                         :hide-details="false"
                         name="password"
-                        :type="showPassword ? 'password' : 'text'"
+                        :type="!showPassword ? 'password' : 'text'"
                         :rules="passwordRule"
                         @click:append-inner="
                             () => (showPassword = !showPassword)

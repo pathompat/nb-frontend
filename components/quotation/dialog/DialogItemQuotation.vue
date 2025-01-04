@@ -2,7 +2,9 @@
     <v-dialog v-model="dialogOpen" width="700" persistent>
         <v-card :loading="loading">
             <v-card-title class="d-flex align-center">
-                <span>เพิ่มรายการใหม่</span>
+                <span>
+                    {{ quotationItem.id ? 'แก้ไขรายการ' : 'เพิ่มรายการใหม่' }}
+                </span>
                 <v-spacer></v-spacer>
                 <v-btn
                     data-testid="close-dialog-button"
@@ -43,7 +45,7 @@
                                     :hide-details="false"
                                 ></v-select>
                             </v-col>
-                            <v-col>
+                            <v-col v-if="!quotationItem.id">
                                 <v-autocomplete
                                     :items="itemSuggestions"
                                     item-title="label"
@@ -84,6 +86,7 @@
                                     data-testid="gram-select"
                                     :rules="emtpyRule"
                                     label="แกรม"
+                                    type="number"
                                     :disabled="!openFormEdit"
                                     :items="grams"
                                     :hide-details="false"
@@ -165,6 +168,7 @@
                                 v-if="quotationItem.pattern == PATTERN.PRINTING"
                             >
                                 <v-text-field
+                                    v-model="quotationItem.printedContent"
                                     data-testid="printing-field"
                                     :rules="emtpyRule"
                                     label="เนื้อพิมพ์"
@@ -291,7 +295,12 @@ const {
 const openFormEdit = computed(
     () => quotationItem.value.id === '' || quotationItem.value.id == undefined
 )
-const templateSelect = ref<TemplateCategory | null>(null)
+
+const { handlerByItemPriceRef } = useCalculatorQuotationItem()
+const { prices } = storeToRefs(usePriceStore())
+const { action, dialogOpen, quotationItem, loading, templateSelect } = inject(
+    dialogItemQuotationStateSymbol
+)!
 watch(templateSelect, (value) => {
     if (value) {
         const { category, gram, line, page, price, color, plate } = value
@@ -303,11 +312,6 @@ watch(templateSelect, (value) => {
         quotationItem.value.price = price
     }
 })
-const { handlerByItemPriceRef } = useCalculatorQuotationItem()
-const { prices } = storeToRefs(usePriceStore())
-const { action, dialogOpen, quotationItem, loading } = inject(
-    dialogItemQuotationStateSymbol
-)!
 const itemSuggestions = computed(() => {
     if (!quotationItem.value.category) return []
     return getListDropdownTemplate(

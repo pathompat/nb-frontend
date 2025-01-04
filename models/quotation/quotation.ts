@@ -30,6 +30,7 @@ export interface CreateQuotation {
     schoolName: string
     dueDateAt: Date | null
     appointmentAt: Date | null
+    schoolContactName: string
     items: QuotationItem[]
     remark?: string
     status?: string
@@ -51,6 +52,7 @@ export interface QuotationItem {
     color: string
     pattern: string
     page: number
+    printedContent?: string
 }
 export interface CreateQuotationItem
     extends Omit<Partial<QuotationItem>, 'status'> {
