@@ -25,6 +25,7 @@ export default function useCalculatorQuotationItem() {
         return true
     }
     function handlerByItemPriceRef(item: CreateQuotationItem, prices: Price[]) {
+        return
         if (!item.gram || !item.color || !item.page || !item.pattern) {
             return
         }
@@ -40,7 +41,7 @@ export default function useCalculatorQuotationItem() {
             item.price = 0
             return
         }
-        item.price = priceRef.priceRef
+        item.price = priceRef!.priceRef
     }
     function handlerRowItemsPriceRef(
         newValue: CreateQuotationItem[],
