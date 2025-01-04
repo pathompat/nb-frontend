@@ -2,7 +2,9 @@
     <v-dialog v-model="dialogOpen" width="700" persistent>
         <v-card :loading="loading">
             <v-card-title class="d-flex align-center">
-                <span>เพิ่มรายการใหม่</span>
+                <span>
+                    {{ quotationItem.id ? 'แก้ไขรายการ' : 'เพิ่มรายการใหม่' }}
+                </span>
                 <v-spacer></v-spacer>
                 <v-btn
                     data-testid="close-dialog-button"
@@ -43,7 +45,7 @@
                                     :hide-details="false"
                                 ></v-select>
                             </v-col>
-                            <v-col>
+                            <v-col v-if="!quotationItem.id">
                                 <v-autocomplete
                                     :items="itemSuggestions"
                                     item-title="label"
