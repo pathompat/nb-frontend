@@ -171,7 +171,7 @@
                                 <v-col cols="2">
                                     <v-text-field
                                         data-testid="quotation-telephone-contact-name"
-                                        label="ชื่อผู้ตืดต่อ"
+                                        label="ชื่อผู้ติดต่อ"
                                         v-model="
                                             quotationForm.schoolContactName
                                         "
