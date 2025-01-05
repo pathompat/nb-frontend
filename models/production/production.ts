@@ -14,6 +14,7 @@ export interface Production {
     items: ProductionItem[]
     remark?: string
     userId: string
+    userName?: string
 }
 export interface ProductionItem {
     id?: string
