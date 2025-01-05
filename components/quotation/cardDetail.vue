@@ -20,6 +20,7 @@
                             ><v-row>
                                 <v-col cols="4">
                                     <v-select
+                                        v-if="!quotationForm.userId"
                                         data-testid="quotation-user-field"
                                         item-title="username"
                                         item-value="id"
@@ -37,6 +38,13 @@
                                         "
                                         :items="users"
                                     ></v-select>
+                                    <v-text-field
+                                        v-else
+                                        disabled
+                                        label="User"
+                                        :model-value="quotationForm.userName"
+                                    >
+                                    </v-text-field>
                                 </v-col>
 
                                 <v-col cols="4">
@@ -531,6 +539,7 @@ const quotationForm = ref<QuotationForm>({
     schoolContactName: '',
     dueDateAt: null,
     items: [],
+    userName: '',
     schoolName: '',
     remark: '',
 })
@@ -803,6 +812,7 @@ onMounted(async () => {
                     printedContent: x.printedContent,
                 }
             }),
+            userName: quotation.value.userName,
             status: quotation.value.status,
             schoolAddress: quotation.value.schoolAddress,
             schoolTelephone: quotation.value.schoolTelephone,

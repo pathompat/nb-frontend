@@ -33,6 +33,7 @@ export interface CreateQuotation {
     schoolContactName: string
     items: QuotationItem[]
     remark?: string
+    userName?: string
     status?: string
 }
 export interface QuotationResultApi extends Quotation {

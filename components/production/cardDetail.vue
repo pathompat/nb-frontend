@@ -27,6 +27,7 @@
                         ><v-row>
                             <v-col cols="4">
                                 <v-select
+                                    v-if="!production.userId"
                                     data-testid="user-select"
                                     label="User"
                                     item-title="username"
@@ -35,6 +36,13 @@
                                     :items="users"
                                     v-model="production.userId"
                                 ></v-select>
+                                <v-text-field
+                                    v-else
+                                    disabled
+                                    label="User"
+                                    :model-value="production.userName"
+                                >
+                                </v-text-field>
                             </v-col>
                             <v-col cols="4">
                                 <v-text-field
