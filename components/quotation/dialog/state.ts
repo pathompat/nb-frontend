@@ -1,5 +1,8 @@
-import type { ITEM_CATEGORY } from '~/models/enum/enum'
-import type { CreateQuotationItem } from '~/models/quotation/quotation'
+import { CONFIG_TYPE, type ITEM_CATEGORY } from '~/models/enum/enum'
+import type {
+    CreateQuotationItem,
+    QuotationConfig,
+} from '~/models/quotation/quotation'
 import type { TemplateCategory } from '~/models/share/share'
 export type DialogItemQuotationState = ReturnType<
     typeof dialogItemQuotationState
@@ -10,15 +13,28 @@ export default function dialogItemQuotationState() {
     const dialogOpen = ref(false)
     const quotationItem = ref<CreateQuotationItem>(defaultQuotationItem())
     const loading = ref(false)
+    const { calculateWithConfigs } = useCalculatorQuotationItem()
+    const quotationStore = useQuotationStore()
+    const { configItem } = storeToRefs(quotationStore)
     // const { prices } = storeToRefs(usePriceStore())
     // const { handlerByItemPriceRef } = useCalculatorQuotationItem()
     const templateSelect = ref<TemplateCategory | null>(null)
-
-    let resolveFn: ((user: CreateQuotationItem) => void) | null = null
+    interface ItemResolve {
+        item: CreateQuotationItem
+        config: QuotationConfig[]
+    }
+    let resolveFn: ((result: ItemResolve) => void) | null = null
     function action() {
         if (!resolveFn) return
         loading.value = true
-        resolveFn(quotationItem.value)
+        const level = CONFIG_TYPE.QUOTATION_ITEMS
+        const res = calculateWithConfigs
+            .find((x) => x.level == level)
+            ?.calculate([quotationItem.value], configItem.value.configs || [])
+        resolveFn({
+            item: res?.listItem[0] || quotationItem.value,
+            config: res?.configs || [],
+        })
     }
     function defaultQuotationItem(): CreateQuotationItem {
         return {
@@ -33,15 +49,19 @@ export default function dialogItemQuotationState() {
             hasReference: false,
             quantity: undefined,
             price: undefined,
+            perUnitPrice: 0,
         }
     }
-    const openDialog = async (id?: string): Promise<CreateQuotationItem> => {
+    const openDialog = async (id?: string): Promise<ItemResolve> => {
         quotationItem.value = defaultQuotationItem()
         templateSelect.value = null
         loading.value = true
         dialogOpen.value = true
         loading.value = false
-        return new Promise<CreateQuotationItem>((resolve) => {
+        return new Promise<{
+            item: CreateQuotationItem
+            config: QuotationConfig[]
+        }>((resolve) => {
             resolveFn = resolve
         })
     }
@@ -57,7 +77,7 @@ export default function dialogItemQuotationState() {
             quotationItem.value = item
             dialogOpen.value = true
             templateSelect.value = null
-            return new Promise<CreateQuotationItem>((resolve) => {
+            return new Promise<ItemResolve>((resolve) => {
                 resolveFn = resolve
             })
         },

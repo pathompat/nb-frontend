@@ -15,9 +15,8 @@ export interface TemplateCategory {
     line?: string
     page: number
     price: number
-    color?: string
-    plate?: string
-    category: ITEM_CATEGORY
+    color: string | null
+    categoryId: number
 }
 export interface PricePageMap {
     page: number
@@ -28,6 +27,5 @@ export interface TemplateCategoryGroup {
     line: string[]
     pagePriceMap: PricePageMap[]
     color?: string[]
-    plate?: string[]
-    category: ITEM_CATEGORY
+    categoryId: number
 }

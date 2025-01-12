@@ -6,6 +6,7 @@ export const ITEM_OPTION = {
     SEPARATE_BY_LEVEL: 'จัดชุดแยกระดับชั้น',
     COVER_PRINT_COLOR_SELECTION: 'พิมพ์ปกเลือกสีหมึก',
 }
+
 export const PATTERN = {
     TABLE: 'TABLE',
     ACCOUNTING: 'ACCOUNTING',

@@ -1,11 +1,14 @@
 export interface Price {
-    productTitle: string
-    plate: string
-    gram: number
-    color: string
-    page: number
-    pattern: string
-    hasReference: false
-    priceRef: number
+    categoryId: number
+    categoryName: string
+    options: PriceOption[]
 }
+export interface PriceOption {
+    gram: number
+    pattern: string[]
+    page: number
+    color: string | null
+    price: number
+}
+
 export interface CreatePrice {}

@@ -189,6 +189,7 @@
                                 <v-btn
                                     data-testid="quotation-add-item-button"
                                     variant="flat"
+                                    :disabled="quotationForm.userId == ''"
                                     @click="addItem"
                                     color="primary"
                                     v-if="!props.id"
@@ -280,7 +281,22 @@
                                         </td>
                                         <td>
                                             <div>
-                                                {{ item.options }}
+                                                {{
+                                                    (
+                                                        item.options?.split(
+                                                            ','
+                                                        ) || []
+                                                    )
+                                                        .map(
+                                                            (h) =>
+                                                                configItem?.configs.find(
+                                                                    (x) =>
+                                                                        x.key ==
+                                                                        h
+                                                                )?.label
+                                                        )
+                                                        .join(', ') || 'ไม่พบ'
+                                                }}
                                             </div>
                                         </td>
                                         <td>
@@ -294,7 +310,27 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <!-- {{ item.price / item.quantity }} -->
+                                            <span
+                                                :style="`color:${
+                                                    item.perUnitPrice !=
+                                                    undefined
+                                                        ? item.perUnitPrice >= 0
+                                                            ? 'green'
+                                                            : 'red'
+                                                        : ''
+                                                }`"
+                                            >
+                                                {{
+                                                    item.perUnitPrice !=
+                                                    undefined
+                                                        ? (item.perUnitPrice >=
+                                                          0
+                                                              ? '+'
+                                                              : '') +
+                                                          item.perUnitPrice
+                                                        : ''
+                                                }}
+                                            </span>
                                         </td>
                                         <td>
                                             {{ item.price! * item.quantity! }}
@@ -345,82 +381,53 @@
                                     </tr>
                                 </template>
                             </v-data-table>
-                            <v-divider class="my-4"></v-divider>
                             <div
-                                class="d-flex w-100 justify-end align-center text-h6"
+                                v-for="config in configUsed
+                                    .flatMap((x) => x.items)
+                                    .filter(
+                                        (x) =>
+                                            x.level !=
+                                            CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS
+                                    )"
                             >
-                                <div class="w-25 d-flex justify-space-between">
-                                    <div>เพลท สี ตัด 9 :</div>
-                                    <div>
-                                        <!-- {{
-                                            quotationForm.items.reduce(
-                                                (sum, item) =>
-                                                    sum +
-                                                    item.price * item.quantity,
-                                                0
-                                            )
-                                        }} -->
+                                <v-divider class="my-4"></v-divider>
+                                <div
+                                    class="d-flex w-100 justify-end align-center text-h6"
+                                >
+                                    <div
+                                        class="w-25 d-flex justify-space-between"
+                                    >
+                                        <div>{{ config.label }} :</div>
+                                        <div>
+                                            {{ config.fixedChargePrice }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <v-divider class="my-4"></v-divider>
-                            <div
-                                class="d-flex w-100 justify-end align-center text-h6"
-                            >
-                                <div class="w-25 d-flex justify-space-between">
-                                    <p>เพลท ขาวดำ ตัด 9 :</p>
-                                    <div>
-                                        <!-- {{
-                                            quotationForm.items.reduce(
-                                                (sum, item) =>
-                                                    sum +
-                                                    item.price * item.quantity,
-                                                0
-                                            )
-                                        }} -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <v-divider class="my-4"></v-divider>
-                            <div
-                                class="d-flex w-100 justify-end align-center text-h6"
-                            >
-                                <div class="w-25 d-flex justify-space-between">
-                                    <p>เพลท รายงาน:</p>
-                                    <div>
-                                        <!-- {{
-                                            quotationForm.items.reduce(
-                                                (sum, item) =>
-                                                    sum +
-                                                    item.price * item.quantity,
-                                                0
-                                            )
-                                        }} -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <v-divider class="my-4"></v-divider>
-                            <div
-                                class="d-flex w-100 justify-end align-center text-h6"
-                            >
-                                <div class="w-25 d-flex justify-space-between">
-                                    <p>ส่วนลดท้ายบิล:</p>
-                                    <div>
-                                        <v-text-field
-                                            data-testid="quotation-discount-field"
-                                            :disabled="
-                                                userProfile?.role !==
-                                                    SYSTEM_ROLE.ADMIN ||
-                                                quotationForm.status ==
-                                                    STATUS.APPROVED ||
-                                                quotationForm.status ==
-                                                    STATUS.CANCELED
-                                            "
-                                            v-model="discount"
-                                            type="number"
-                                        ></v-text-field>
+                            <div v-if="userProfile?.role === SYSTEM_ROLE.ADMIN">
+                                <v-divider class="my-4"></v-divider>
+                                <div
+                                    class="d-flex w-100 justify-end align-center text-h6"
+                                >
+                                    <div
+                                        class="w-25 d-flex justify-space-between"
+                                    >
+                                        <p>ส่วนลดท้ายบิล:</p>
+                                        <div>
+                                            <v-text-field
+                                                data-testid="quotation-discount-field"
+                                                :disabled="
+                                                    userProfile?.role !==
+                                                        SYSTEM_ROLE.ADMIN ||
+                                                    quotationForm.status ==
+                                                        STATUS.APPROVED ||
+                                                    quotationForm.status ==
+                                                        STATUS.CANCELED
+                                                "
+                                                v-model="discount"
+                                                type="number"
+                                            ></v-text-field>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -432,15 +439,7 @@
                                 <div class="w-25 d-flex justify-space-between">
                                     <p>รวม :</p>
                                     <div>
-                                        {{
-                                            quotationForm.items.reduce(
-                                                (sum, item) =>
-                                                    sum +
-                                                    item.price! *
-                                                        item.quantity!,
-                                                0
-                                            ) - discount
-                                        }}
+                                        {{ total - discount }}
                                     </div>
                                 </div>
                             </div>
@@ -507,7 +506,7 @@
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
-import { STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
+import { CONFIG_TYPE, STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -518,7 +517,11 @@ import dialogItemQuotationState, {
 
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
-import type { QuotationForm, QuotationItem } from '~/models/quotation/quotation'
+import type {
+    QuotationConfig,
+    QuotationForm,
+    QuotationItem,
+} from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
 const stateDialogCreateNewSchool = dialogSchoolState()
 const statedialogItemQuotation = dialogItemQuotationState()
@@ -529,7 +532,9 @@ provide(dialogItemQuotationStateSymbol, statedialogItemQuotation)
 const valid = ref(false)
 const quotationStore = useQuotationStore()
 const { getQuotationById, createQuotation } = quotationStore
-const { quotation } = storeToRefs(quotationStore)
+const { quotation, configs, configBill, configItem, configPromotion } =
+    storeToRefs(quotationStore)
+
 const quotationForm = ref<QuotationForm>({
     userId: '',
     schoolId: '',
@@ -545,16 +550,19 @@ const quotationForm = ref<QuotationForm>({
 })
 
 const discount = ref(0)
-const { plates, lines, itemCategories } = useShare()
+const { plates, lines } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
 const priceStore = usePriceStore()
+const total = ref(0)
 const { emtpyRule, noEmojiOrEscapeCharacterRule, phoneNumberRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)
-const { handlerRowItemsPriceRef } = useCalculatorQuotationItem()
+const configUsed = ref<{ index: number; items: QuotationConfig[] }[]>([])
+const { handlerRowItemsPriceRef, calculateWithConfigs } =
+    useCalculatorQuotationItem()
 const { userProfile } = useAuthStore()
 const isCustomDate = ref(false)
 const headerItems = computed(() => {
@@ -574,7 +582,7 @@ const headerItems = computed(() => {
 
         { title: 'จำนวน', key: 'amount' },
         { title: 'ราคา', key: 'price' },
-        { title: '+/- ต่อตัว', key: 'priceUnit' },
+        { title: '+/- ต่อตัว', key: 'perUnitPrice' },
 
         { title: 'รวม', key: 'sum' },
         { title: 'ดำเนินการ', key: 'action' },
@@ -598,6 +606,15 @@ const storeSelect = computed(() => {
     return users.value.find((user) => user.id === quotationForm.value.userId)
         ?.storeName
 })
+const itemCategories = computed(() => {
+    return prices.value.map((x) => {
+        return {
+            title: x.categoryName,
+            value: x.categoryId,
+        }
+    })
+})
+
 function updateCustomerSelectSchool(value: string) {
     quotationForm.value.schoolId = value
     if (quotationForm.value.status != undefined) return
@@ -618,7 +635,10 @@ const updateCustomDate = (value: boolean | null) => {
     if (!value) quotationForm.value.appointmentAt = null
 }
 const updateCustomerSelect = async (value: string) => {
+    // console.log(quotationForm.value.userId)
+
     quotationForm.value.userId = value
+    await quotationStore.getConfig(quotationForm.value.userId)
     await Promise.all([
         priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId),
         getSchools(),
@@ -706,26 +726,70 @@ async function createNewSchool() {
     }
     stateDialogCreateNewSchool.closeLoading()
 }
+function calculateAllItem() {
+    total.value = quotationForm.value.items.reduce(
+        (sum, item) => sum + item.price! * item.quantity!,
+        0
+    )
+    const resultBill = calculateWithConfigs
+        .find((x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LISTS)!
+        .calculate(
+            quotationForm.value.items,
+            [
+                ...configBill.value.configs,
+                ...configUsed.value.flatMap((x) => x.items),
+            ],
+            total.value
+        )
+    configUsed.value.push({
+        index: -1,
+        items: resultBill.configs,
+    })
+    total.value = resultBill.total
+    const resultPromotion = calculateWithConfigs
+        .find((x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS)!
+        .calculate(
+            quotationForm.value.items,
+            configPromotion.value.configs,
+            total.value
+        )
+    quotationForm.value.items = resultPromotion.listItem
+    total.value = resultPromotion.total
+}
 async function addItem() {
     try {
-        const newItems = await statedialogItemQuotation.openDialog()
-        newItems.id = undefined
+        const { config, item } = await statedialogItemQuotation.openDialog()
+        item.id = undefined
         statedialogItemQuotation.closeDialog()
-        quotationForm.value.items.push(newItems)
+        quotationForm.value.items.push(item)
+        configUsed.value.push({
+            index: quotationForm.value.items.length - 1,
+            items: config,
+        })
+        calculateAllItem()
     } catch (e) {
         toast.error(`${e}`)
     }
 }
 async function editItem(index: number) {
     try {
-        const editItem = await statedialogItemQuotation.setItemAndOpen(
+        console.log(configUsed.value)
+        const resultEdit = await statedialogItemQuotation.setItemAndOpen(
             JSON.parse(JSON.stringify(quotationForm.value.items[index]))
         )
         statedialogItemQuotation.closeDialog()
+        if (resultEdit) {
+            const editItem = resultEdit.item
+            configUsed.value = configUsed.value.filter((x) => x.index != -1)
+            configUsed.value[index] = {
+                index: index!,
+                items: resultEdit.config,
+            }
+            console.log(configUsed.value)
 
-        if (editItem) {
             quotationForm.value.items[index] = editItem
-            console.log(editItem)
+            calculateAllItem()
+            console.log(configUsed.value)
             if (editItem.id == undefined) {
                 return
             }
@@ -737,6 +801,7 @@ async function editItem(index: number) {
                     price: +`${editItem.price}`,
                 }
             )
+
             toast.success(`แก้ไขสำเร็จ`)
             return
         }
