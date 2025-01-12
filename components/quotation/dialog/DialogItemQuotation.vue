@@ -38,11 +38,7 @@
                                             templateSelect = null
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices.find(
-                                                    (x) =>
-                                                        x.categoryId ==
-                                                        quotationItem.categoryId
-                                                )?.options || []
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -79,11 +75,7 @@
                                             quotationItem.plate = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices.find(
-                                                    (x) =>
-                                                        x.categoryId ==
-                                                        quotationItem.categoryId
-                                                )?.options || []
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -104,11 +96,7 @@
                                             quotationItem.gram = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices.find(
-                                                    (x) =>
-                                                        x.categoryId ==
-                                                        quotationItem.categoryId
-                                                )?.options || []
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -128,11 +116,7 @@
                                             quotationItem.color = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices.find(
-                                                    (x) =>
-                                                        x.categoryId ==
-                                                        quotationItem.categoryId
-                                                )?.options || []
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -151,11 +135,7 @@
                                             quotationItem.page = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices.find(
-                                                    (x) =>
-                                                        x.categoryId ==
-                                                        quotationItem.categoryId
-                                                )?.options || []
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -177,11 +157,7 @@
                                             quotationItem.pattern = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices.find(
-                                                    (x) =>
-                                                        x.categoryId ==
-                                                        quotationItem.categoryId
-                                                )?.options || []
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -218,11 +194,7 @@
                                             quotationItem.hasReference = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices.find(
-                                                    (x) =>
-                                                        x.categoryId ==
-                                                        quotationItem.categoryId
-                                                )?.options || []
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -329,7 +301,12 @@ const itemCategories = computed(() => {
         }
     })
 })
-
+const priceCategories = computed(() => {
+    return (
+        prices.value.find((x) => x.categoryId == quotationItem.value.categoryId)
+            ?.options || []
+    )
+})
 const { action, dialogOpen, quotationItem, loading, templateSelect } = inject(
     dialogItemQuotationStateSymbol
 )!

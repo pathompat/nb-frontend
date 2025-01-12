@@ -1,10 +1,7 @@
-import { ac } from 'vitest/dist/chunks/reporters.D7Jzd9GS'
-import { a } from 'vitest/dist/chunks/suite.B2jumIFP'
 import {
     COMPARATOR,
     CONFIG_TYPE,
     CONFIG_TYPE_CATEGORY,
-    type ITEM_CATEGORY,
 } from '~/models/enum/enum'
 import type { Price, PriceOption } from '~/models/price/price'
 import type {
@@ -192,10 +189,6 @@ export default function useCalculatorQuotationItem() {
                     configsByItem: configs,
                     defaultItem: listItem,
                 }
-                //                 (qty * value) + (changeprice)
-                // special case
-                // if(contidition)
-                // (qty * value) or  (changeprice)
             },
         },
         {
@@ -291,31 +284,12 @@ export default function useCalculatorQuotationItem() {
             item.price = 0
         }
         return
-        // if (!item.gram || !item.color || !item.page || !item.pattern) {
-        //     return
-        // }
-        // const priceRef = prices.find(
-        //     (price) =>
-        //         price.gram == item.gram &&
-        //         price.color == item.color &&
-        //         price.page == item.page &&
-        //         price.pattern == item.pattern &&
-        //         price.hasReference == item.hasReference
-        // )
-        // if (!priceRef) {
-        //     item.price = 0
-        //     return
-        // }
-        // item.price = priceRef!.priceRef
     }
     function handlerRowItemsPriceRef(
         newValue: CreateQuotationItem[],
         prices: Price[]
     ) {
         return
-        // newValue.forEach((item, index) => {
-        //     handlerByItemPriceRef(item, prices)
-        // })
     }
 
     return {

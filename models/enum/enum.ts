@@ -45,10 +45,10 @@ export enum SYSTEM_ROLE {
     CUSTOMER = 'CUSTOMER',
 }
 export enum ITEM_CATEGORY {
-    CUT_NINE = 'CUT_NINE',
-    REPORT = 'REPORT',
-    DRAWING = 'DRAWING',
-    ACCOUNTING = 'ACCOUNTING',
+    CUT_NINE = 1,
+    REPORT = 2,
+    DRAWING = 3,
+    ACCOUNTING = 4,
 }
 export enum CONFIG_TYPE {
     QUOTATION_ADDITIONAL_LIST_ITEMS = 'quotation_additional_list_items',

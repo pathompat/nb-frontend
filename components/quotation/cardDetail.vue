@@ -307,8 +307,12 @@
                                         <td>
                                             <div>
                                                 {{
-                                                    item.price! +
-                                                    item.perUnitPrice
+                                                    parseFloat(
+                                                        `${item.price!}`
+                                                    ) +
+                                                    parseFloat(
+                                                        `${item.perUnitPrice}`
+                                                    )
                                                 }}
                                             </div>
                                         </td>
@@ -746,7 +750,7 @@ async function create() {
                 price: +item.price!,
                 status: '',
                 configIds: item.configIds,
-                category: item.categoryId,
+                categoryId: item.categoryId,
                 printedContent: item.printedContent,
             }
         })
@@ -754,7 +758,7 @@ async function create() {
             ...quotationForm.value,
             items: items.map<QuotationItem>((x) => {
                 return {
-                    categoryId: x.category!,
+                    categoryId: x.categoryId!,
                     color: x.color!,
                     gram: x.gram!,
                     hasReference: x.hasReference!,
@@ -910,7 +914,6 @@ onMounted(async () => {
 
     if (userProfile?.role !== SYSTEM_ROLE.ADMIN && props.id == undefined) {
         await updateCustomerSelect(userProfile!.id)
-        // return
     }
     loading.value = true
     try {
@@ -923,7 +926,7 @@ onMounted(async () => {
             items: quotation.value.items.map((x) => {
                 return {
                     id: `${x.id}`,
-                    category: x.categoryId,
+                    categoryId: x.categoryId,
                     color: x.color,
                     gram: x.gram,
                     hasReference: x.hasReference,

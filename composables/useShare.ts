@@ -1,10 +1,7 @@
 import { ITEM_CATEGORY, STATUS, TYPE } from '~/models/enum/enum'
 import { ITEM_OPTION, PATTERN } from '~/models/object/object'
-import type { Price, PriceOption } from '~/models/price/price'
-import type {
-    TemplateCategory,
-    TemplateCategoryGroup,
-} from '~/models/share/share'
+import type { PriceOption } from '~/models/price/price'
+import type { TemplateCategory } from '~/models/share/share'
 
 export function useShare() {
     const itemStatuses = ref([

@@ -151,7 +151,8 @@
                                         : ''
                                 }}{{
                                     itemCategories.find(
-                                        (x) => x.value == item.categoryId
+                                        (x) =>
+                                            x.value == (item as any).categoryId
                                     )?.title || 'ไม่พบ'
                                 }}/{{ item.gram }}/{{ item.color }}/{{
                                     item.page
