@@ -20,7 +20,10 @@
                             ><v-row>
                                 <v-col cols="4">
                                     <v-select
-                                        v-if="!quotationForm.userId"
+                                        v-if="
+                                            !quotationForm.userId ||
+                                            quotationForm.status == undefined
+                                        "
                                         data-testid="quotation-user-field"
                                         item-title="username"
                                         item-value="id"
@@ -189,6 +192,7 @@
                                 <v-btn
                                     data-testid="quotation-add-item-button"
                                     variant="flat"
+                                    :disabled="quotationForm.userId == ''"
                                     @click="addItem"
                                     color="primary"
                                     v-if="!props.id"
@@ -220,7 +224,8 @@
                                             {{
                                                 itemCategories.find(
                                                     (x) =>
-                                                        x.value == item.category
+                                                        x.value ==
+                                                        item.categoryId
                                                 )?.title || 'ไม่พบ'
                                             }}
                                         </td>
@@ -280,7 +285,18 @@
                                         </td>
                                         <td>
                                             <div>
-                                                {{ item.options }}
+                                                {{
+                                                    (item.configIds || [])
+                                                        .map(
+                                                            (h) =>
+                                                                configItem?.configs.find(
+                                                                    (x) =>
+                                                                        x.id ==
+                                                                        h
+                                                                )?.label
+                                                        )
+                                                        .join(', ') || 'ไม่พบ'
+                                                }}
                                             </div>
                                         </td>
                                         <td>
@@ -290,14 +306,45 @@
                                         </td>
                                         <td>
                                             <div>
-                                                {{ item.price }}
+                                                {{
+                                                    parseFloat(
+                                                        `${item.price!}`
+                                                    ) +
+                                                    parseFloat(
+                                                        `${item.perUnitPrice}`
+                                                    )
+                                                }}
                                             </div>
                                         </td>
                                         <td>
-                                            <!-- {{ item.price / item.quantity }} -->
+                                            <span
+                                                :style="`color:${
+                                                    item.perUnitPrice == 0
+                                                        ? 'black'
+                                                        : item.perUnitPrice >= 0
+                                                          ? 'green'
+                                                          : 'red'
+                                                }`"
+                                            >
+                                                {{
+                                                    (item.perUnitPrice >= 0
+                                                        ? '+'
+                                                        : '') +
+                                                    item.perUnitPrice
+                                                }}
+                                            </span>
                                         </td>
                                         <td>
-                                            {{ item.price! * item.quantity! }}
+                                            {{
+                                                ceilToTwoDecimals(
+                                                    parseFloat(
+                                                        `${item.price! + item.perUnitPrice}`
+                                                    ) *
+                                                        parseInt(
+                                                            `${item.quantity}`
+                                                        )
+                                                )
+                                            }}
                                         </td>
                                         <td
                                             v-if="
@@ -345,82 +392,105 @@
                                     </tr>
                                 </template>
                             </v-data-table>
-                            <v-divider class="my-4"></v-divider>
                             <div
-                                class="d-flex w-100 justify-end align-center text-h6"
+                                v-for="group in configUsed
+                                    .filter(
+                                        (x) =>
+                                            x.level !==
+                                            CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS
+                                    )
+                                    .reduce((acc: any, x) => {
+                                        const existingItem = acc.find(
+                                            (item: any) => item.key === x.key
+                                        )
+                                        if (existingItem) {
+                                            existingItem.qty += 1
+                                        } else {
+                                            acc.push({
+                                                ...x,
+                                                qty: 1,
+                                            })
+                                        }
+                                        return acc
+                                    }, [])"
                             >
-                                <div class="w-25 d-flex justify-space-between">
-                                    <div>เพลท สี ตัด 9 :</div>
-                                    <div>
-                                        <!-- {{
-                                            quotationForm.items.reduce(
-                                                (sum, item) =>
-                                                    sum +
-                                                    item.price * item.quantity,
-                                                0
-                                            )
-                                        }} -->
+                                <v-divider class="my-4"></v-divider>
+                                <div
+                                    class="d-flex w-100 justify-end align-center text-h6"
+                                >
+                                    <div
+                                        class="w-25 d-flex justify-space-between"
+                                    >
+                                        <div>{{ group.label }}</div>
+                                        <div class="d-flex ga-4">
+                                            <div>
+                                                {{ group.fixedChargePrice }} x
+                                                {{ group.qty }} =
+                                            </div>
+                                            <div>
+                                                {{
+                                                    ceilToTwoDecimals(
+                                                        group.fixedChargePrice *
+                                                            group.qty
+                                                    )
+                                                }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <v-divider class="my-4"></v-divider>
-                            <div
-                                class="d-flex w-100 justify-end align-center text-h6"
-                            >
-                                <div class="w-25 d-flex justify-space-between">
-                                    <p>เพลท ขาวดำ ตัด 9 :</p>
-                                    <div>
-                                        <!-- {{
-                                            quotationForm.items.reduce(
-                                                (sum, item) =>
-                                                    sum +
-                                                    item.price * item.quantity,
-                                                0
-                                            )
-                                        }} -->
+                            <div v-if="userProfile?.role === SYSTEM_ROLE.ADMIN">
+                                <v-divider class="my-4"></v-divider>
+                                <div
+                                    class="d-flex w-100 justify-end align-center text-h6"
+                                >
+                                    <div
+                                        class="w-25 d-flex justify-space-between"
+                                    >
+                                        <p>ส่วนลดท้ายบิล:</p>
+                                        <div>
+                                            <v-text-field
+                                                data-testid="quotation-discount-field"
+                                                :disabled="
+                                                    userProfile?.role !==
+                                                        SYSTEM_ROLE.ADMIN ||
+                                                    quotationForm.status ==
+                                                        STATUS.APPROVED ||
+                                                    quotationForm.status ==
+                                                        STATUS.CANCELED
+                                                "
+                                                v-model="discount"
+                                                type="number"
+                                            ></v-text-field>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <v-divider class="my-4"></v-divider>
-                            <div
-                                class="d-flex w-100 justify-end align-center text-h6"
-                            >
-                                <div class="w-25 d-flex justify-space-between">
-                                    <p>เพลท รายงาน:</p>
-                                    <div>
-                                        <!-- {{
-                                            quotationForm.items.reduce(
-                                                (sum, item) =>
-                                                    sum +
-                                                    item.price * item.quantity,
-                                                0
-                                            )
-                                        }} -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <v-divider class="my-4"></v-divider>
-                            <div
-                                class="d-flex w-100 justify-end align-center text-h6"
-                            >
-                                <div class="w-25 d-flex justify-space-between">
-                                    <p>ส่วนลดท้ายบิล:</p>
-                                    <div>
-                                        <v-text-field
-                                            data-testid="quotation-discount-field"
-                                            :disabled="
-                                                userProfile?.role !==
-                                                    SYSTEM_ROLE.ADMIN ||
-                                                quotationForm.status ==
-                                                    STATUS.APPROVED ||
-                                                quotationForm.status ==
-                                                    STATUS.CANCELED
-                                            "
-                                            v-model="discount"
-                                            type="number"
-                                        ></v-text-field>
+                            <div v-if="userProfile?.role === SYSTEM_ROLE.ADMIN">
+                                <v-divider class="my-4"></v-divider>
+                                <div
+                                    class="d-flex w-100 justify-end align-center text-h6"
+                                >
+                                    <div
+                                        class="w-25 d-flex justify-space-between"
+                                    >
+                                        <p>ส่วนเพิ่มท้ายบิล:</p>
+                                        <div>
+                                            <v-text-field
+                                                data-testid="quotation-discount-field"
+                                                :disabled="
+                                                    userProfile?.role !==
+                                                        SYSTEM_ROLE.ADMIN ||
+                                                    quotationForm.status ==
+                                                        STATUS.APPROVED ||
+                                                    quotationForm.status ==
+                                                        STATUS.CANCELED
+                                                "
+                                                v-model="additionPrice"
+                                                type="number"
+                                            ></v-text-field>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -433,13 +503,15 @@
                                     <p>รวม :</p>
                                     <div>
                                         {{
-                                            quotationForm.items.reduce(
-                                                (sum, item) =>
-                                                    sum +
-                                                    item.price! *
-                                                        item.quantity!,
-                                                0
-                                            ) - discount
+                                            ceilToTwoDecimals(
+                                                total -
+                                                    parseFloat(
+                                                        `${discount || 0}`
+                                                    ) +
+                                                    parseFloat(
+                                                        `${additionPrice || 0}`
+                                                    )
+                                            )
                                         }}
                                     </div>
                                 </div>
@@ -507,7 +579,7 @@
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
-import { STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
+import { CONFIG_TYPE, STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -518,7 +590,12 @@ import dialogItemQuotationState, {
 
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
-import type { QuotationForm, QuotationItem } from '~/models/quotation/quotation'
+import type {
+    CreateQuotationItem,
+    QuotationConfig,
+    QuotationForm,
+    QuotationItem,
+} from '~/models/quotation/quotation'
 import { usePriceStore } from '~/stores/prices'
 const stateDialogCreateNewSchool = dialogSchoolState()
 const statedialogItemQuotation = dialogItemQuotationState()
@@ -529,7 +606,9 @@ provide(dialogItemQuotationStateSymbol, statedialogItemQuotation)
 const valid = ref(false)
 const quotationStore = useQuotationStore()
 const { getQuotationById, createQuotation } = quotationStore
-const { quotation } = storeToRefs(quotationStore)
+const { quotation, configs, configBill, configItem, configPromotion } =
+    storeToRefs(quotationStore)
+
 const quotationForm = ref<QuotationForm>({
     userId: '',
     schoolId: '',
@@ -543,18 +622,22 @@ const quotationForm = ref<QuotationForm>({
     schoolName: '',
     remark: '',
 })
-
 const discount = ref(0)
-const { plates, lines, itemCategories } = useShare()
+const additionPrice = ref(0)
+
+const { plates, lines, ceilToTwoDecimals } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
 const priceStore = usePriceStore()
-const { emtpyRule, noEmojiOrEscapeCharacterRule, phoneNumberRule } = useRules()
+const total = ref(0)
+const { emtpyRule, noEmojiOrEscapeCharacterRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)
-const { handlerRowItemsPriceRef } = useCalculatorQuotationItem()
+const configUsed = ref<QuotationConfig[]>([])
+const { handlerRowItemsPriceRef, calculateWithConfigs } =
+    useCalculatorQuotationItem()
 const { userProfile } = useAuthStore()
 const isCustomDate = ref(false)
 const headerItems = computed(() => {
@@ -574,7 +657,7 @@ const headerItems = computed(() => {
 
         { title: 'จำนวน', key: 'amount' },
         { title: 'ราคา', key: 'price' },
-        { title: '+/- ต่อตัว', key: 'priceUnit' },
+        { title: '+/- ต่อตัว', key: 'perUnitPrice' },
 
         { title: 'รวม', key: 'sum' },
         { title: 'ดำเนินการ', key: 'action' },
@@ -598,6 +681,15 @@ const storeSelect = computed(() => {
     return users.value.find((user) => user.id === quotationForm.value.userId)
         ?.storeName
 })
+const itemCategories = computed(() => {
+    return prices.value.map((x) => {
+        return {
+            title: x.categoryName,
+            value: x.categoryId,
+        }
+    })
+})
+
 function updateCustomerSelectSchool(value: string) {
     quotationForm.value.schoolId = value
     if (quotationForm.value.status != undefined) return
@@ -619,6 +711,7 @@ const updateCustomDate = (value: boolean | null) => {
 }
 const updateCustomerSelect = async (value: string) => {
     quotationForm.value.userId = value
+    await quotationStore.getConfig(quotationForm.value.userId)
     await Promise.all([
         priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId),
         getSchools(),
@@ -656,8 +749,8 @@ async function create() {
                 quantity: +item.quantity!,
                 price: +item.price!,
                 status: '',
-                options: item.options,
-                category: item.category,
+                configIds: item.configIds,
+                categoryId: item.categoryId,
                 printedContent: item.printedContent,
             }
         })
@@ -665,11 +758,11 @@ async function create() {
             ...quotationForm.value,
             items: items.map<QuotationItem>((x) => {
                 return {
-                    category: x.category!,
+                    categoryId: x.categoryId!,
                     color: x.color!,
                     gram: x.gram!,
                     hasReference: x.hasReference!,
-                    options: x.options || '',
+                    configIds: x.configIds || [],
                     page: x.page!,
                     pattern: x.pattern!,
                     plate: x.plate!,
@@ -706,26 +799,62 @@ async function createNewSchool() {
     }
     stateDialogCreateNewSchool.closeLoading()
 }
+function calculateAllItem() {
+    configUsed.value = []
+    const level = CONFIG_TYPE.QUOTATION_ITEMS
+    const resultItem = calculateWithConfigs
+        .find((x) => x.level == level)
+        ?.calculate(quotationForm.value.items, configItem.value.configs || [])
+    if (!resultItem) return
+    console.log('s')
+    configUsed.value.push(...resultItem.configs)
+    quotationForm.value.items = resultItem.listItem!
+    const resultPromotion = calculateWithConfigs
+        .find((x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS)!
+        .calculate(
+            quotationForm.value.items,
+            configPromotion.value.configs,
+            configUsed.value
+        )
+    quotationForm.value.items = resultPromotion.listItem
+    const resultBill = calculateWithConfigs
+        .find((x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LISTS)!
+        .calculate(
+            quotationForm.value.items,
+            configBill.value.configs,
+            configUsed.value,
+            quotationForm.value.items!.reduce(
+                (sum, item) =>
+                    sum + (item.price! + item.perUnitPrice) * item.quantity!,
+                0
+            )
+        )
+    configUsed.value.push(...resultBill.configs)
+    quotationForm.value.items = resultBill.listItem
+    total.value = ceilToTwoDecimals(resultBill.total)
+}
 async function addItem() {
     try {
-        const newItems = await statedialogItemQuotation.openDialog()
-        newItems.id = undefined
+        const { item } = await statedialogItemQuotation.openDialog()
+        item.id = undefined
         statedialogItemQuotation.closeDialog()
-        quotationForm.value.items.push(newItems)
+        quotationForm.value.items.push(item)
+        calculateAllItem()
     } catch (e) {
         toast.error(`${e}`)
     }
 }
 async function editItem(index: number) {
     try {
-        const editItem = await statedialogItemQuotation.setItemAndOpen(
+        const resultEdit = await statedialogItemQuotation.setItemAndOpen(
             JSON.parse(JSON.stringify(quotationForm.value.items[index]))
         )
         statedialogItemQuotation.closeDialog()
+        if (resultEdit) {
+            const editItem = resultEdit.item
 
-        if (editItem) {
             quotationForm.value.items[index] = editItem
-            console.log(editItem)
+            calculateAllItem()
             if (editItem.id == undefined) {
                 return
             }
@@ -737,6 +866,7 @@ async function editItem(index: number) {
                     price: +`${editItem.price}`,
                 }
             )
+
             toast.success(`แก้ไขสำเร็จ`)
             return
         }
@@ -746,11 +876,10 @@ async function editItem(index: number) {
     }
 }
 function deleteItem(index: number) {
-    quotationForm.value.items = quotationForm.value.items
-        .filter((_, i) => i !== index)
-        .map((item, newIndex) => {
-            return { ...item, index: newIndex }
-        })
+    quotationForm.value.items = quotationForm.value.items.filter(
+        (_, i) => i !== index
+    )
+    calculateAllItem()
 }
 
 async function approve() {
@@ -781,15 +910,13 @@ async function cancel() {
     }
 }
 onMounted(async () => {
-    if (userProfile?.role !== SYSTEM_ROLE.ADMIN) {
-        quotationForm.value.userId = userProfile!.id
-        await getSchools()
-        return
+    await userStore.fetchAllUsers()
+
+    if (userProfile?.role !== SYSTEM_ROLE.ADMIN && props.id == undefined) {
+        await updateCustomerSelect(userProfile!.id)
     }
     loading.value = true
     try {
-        await userStore.fetchAllUsers()
-
         if (!props.id) return
         await getQuotationById(props.id)
         quotationForm.value = {
@@ -799,17 +926,18 @@ onMounted(async () => {
             items: quotation.value.items.map((x) => {
                 return {
                     id: `${x.id}`,
-                    category: x.category,
+                    categoryId: x.categoryId,
                     color: x.color,
                     gram: x.gram,
                     hasReference: x.hasReference,
-                    options: x.options,
+                    configIds: x.configIds,
                     page: x.page,
                     pattern: x.pattern,
                     plate: x.plate,
                     price: x.price!,
                     quantity: x.quantity!,
                     printedContent: x.printedContent,
+                    perUnitPrice: 0,
                 }
             }),
             userName: quotation.value.userName,
@@ -832,6 +960,8 @@ onMounted(async () => {
             return
         }
         await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
+        await quotationStore.getConfig(quotationForm.value.userId)
+        calculateAllItem()
         emit('status', quotationForm.value.status!)
     } catch (error) {
         toast.error(`${error}`)

@@ -6,7 +6,7 @@ export default function useCalculator() {
         calculateAllItem(items: CreateQuotationItem[]): CalculateResult {
             let totalItemAmount = 0
             items.forEach((item) => {
-                totalItemAmount += item.price * item.quantity
+                totalItemAmount += item.price! * item.quantity!
             })
             return {
                 discount: 0,

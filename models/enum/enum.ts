@@ -45,8 +45,24 @@ export enum SYSTEM_ROLE {
     CUSTOMER = 'CUSTOMER',
 }
 export enum ITEM_CATEGORY {
-    CUT_NINE = 'CUT_NINE',
-    REPORT = 'REPORT',
-    DRAWING = 'DRAWING',
-    ACCOUNTING = 'ACCOUNTING',
+    CUT_NINE = 1,
+    REPORT = 2,
+    DRAWING = 3,
+    ACCOUNTING = 4,
+}
+export enum CONFIG_TYPE {
+    QUOTATION_ADDITIONAL_LIST_ITEMS = 'quotation_additional_list_items',
+    QUOTATION_ITEMS = 'quotation_items',
+    QUOTATION_ADDITIONAL_LISTS = 'quotation_additional_lists',
+}
+export enum CONFIG_TYPE_CATEGORY {
+    DISCOUNT = 'DISCOUNT',
+    CHARGES = 'CHARGES',
+}
+export enum COMPARATOR {
+    LESS_THAN = 'LESS_THAN',
+    LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
+    EQUAL = 'EQUAL',
+    GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+    GREATER_THAN = 'GREATER_THAN',
 }

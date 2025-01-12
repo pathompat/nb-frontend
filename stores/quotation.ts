@@ -4,13 +4,16 @@ import {
     type QuotationResultApi,
     type QuotationStat,
     type QuotationItem,
+    type QuotationConfigWithLevel,
+    type QuotationConfigResultApi,
 } from '~/models/quotation/quotation'
 import type { ApiResult } from '~/models/api/api'
+import { CONFIG_TYPE } from '~/models/enum/enum'
 
 export const useQuotationStore = defineStore('quotation', () => {
     const { getRequest, postRequest, putRequest } = useBaseApi()
     const controller = 'quotation'
-
+    const configs = ref<QuotationConfigWithLevel[]>([])
     const quotations = ref<QuotationResultApi[]>([])
     const quotationStat = ref<QuotationStat[]>([])
     const quotation = ref<QuotationResultApi>({
@@ -55,6 +58,30 @@ export const useQuotationStore = defineStore('quotation', () => {
                 quotation
             )
             return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    const getConfig = async (userId: string) => {
+        try {
+            const response = await getRequest<
+                ApiResult<QuotationConfigResultApi[]>
+            >(`${controller}/config?userId=${userId}`)
+            configs.value = response.data.reduce((acc, item) => {
+                const existingGroup = acc.find(
+                    (group) => group.level === item.level
+                )
+                if (existingGroup) {
+                    existingGroup.configs.push(item)
+                } else {
+                    acc.push({
+                        level: item.level,
+                        configs: [item],
+                    })
+                }
+                return acc
+            }, [] as QuotationConfigWithLevel[])
         } catch (error) {
             throw error
         }
@@ -111,6 +138,23 @@ export const useQuotationStore = defineStore('quotation', () => {
         fetchQuotationsState,
         updateQuotationItem,
         quotationStat,
+        configs,
+        configPromotion: computed(() => {
+            return configs.value.find(
+                (x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS
+            )!
+        }),
+        configBill: computed(() => {
+            return configs.value.find(
+                (x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LISTS
+            )!
+        }),
+        configItem: computed(() => {
+            return configs.value.find(
+                (x) => x.level == CONFIG_TYPE.QUOTATION_ITEMS
+            )!
+        }),
+        getConfig,
         quotation,
     }
 })

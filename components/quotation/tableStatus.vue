@@ -151,7 +151,8 @@
                                         : ''
                                 }}{{
                                     itemCategories.find(
-                                        (x) => x.value == item.category
+                                        (x) =>
+                                            x.value == (item as any).categoryId
                                     )?.title || 'ไม่พบ'
                                 }}/{{ item.gram }}/{{ item.color }}/{{
                                     item.page
@@ -261,7 +262,7 @@ const filterQuotation = computed(() => {
             ) || status.length === 0
     )
     result = result.filter(
-        (x) => category == null || x.items.some((s) => s.category == category)
+        (x) => category == null || x.items.some((s) => s.categoryId == category)
     )
     result = result.filter(
         (x) => color == null || x.items.some((s) => s.color == color)

@@ -1,9 +1,7 @@
 import { ITEM_CATEGORY, STATUS, TYPE } from '~/models/enum/enum'
 import { ITEM_OPTION, PATTERN } from '~/models/object/object'
-import type {
-    TemplateCategory,
-    TemplateCategoryGroup,
-} from '~/models/share/share'
+import type { PriceOption } from '~/models/price/price'
+import type { TemplateCategory } from '~/models/share/share'
 
 export function useShare() {
     const itemStatuses = ref([
@@ -340,160 +338,38 @@ export function useShare() {
     ])
 
     function flattenTemplateCategoryGroup(
-        groups: TemplateCategoryGroup[]
+        groups: PriceOption[],
+        categoryId: number
     ): TemplateCategory[] {
-        return groups.flatMap((group) => {
-            const { gram, category, pagePriceMap, line, color, plate } = group
-
-            const effectiveLine = line.length > 0 ? line : ['']
-
-            return pagePriceMap.flatMap(({ page, price }) =>
-                effectiveLine.map((line, index) => ({
-                    gram,
-                    line,
-                    page,
-                    price,
-                    category,
-                    color: color?.[index] ?? undefined,
-                    plate: plate?.[index] ?? undefined,
-                }))
-            )
+        return groups.flatMap<TemplateCategory>((group) => {
+            const { gram, page, pattern, price, color } = group
+            const effectiveLine = pattern.length > 0 ? pattern : ['']
+            return effectiveLine.map<TemplateCategory>((line, index) => ({
+                gram,
+                line,
+                page,
+                price,
+                categoryId,
+                color: color,
+            }))
         })
     }
 
-    const templateItems = ref<TemplateCategoryGroup[]>([
-        {
-            gram: 55,
-            line: [PATTERN.SINGLE, PATTERN.HALF, PATTERN.FIVE_LINES],
-            pagePriceMap: [
-                { page: 20, price: 3.4 },
-                { page: 30, price: 4.2 },
-                { page: 40, price: 5.1 },
-                { page: 60, price: 7.5 },
-                { page: 80, price: 10 },
-            ],
-            category: ITEM_CATEGORY.CUT_NINE,
-        },
-        {
-            gram: 55,
-            line: [PATTERN.TABLE],
-            pagePriceMap: [
-                { page: 20, price: 3.5 },
-                { page: 30, price: 4.3 },
-                { page: 40, price: 5.3 },
-                { page: 60, price: 7.9 },
-                { page: 80, price: 10.4 },
-            ],
-            category: ITEM_CATEGORY.CUT_NINE,
-        },
-        {
-            gram: 60,
-            line: [
-                PATTERN.SINGLE,
-                PATTERN.HALF,
-                PATTERN.FIVE_LINES,
-                PATTERN.TABLE,
-            ],
-            pagePriceMap: [
-                { page: 20, price: 3.6 },
-                { page: 30, price: 4.4 },
-                { page: 40, price: 5.3 },
-                { page: 60, price: 7.8 },
-                { page: 80, price: 10.4 },
-            ],
-            category: ITEM_CATEGORY.CUT_NINE,
-        },
-        {
-            gram: 60,
-            line: [PATTERN.TABLE],
-            pagePriceMap: [
-                { page: 20, price: 3.7 },
-                { page: 30, price: 4.5 },
-                { page: 40, price: 5.5 },
-                { page: 60, price: 8.2 },
-                { page: 80, price: 10.8 },
-            ],
-            category: ITEM_CATEGORY.CUT_NINE,
-        },
-        {
-            gram: 60,
-            line: [PATTERN.PRINTING],
-            pagePriceMap: [
-                { page: 30, price: 5.5 },
-                { page: 40, price: 6.5 },
-            ],
-            category: ITEM_CATEGORY.CUT_NINE,
-        },
-        {
-            gram: 55,
-            line: [],
-            pagePriceMap: [
-                { page: 60, price: 18.5 },
-                { page: 70, price: 20.5 },
-                { page: 80, price: 22.5 },
-            ],
-            category: ITEM_CATEGORY.ACCOUNTING,
-        },
-        {
-            gram: 100,
-            line: [PATTERN.SMALL_DRAWING],
-            pagePriceMap: [{ page: 10, price: 4 }],
-            category: ITEM_CATEGORY.DRAWING,
-        },
-        {
-            gram: 100,
-            line: [PATTERN.LARGE_DRAWING],
-            pagePriceMap: [{ page: 10, price: 7.25 }],
-            category: ITEM_CATEGORY.DRAWING,
-        },
-        {
-            gram: 120,
-            line: [PATTERN.SMALL_DRAWING],
-            pagePriceMap: [{ page: 10, price: 4.5 }],
-            category: ITEM_CATEGORY.DRAWING,
-        },
-        {
-            gram: 120,
-            line: [PATTERN.LARGE_DRAWING],
-            pagePriceMap: [{ page: 10, price: 8.25 }],
-            category: ITEM_CATEGORY.DRAWING,
-        },
-        {
-            gram: 150,
-            line: [PATTERN.SMALL_DRAWING],
-            pagePriceMap: [{ page: 10, price: 5 }],
-            category: ITEM_CATEGORY.DRAWING,
-        },
-        {
-            gram: 150,
-            line: [PATTERN.LARGE_DRAWING],
-            pagePriceMap: [{ page: 10, price: 9.25 }],
-            category: ITEM_CATEGORY.DRAWING,
-        },
-        {
-            gram: 60,
-            line: [PATTERN.REPORT],
-            pagePriceMap: [
-                { page: 20, price: 8 },
-                { page: 30, price: 10 },
-                { page: 40, price: 12 },
-                { page: 50, price: 14 },
-            ],
-            category: ITEM_CATEGORY.REPORT,
-        },
-    ])
     function getListDropdownTemplate(
-        category: ITEM_CATEGORY
+        items: PriceOption[],
+        categoryId: number
     ): { label: string; value: TemplateCategory }[] {
-        return flattenTemplateCategoryGroup(templateItems.value)
-            .filter((f) => f.category == category)
-            .map((x) => {
-                const line = lines.value.find((c) => c.value == x.line)
-                return {
-                    label: `${x.gram} แกรม ${!line ? '' : `เส้น ${line.title}`} จำนวน ${x.page} หน้า ราคา ${x.price} บาท`,
-                    value: x,
-                }
-            })
+        return flattenTemplateCategoryGroup(items, categoryId).map((x) => {
+            const line = lines.value.find((c) => c.value == x.line)
+            return {
+                label: `${x.gram} แกรม ${!line ? '' : `เส้น ${line.title}`} จำนวน ${x.page} หน้า ราคา ${x.price} บาท`,
+                value: x,
+            }
+        })
+    }
+    function ceilToTwoDecimals(number: number) {
+        const factor = Math.pow(10, 2)
+        return Math.ceil(number * factor) / factor
     }
     return {
         itemStatuses,
@@ -514,5 +390,6 @@ export function useShare() {
         getListDropdownTemplate,
         itemOptions,
         itemCategories,
+        ceilToTwoDecimals,
     }
 }

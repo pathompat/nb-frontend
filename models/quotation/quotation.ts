@@ -1,4 +1,4 @@
-import type { PRINTSTATUS, LINE, PLATE } from '../enum/enum'
+import type { PRINTSTATUS, LINE, PLATE, CONFIG_TYPE } from '../enum/enum'
 import type { Production } from '../production/production'
 
 export interface QuotationStat {
@@ -22,6 +22,7 @@ export interface Quotation
 export interface QuotationForm extends Omit<CreateQuotation, 'items'> {
     items: CreateQuotationItem[]
 }
+
 export interface CreateQuotation {
     userId: string
     schoolId: string
@@ -42,8 +43,8 @@ export interface QuotationResultApi extends Quotation {
 }
 export interface QuotationItem {
     id?: String
-    category: string
-    options: string
+    categoryId: number
+    configIds: number[]
     hasReference: boolean
     quantity: number
     status: string
@@ -58,6 +59,17 @@ export interface QuotationItem {
 export interface CreateQuotationItem
     extends Omit<Partial<QuotationItem>, 'status'> {
     id?: string
+    perUnitPrice: number
+}
+
+export interface ColorTypeCounter {
+    color: string
+    count: number
+}
+
+export interface CategoryColorCounter {
+    categoryId: number
+    colorCount: ColorTypeCounter[]
 }
 export interface FilterQuotation {
     school: string[]
@@ -69,5 +81,69 @@ export interface FilterQuotation {
     color: string | null
     pattern: string | null
     gram: number | null
-    category: string | null
+    category: number | null
 }
+export interface QuotationConfigWithLevel {
+    level: string
+    configs: QuotationConfig[]
+}
+export interface QuotationConfig extends QuotationConfigResultApi {}
+export interface QuotationConfigResultApi {
+    categoryId: number
+    categoryKey: string
+    comparator: string
+    compareValue: number
+    description: string
+    fixedChargePrice: number
+    hasFixedChange: false
+    id: number
+    key: string
+    label: string | null
+    level: string
+    tierIds: number[]
+    type: string
+    unit: string
+    value: number
+    color: string | null
+}
+
+export type CalculateConfig =
+    | {
+          level: CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS
+          calculate: (
+              listItem: CreateQuotationItem[],
+              configs: QuotationConfig[],
+              usedConfigs: QuotationConfig[]
+          ) => {
+              listItem: CreateQuotationItem[]
+              configs: QuotationConfig[]
+              configsByItem: QuotationConfig[]
+              total: number
+          }
+      }
+    | {
+          level: CONFIG_TYPE.QUOTATION_ITEMS
+          calculate: (
+              listItem: CreateQuotationItem[],
+              configs: QuotationConfig[]
+          ) => {
+              listItem: CreateQuotationItem[]
+              configs: QuotationConfig[]
+              configsByItem: QuotationConfig[]
+              defaultItem: CreateQuotationItem[]
+          }
+      }
+    | {
+          level: CONFIG_TYPE.QUOTATION_ADDITIONAL_LISTS
+          calculate: (
+              listItem: CreateQuotationItem[],
+              configs: QuotationConfig[],
+              oldUsedConfigs: QuotationConfig[],
+              total: number
+          ) => {
+              listItem: CreateQuotationItem[]
+              configs: QuotationConfig[]
+              configsByItem: QuotationConfig[]
+              total: number
+          }
+      }

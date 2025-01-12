@@ -38,7 +38,8 @@ export function quotationPdf() {
                                         (item, index) => [
                                             index + 1,
                                             itemCategories.value.find(
-                                                (x) => x.value == item.category
+                                                (x) =>
+                                                    x.value == item.categoryId
                                             )?.title ||
                                                 'ไม่พบ' +
                                                     '/' +

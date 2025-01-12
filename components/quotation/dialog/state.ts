@@ -1,5 +1,8 @@
-import type { ITEM_CATEGORY } from '~/models/enum/enum'
-import type { CreateQuotationItem } from '~/models/quotation/quotation'
+import { CONFIG_TYPE, type ITEM_CATEGORY } from '~/models/enum/enum'
+import type {
+    CreateQuotationItem,
+    QuotationConfig,
+} from '~/models/quotation/quotation'
 import type { TemplateCategory } from '~/models/share/share'
 export type DialogItemQuotationState = ReturnType<
     typeof dialogItemQuotationState
@@ -10,21 +13,26 @@ export default function dialogItemQuotationState() {
     const dialogOpen = ref(false)
     const quotationItem = ref<CreateQuotationItem>(defaultQuotationItem())
     const loading = ref(false)
-    // const { prices } = storeToRefs(usePriceStore())
-    // const { handlerByItemPriceRef } = useCalculatorQuotationItem()
+    const { calculateWithConfigs } = useCalculatorQuotationItem()
+    const quotationStore = useQuotationStore()
+    const { configItem } = storeToRefs(quotationStore)
     const templateSelect = ref<TemplateCategory | null>(null)
-
-    let resolveFn: ((user: CreateQuotationItem) => void) | null = null
+    interface ItemResolve {
+        item: CreateQuotationItem
+    }
+    let resolveFn: ((result: ItemResolve) => void) | null = null
     function action() {
         if (!resolveFn) return
         loading.value = true
-        resolveFn(quotationItem.value)
+        resolveFn({
+            item: quotationItem.value,
+        })
     }
     function defaultQuotationItem(): CreateQuotationItem {
         return {
             id: undefined,
-            category: undefined,
-            options: undefined,
+            categoryId: undefined,
+            configIds: [],
             plate: undefined,
             gram: undefined,
             color: undefined,
@@ -33,15 +41,16 @@ export default function dialogItemQuotationState() {
             hasReference: false,
             quantity: undefined,
             price: undefined,
+            perUnitPrice: 0,
         }
     }
-    const openDialog = async (id?: string): Promise<CreateQuotationItem> => {
+    const openDialog = async (id?: string): Promise<ItemResolve> => {
         quotationItem.value = defaultQuotationItem()
         templateSelect.value = null
         loading.value = true
         dialogOpen.value = true
         loading.value = false
-        return new Promise<CreateQuotationItem>((resolve) => {
+        return new Promise<ItemResolve>((resolve) => {
             resolveFn = resolve
         })
     }
@@ -57,7 +66,7 @@ export default function dialogItemQuotationState() {
             quotationItem.value = item
             dialogOpen.value = true
             templateSelect.value = null
-            return new Promise<CreateQuotationItem>((resolve) => {
+            return new Promise<ItemResolve>((resolve) => {
                 resolveFn = resolve
             })
         },

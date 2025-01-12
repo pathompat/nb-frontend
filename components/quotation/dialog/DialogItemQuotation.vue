@@ -31,14 +31,14 @@
                                     :disabled="!openFormEdit"
                                     label="ประเภท"
                                     :rules="emtpyRule"
-                                    :model-value="quotationItem.category"
+                                    :model-value="quotationItem.categoryId"
                                     @update:model-value="
                                         (e) => {
-                                            quotationItem.category = e
+                                            quotationItem.categoryId = e
                                             templateSelect = null
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -75,7 +75,7 @@
                                             quotationItem.plate = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -96,7 +96,7 @@
                                             quotationItem.gram = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -116,7 +116,7 @@
                                             quotationItem.color = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -135,7 +135,7 @@
                                             quotationItem.page = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -157,7 +157,7 @@
                                             quotationItem.pattern = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -194,7 +194,7 @@
                                             quotationItem.hasReference = e
                                             handlerByItemPriceRef(
                                                 quotationItem,
-                                                prices
+                                                priceCategories
                                             )
                                         }
                                     "
@@ -211,15 +211,7 @@
                                     item-value="value"
                                     label="เพิ่มเติม"
                                     :hide-details="false"
-                                    :model-value="
-                                        quotationItem.options?.split(',') ||
-                                        null
-                                    "
-                                    @update:model-value="
-                                        quotationItem.options = $event
-                                            .filter((x) => x != '')
-                                            .join(',')
-                                    "
+                                    v-model="quotationItem.configIds"
                                 ></v-select>
                             </v-col>
                         </v-row>
@@ -275,35 +267,52 @@
     >
 </template>
 <script lang="ts" setup>
-import { ITEM_CATEGORY, SYSTEM_ROLE } from '~/models/enum/enum'
+import { SYSTEM_ROLE } from '~/models/enum/enum'
 import { dialogItemQuotationStateSymbol } from './state'
-import type { TemplateCategory } from '~/models/share/share'
 import { PATTERN } from '~/models/object/object'
 const valid = ref(false)
 const { userProfile } = useAuthStore()
 const { emtpyRule, morethanZeroRule } = useRules()
-const {
-    plates,
-    lines,
-    grams,
-    pages,
-    colors,
-    itemOptions,
-    itemCategories,
-    getListDropdownTemplate,
-} = useShare()
+const quotationStore = useQuotationStore()
+const { configItem } = storeToRefs(quotationStore)
+const itemOptions = computed(() => {
+    return (configItem.value.configs || [])
+        .filter((x) => x.categoryId == quotationItem.value.categoryId)
+        .map((x) => {
+            return {
+                title: x.label,
+                value: x.id,
+            }
+        })
+})
+const { plates, lines, grams, pages, colors, getListDropdownTemplate } =
+    useShare()
 const openFormEdit = computed(
     () => quotationItem.value.id === '' || quotationItem.value.id == undefined
 )
 
 const { handlerByItemPriceRef } = useCalculatorQuotationItem()
 const { prices } = storeToRefs(usePriceStore())
+const itemCategories = computed(() => {
+    return prices.value.map((x) => {
+        return {
+            title: x.categoryName,
+            value: x.categoryId,
+        }
+    })
+})
+const priceCategories = computed(() => {
+    return (
+        prices.value.find((x) => x.categoryId == quotationItem.value.categoryId)
+            ?.options || []
+    )
+})
 const { action, dialogOpen, quotationItem, loading, templateSelect } = inject(
     dialogItemQuotationStateSymbol
 )!
 watch(templateSelect, (value) => {
     if (value) {
-        const { category, gram, line, page, price, color, plate } = value
+        const { gram, line, page, price } = value
         if (line) {
             quotationItem.value.pattern = value.line
         }
@@ -313,9 +322,11 @@ watch(templateSelect, (value) => {
     }
 })
 const itemSuggestions = computed(() => {
-    if (!quotationItem.value.category) return []
+    if (!quotationItem.value.categoryId) return []
     return getListDropdownTemplate(
-        quotationItem.value.category as ITEM_CATEGORY
+        prices.value.find((x) => x.categoryId == quotationItem.value.categoryId)
+            ?.options || [],
+        quotationItem.value.categoryId!
     )
 })
 </script>
