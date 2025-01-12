@@ -370,6 +370,10 @@ export function useShare() {
             }
         })
     }
+    function ceilToTwoDecimals(number: number) {
+        const factor = Math.pow(10, 2)
+        return Math.ceil(number * factor) / factor
+    }
     return {
         itemStatuses,
         tiers,
@@ -389,5 +393,6 @@ export function useShare() {
         getListDropdownTemplate,
         itemOptions,
         itemCategories,
+        ceilToTwoDecimals,
     }
 }

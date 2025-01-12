@@ -15,7 +15,7 @@ import type {
 } from '~/models/quotation/quotation'
 
 export default function useCalculatorQuotationItem() {
-    const { getListDropdownTemplate } = useShare()
+    const { getListDropdownTemplate, ceilToTwoDecimals } = useShare()
     const comparatorActions = [
         {
             oparator: COMPARATOR.EQUAL,
@@ -77,8 +77,8 @@ export default function useCalculatorQuotationItem() {
                     })
                 } else {
                     color.count =
-                        Math.ceil(parseFloat(`${color.count}`)) +
-                        Math.ceil(parseFloat(`${item.quantity!}`))
+                        ceilToTwoDecimals(parseFloat(`${color.count}`)) +
+                        ceilToTwoDecimals(parseFloat(`${item.quantity!}`))
                 }
             }
 
@@ -94,7 +94,7 @@ export default function useCalculatorQuotationItem() {
                 usedConfigs: QuotationConfig[]
             ) => {
                 const allItemRequest = listItem.reduce((acc, item) => {
-                    return Math.ceil(
+                    return ceilToTwoDecimals(
                         parseFloat(`${acc}`) + parseFloat(`${item.quantity}`)!
                     )
                 }, 0)
@@ -182,7 +182,7 @@ export default function useCalculatorQuotationItem() {
                     }
                     result.push({
                         ...item,
-                        perUnitPrice: Math.ceil(unitPerprice),
+                        perUnitPrice: ceilToTwoDecimals(unitPerprice),
                     })
                 }
 

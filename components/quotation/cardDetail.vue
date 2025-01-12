@@ -332,7 +332,7 @@
                                         </td>
                                         <td>
                                             {{
-                                                Math.ceil(
+                                                ceilToTwoDecimals(
                                                     parseFloat(
                                                         `${item.price! + item.perUnitPrice}`
                                                     ) *
@@ -425,7 +425,7 @@
                                             </div>
                                             <div>
                                                 {{
-                                                    Math.ceil(
+                                                    ceilToTwoDecimals(
                                                         group.fixedChargePrice *
                                                             group.qty
                                                     )
@@ -499,11 +499,13 @@
                                     <p>รวม :</p>
                                     <div>
                                         {{
-                                            Math.ceil(
+                                            ceilToTwoDecimals(
                                                 total -
-                                                    parseFloat(`${discount}`) +
                                                     parseFloat(
-                                                        `${additionPrice}`
+                                                        `${discount || 0}`
+                                                    ) +
+                                                    parseFloat(
+                                                        `${additionPrice || 0}`
                                                     )
                                             )
                                         }}
@@ -619,7 +621,7 @@ const quotationForm = ref<QuotationForm>({
 const discount = ref(0)
 const additionPrice = ref(0)
 
-const { plates, lines } = useShare()
+const { plates, lines, ceilToTwoDecimals } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
 const schoolStore = useSchoolStore()
@@ -825,7 +827,7 @@ function calculateAllItem() {
         )
     configUsed.value.push(...resultBill.configs)
     quotationForm.value.items = resultBill.listItem
-    total.value = Math.ceil(resultBill.total)
+    total.value = ceilToTwoDecimals(resultBill.total)
 }
 async function addItem() {
     try {
