@@ -43,7 +43,7 @@ export interface QuotationResultApi extends Quotation {
 }
 export interface QuotationItem {
     id?: String
-    category: number
+    categoryId: number
     options: string
     hasReference: boolean
     quantity: number
@@ -59,7 +59,7 @@ export interface QuotationItem {
 export interface CreateQuotationItem
     extends Omit<Partial<QuotationItem>, 'status'> {
     id?: string
-    perUnitPrice?: number
+    perUnitPrice: number
 }
 
 export interface FilterQuotation {
@@ -103,7 +103,7 @@ export type CalculateConfig =
           calculate: (
               listItem: CreateQuotationItem[],
               configs: QuotationConfig[],
-              total: number
+              usedConfigs: QuotationConfig[]
           ) => {
               listItem: CreateQuotationItem[]
               configs: QuotationConfig[]
@@ -120,6 +120,7 @@ export type CalculateConfig =
               listItem: CreateQuotationItem[]
               configs: QuotationConfig[]
               configsByItem: QuotationConfig[]
+              defaultItem: CreateQuotationItem[]
           }
       }
     | {

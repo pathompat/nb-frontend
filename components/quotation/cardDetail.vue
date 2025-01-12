@@ -20,7 +20,10 @@
                             ><v-row>
                                 <v-col cols="4">
                                     <v-select
-                                        v-if="!quotationForm.userId"
+                                        v-if="
+                                            !quotationForm.userId ||
+                                            quotationForm.status == undefined
+                                        "
                                         data-testid="quotation-user-field"
                                         item-title="username"
                                         item-value="id"
@@ -221,7 +224,8 @@
                                             {{
                                                 itemCategories.find(
                                                     (x) =>
-                                                        x.value == item.category
+                                                        x.value ==
+                                                        item.categoryId
                                                 )?.title || 'ไม่พบ'
                                             }}
                                         </td>
@@ -306,34 +310,34 @@
                                         </td>
                                         <td>
                                             <div>
-                                                {{ item.price }}
+                                                {{
+                                                    item.price! +
+                                                    item.perUnitPrice
+                                                }}
                                             </div>
                                         </td>
                                         <td>
                                             <span
                                                 :style="`color:${
-                                                    item.perUnitPrice !=
-                                                    undefined
-                                                        ? item.perUnitPrice >= 0
-                                                            ? 'green'
-                                                            : 'red'
-                                                        : ''
+                                                    item.perUnitPrice >= 0
+                                                        ? 'green'
+                                                        : 'red'
                                                 }`"
                                             >
                                                 {{
-                                                    item.perUnitPrice !=
-                                                    undefined
-                                                        ? (item.perUnitPrice >=
-                                                          0
-                                                              ? '+'
-                                                              : '') +
-                                                          item.perUnitPrice
-                                                        : ''
+                                                    (item.perUnitPrice >= 0
+                                                        ? '+'
+                                                        : '') +
+                                                    item.perUnitPrice
                                                 }}
                                             </span>
                                         </td>
                                         <td>
-                                            {{ item.price! * item.quantity! }}
+                                            {{
+                                                parseFloat(
+                                                    `${item.price! + item.perUnitPrice}`
+                                                ) * parseInt(`${item.quantity}`)
+                                            }}
                                         </td>
                                         <td
                                             v-if="
@@ -382,13 +386,26 @@
                                 </template>
                             </v-data-table>
                             <div
-                                v-for="config in configUsed
-                                    .flatMap((x) => x.items)
+                                v-for="group in configUsed
                                     .filter(
                                         (x) =>
-                                            x.level !=
+                                            x.level !==
                                             CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS
-                                    )"
+                                    )
+                                    .reduce((acc: any, x) => {
+                                        const existingItem = acc.find(
+                                            (item: any) => item.key === x.key
+                                        )
+                                        if (existingItem) {
+                                            existingItem.qty += 1
+                                        } else {
+                                            acc.push({
+                                                ...x,
+                                                qty: 1,
+                                            })
+                                        }
+                                        return acc
+                                    }, [])"
                             >
                                 <v-divider class="my-4"></v-divider>
                                 <div
@@ -397,9 +414,18 @@
                                     <div
                                         class="w-25 d-flex justify-space-between"
                                     >
-                                        <div>{{ config.label }} :</div>
-                                        <div>
-                                            {{ config.fixedChargePrice }}
+                                        <div>{{ group.label }}</div>
+                                        <div class="d-flex ga-4">
+                                            <div>
+                                                {{ group.fixedChargePrice }} x
+                                                {{ group.qty }} =
+                                            </div>
+                                            <div>
+                                                {{
+                                                    group.fixedChargePrice *
+                                                    group.qty
+                                                }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -518,6 +544,7 @@ import dialogItemQuotationState, {
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
 import type {
+    CreateQuotationItem,
     QuotationConfig,
     QuotationForm,
     QuotationItem,
@@ -548,7 +575,6 @@ const quotationForm = ref<QuotationForm>({
     schoolName: '',
     remark: '',
 })
-
 const discount = ref(0)
 const { plates, lines } = useShare()
 const loading = ref(false)
@@ -556,11 +582,11 @@ const userStore = useUserStore()
 const schoolStore = useSchoolStore()
 const priceStore = usePriceStore()
 const total = ref(0)
-const { emtpyRule, noEmojiOrEscapeCharacterRule, phoneNumberRule } = useRules()
+const { emtpyRule, noEmojiOrEscapeCharacterRule } = useRules()
 const { users } = storeToRefs(userStore)
 const { schools } = storeToRefs(schoolStore)
 const { prices } = storeToRefs(priceStore)
-const configUsed = ref<{ index: number; items: QuotationConfig[] }[]>([])
+const configUsed = ref<QuotationConfig[]>([])
 const { handlerRowItemsPriceRef, calculateWithConfigs } =
     useCalculatorQuotationItem()
 const { userProfile } = useAuthStore()
@@ -635,8 +661,6 @@ const updateCustomDate = (value: boolean | null) => {
     if (!value) quotationForm.value.appointmentAt = null
 }
 const updateCustomerSelect = async (value: string) => {
-    // console.log(quotationForm.value.userId)
-
     quotationForm.value.userId = value
     await quotationStore.getConfig(quotationForm.value.userId)
     await Promise.all([
@@ -677,7 +701,7 @@ async function create() {
                 price: +item.price!,
                 status: '',
                 options: item.options,
-                category: item.category,
+                category: item.categoryId,
                 printedContent: item.printedContent,
             }
         })
@@ -685,7 +709,7 @@ async function create() {
             ...quotationForm.value,
             items: items.map<QuotationItem>((x) => {
                 return {
-                    category: x.category!,
+                    categoryId: x.category!,
                     color: x.color!,
                     gram: x.gram!,
                     hasReference: x.hasReference!,
@@ -727,45 +751,41 @@ async function createNewSchool() {
     stateDialogCreateNewSchool.closeLoading()
 }
 function calculateAllItem() {
-    total.value = quotationForm.value.items.reduce(
-        (sum, item) => sum + item.price! * item.quantity!,
-        0
-    )
+    configUsed.value = []
+    const level = CONFIG_TYPE.QUOTATION_ITEMS
+    const resultItem = calculateWithConfigs
+        .find((x) => x.level == level)
+        ?.calculate(quotationForm.value.items, configItem.value.configs || [])
+    if (!resultItem) return
+    configUsed.value.push(...resultItem.configs)
+    quotationForm.value.items = resultItem.listItem!
     const resultBill = calculateWithConfigs
         .find((x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LISTS)!
         .calculate(
             quotationForm.value.items,
-            [
-                ...configBill.value.configs,
-                ...configUsed.value.flatMap((x) => x.items),
-            ],
-            total.value
+            [...configBill.value.configs, ...configUsed.value],
+            quotationForm.value.items!.reduce(
+                (sum, item) => sum + item.price! * item.quantity!,
+                0
+            )
         )
-    configUsed.value.push({
-        index: -1,
-        items: resultBill.configs,
-    })
-    total.value = resultBill.total
+    configUsed.value.push(...resultBill.configs)
     const resultPromotion = calculateWithConfigs
         .find((x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS)!
         .calculate(
             quotationForm.value.items,
             configPromotion.value.configs,
-            total.value
+            configUsed.value
         )
     quotationForm.value.items = resultPromotion.listItem
     total.value = resultPromotion.total
 }
 async function addItem() {
     try {
-        const { config, item } = await statedialogItemQuotation.openDialog()
+        const { item } = await statedialogItemQuotation.openDialog()
         item.id = undefined
         statedialogItemQuotation.closeDialog()
         quotationForm.value.items.push(item)
-        configUsed.value.push({
-            index: quotationForm.value.items.length - 1,
-            items: config,
-        })
         calculateAllItem()
     } catch (e) {
         toast.error(`${e}`)
@@ -773,23 +793,15 @@ async function addItem() {
 }
 async function editItem(index: number) {
     try {
-        console.log(configUsed.value)
         const resultEdit = await statedialogItemQuotation.setItemAndOpen(
             JSON.parse(JSON.stringify(quotationForm.value.items[index]))
         )
         statedialogItemQuotation.closeDialog()
         if (resultEdit) {
             const editItem = resultEdit.item
-            configUsed.value = configUsed.value.filter((x) => x.index != -1)
-            configUsed.value[index] = {
-                index: index!,
-                items: resultEdit.config,
-            }
-            console.log(configUsed.value)
 
             quotationForm.value.items[index] = editItem
             calculateAllItem()
-            console.log(configUsed.value)
             if (editItem.id == undefined) {
                 return
             }
@@ -811,11 +823,9 @@ async function editItem(index: number) {
     }
 }
 function deleteItem(index: number) {
-    quotationForm.value.items = quotationForm.value.items
-        .filter((_, i) => i !== index)
-        .map((item, newIndex) => {
-            return { ...item, index: newIndex }
-        })
+    quotationForm.value.items = quotationForm.value.items.filter(
+        (_, i) => i !== index
+    )
 }
 
 async function approve() {
@@ -864,7 +874,7 @@ onMounted(async () => {
             items: quotation.value.items.map((x) => {
                 return {
                     id: `${x.id}`,
-                    category: x.category,
+                    category: x.categoryId,
                     color: x.color,
                     gram: x.gram,
                     hasReference: x.hasReference,
@@ -875,6 +885,7 @@ onMounted(async () => {
                     price: x.price!,
                     quantity: x.quantity!,
                     printedContent: x.printedContent,
+                    perUnitPrice: 0,
                 }
             }),
             userName: quotation.value.userName,
@@ -897,6 +908,7 @@ onMounted(async () => {
             return
         }
         await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
+        calculateAllItem()
         emit('status', quotationForm.value.status!)
     } catch (error) {
         toast.error(`${error}`)

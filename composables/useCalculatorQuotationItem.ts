@@ -53,9 +53,8 @@ export default function useCalculatorQuotationItem() {
             calculate: (
                 listItem: CreateQuotationItem[],
                 configs: QuotationConfig[],
-                total: number
+                usedConfigs: QuotationConfig[]
             ) => {
-                let totalPrice = total
                 const allItemRequest = listItem.reduce((acc, item) => {
                     return (
                         parseFloat(`${acc}`) + parseFloat(`${item.quantity}`)!
@@ -64,8 +63,6 @@ export default function useCalculatorQuotationItem() {
                 configs = configs.sort((a, b) => {
                     return b.compareValue - a.compareValue
                 })
-                console.log('s')
-
                 const promotionUse = configs.find((config) => {
                     const comparer = comparatorActions.find(
                         (action) => action.oparator == config.comparator
@@ -77,7 +74,17 @@ export default function useCalculatorQuotationItem() {
                 })
                 if (!promotionUse) {
                     return {
-                        total: totalPrice,
+                        total:
+                            listItem.reduce((acc, item) => {
+                                return (
+                                    acc +
+                                    item.quantity! *
+                                        (item.price! + item.perUnitPrice)
+                                )
+                            }, 0) +
+                            usedConfigs.reduce((acc, item) => {
+                                return acc + item.fixedChargePrice
+                            }, 0),
                         configs: [],
                         configsByItem: [],
                         listItem: listItem,
@@ -92,9 +99,17 @@ export default function useCalculatorQuotationItem() {
                     return item
                 })
                 return {
-                    total: listItem.reduce((acc, item) => {
-                        return acc + item.quantity! * item.price!
-                    }, 0),
+                    total:
+                        newListItem.reduce((acc, item) => {
+                            return (
+                                acc +
+                                item.quantity! *
+                                    (item.price! + item.perUnitPrice)
+                            )
+                        }, 0) +
+                        usedConfigs.reduce((acc, item) => {
+                            return acc + item.fixedChargePrice
+                        }, 0),
                     configs: [],
                     configsByItem: [],
                     listItem: newListItem,
@@ -130,9 +145,6 @@ export default function useCalculatorQuotationItem() {
                     result.push({
                         ...item,
                         perUnitPrice: unitPerprice,
-                        price:
-                            parseFloat(`${item.price}`)! +
-                            parseFloat(`${unitPerprice}`),
                     })
                 }
 
@@ -140,6 +152,7 @@ export default function useCalculatorQuotationItem() {
                     listItem: result,
                     configs: lastBillConfig,
                     configsByItem: configs,
+                    defaultItem: listItem,
                 }
                 //                 (qty * value) + (changeprice)
                 // special case

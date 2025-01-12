@@ -16,30 +16,23 @@ export default function dialogItemQuotationState() {
     const { calculateWithConfigs } = useCalculatorQuotationItem()
     const quotationStore = useQuotationStore()
     const { configItem } = storeToRefs(quotationStore)
-    // const { prices } = storeToRefs(usePriceStore())
-    // const { handlerByItemPriceRef } = useCalculatorQuotationItem()
     const templateSelect = ref<TemplateCategory | null>(null)
     interface ItemResolve {
         item: CreateQuotationItem
-        config: QuotationConfig[]
     }
     let resolveFn: ((result: ItemResolve) => void) | null = null
     function action() {
         if (!resolveFn) return
         loading.value = true
-        const level = CONFIG_TYPE.QUOTATION_ITEMS
-        const res = calculateWithConfigs
-            .find((x) => x.level == level)
-            ?.calculate([quotationItem.value], configItem.value.configs || [])
+
         resolveFn({
-            item: res?.listItem[0] || quotationItem.value,
-            config: res?.configs || [],
+            item: quotationItem.value,
         })
     }
     function defaultQuotationItem(): CreateQuotationItem {
         return {
             id: undefined,
-            category: undefined,
+            categoryId: undefined,
             options: undefined,
             plate: undefined,
             gram: undefined,
@@ -58,10 +51,7 @@ export default function dialogItemQuotationState() {
         loading.value = true
         dialogOpen.value = true
         loading.value = false
-        return new Promise<{
-            item: CreateQuotationItem
-            config: QuotationConfig[]
-        }>((resolve) => {
+        return new Promise<ItemResolve>((resolve) => {
             resolveFn = resolve
         })
     }

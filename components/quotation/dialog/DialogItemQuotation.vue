@@ -31,10 +31,10 @@
                                     :disabled="!openFormEdit"
                                     label="ประเภท"
                                     :rules="emtpyRule"
-                                    :model-value="quotationItem.category"
+                                    :model-value="quotationItem.categoryId"
                                     @update:model-value="
                                         (e) => {
-                                            quotationItem.category = e
+                                            quotationItem.categoryId = e
                                             templateSelect = null
                                             handlerByItemPriceRef(
                                                 quotationItem,
@@ -285,7 +285,7 @@ const quotationStore = useQuotationStore()
 const { configItem } = storeToRefs(quotationStore)
 const itemOptions = computed(() => {
     return configItem.value.configs
-        .filter((x) => x.categoryId == quotationItem.value.category)
+        .filter((x) => x.categoryId == quotationItem.value.categoryId)
         .map((x) => {
             return {
                 title: x.label,
@@ -325,11 +325,11 @@ watch(templateSelect, (value) => {
     }
 })
 const itemSuggestions = computed(() => {
-    if (!quotationItem.value.category) return []
+    if (!quotationItem.value.categoryId) return []
     return getListDropdownTemplate(
-        prices.value.find((x) => x.categoryId == quotationItem.value.category)
+        prices.value.find((x) => x.categoryId == quotationItem.value.categoryId)
             ?.options || [],
-        quotationItem.value.category!
+        quotationItem.value.categoryId!
     )
 })
 </script>
