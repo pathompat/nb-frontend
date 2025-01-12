@@ -44,7 +44,7 @@ export interface QuotationResultApi extends Quotation {
 export interface QuotationItem {
     id?: String
     categoryId: number
-    options: string
+    configIds: number[]
     hasReference: boolean
     quantity: number
     status: string
@@ -62,6 +62,15 @@ export interface CreateQuotationItem
     perUnitPrice: number
 }
 
+export interface ColorTypeCounter {
+    color: string
+    count: number
+}
+
+export interface CategoryColorCounter {
+    categoryId: number
+    colorCount: ColorTypeCounter[]
+}
 export interface FilterQuotation {
     school: string[]
     store: string[]
@@ -83,18 +92,19 @@ export interface QuotationConfigResultApi {
     categoryId: number
     categoryKey: string
     comparator: string
-    compareValue: 2000
+    compareValue: number
     description: string
-    fixedChargePrice: 0
+    fixedChargePrice: number
     hasFixedChange: false
     id: number
     key: string
     label: string | null
     level: string
-    tierIds: [1, 2, 3, 4]
+    tierIds: number[]
     type: string
     unit: string
     value: number
+    color: string | null
 }
 
 export type CalculateConfig =
@@ -128,6 +138,7 @@ export type CalculateConfig =
           calculate: (
               listItem: CreateQuotationItem[],
               configs: QuotationConfig[],
+              oldUsedConfigs: QuotationConfig[],
               total: number
           ) => {
               listItem: CreateQuotationItem[]

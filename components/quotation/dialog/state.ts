@@ -24,7 +24,6 @@ export default function dialogItemQuotationState() {
     function action() {
         if (!resolveFn) return
         loading.value = true
-
         resolveFn({
             item: quotationItem.value,
         })
@@ -33,7 +32,7 @@ export default function dialogItemQuotationState() {
         return {
             id: undefined,
             categoryId: undefined,
-            options: undefined,
+            configIds: [],
             plate: undefined,
             gram: undefined,
             color: undefined,

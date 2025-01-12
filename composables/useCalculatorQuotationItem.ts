@@ -6,11 +6,12 @@ import {
     CONFIG_TYPE_CATEGORY,
     type ITEM_CATEGORY,
 } from '~/models/enum/enum'
-import type { Price } from '~/models/price/price'
+import type { Price, PriceOption } from '~/models/price/price'
 import type {
     CreateQuotationItem,
     CalculateConfig,
     QuotationConfig,
+    CategoryColorCounter,
 } from '~/models/quotation/quotation'
 
 export default function useCalculatorQuotationItem() {
@@ -47,6 +48,43 @@ export default function useCalculatorQuotationItem() {
             },
         },
     ]
+    function aggregateColorCounter(
+        listItem: CreateQuotationItem[]
+    ): CategoryColorCounter[] {
+        return listItem.reduce((acc, item) => {
+            const category = acc.find(
+                (x: any) => x.categoryId === item.categoryId
+            )
+
+            if (!category) {
+                acc.push({
+                    categoryId: item.categoryId!,
+                    colorCount: [
+                        {
+                            color: item.color!,
+                            count: item.quantity!,
+                        },
+                    ],
+                })
+            } else {
+                const color = category.colorCount.find(
+                    (x: any) => x.color === item.color
+                )
+                if (!color) {
+                    category.colorCount.push({
+                        color: item.color!,
+                        count: item.quantity!,
+                    })
+                } else {
+                    color.count =
+                        Math.ceil(parseFloat(`${color.count}`)) +
+                        Math.ceil(parseFloat(`${item.quantity!}`))
+                }
+            }
+
+            return acc
+        }, [] as CategoryColorCounter[])
+    }
     const calculateWithConfigs: CalculateConfig[] = [
         {
             level: CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS,
@@ -56,7 +94,7 @@ export default function useCalculatorQuotationItem() {
                 usedConfigs: QuotationConfig[]
             ) => {
                 const allItemRequest = listItem.reduce((acc, item) => {
-                    return (
+                    return Math.ceil(
                         parseFloat(`${acc}`) + parseFloat(`${item.quantity}`)!
                     )
                 }, 0)
@@ -125,10 +163,10 @@ export default function useCalculatorQuotationItem() {
                 const result: CreateQuotationItem[] = []
                 const lastBillConfig: QuotationConfig[] = []
                 for (const item of listItem) {
-                    const options = item.options?.split(',') || []
+                    const options = item.configIds || []
                     let unitPerprice = 0
                     for (const option of options) {
-                        const config = configs.find((x) => x.key == option)
+                        const config = configs.find((x) => x.id == option)
                         if (config) {
                             if (config.type == CONFIG_TYPE_CATEGORY.DISCOUNT) {
                                 unitPerprice -= config.value
@@ -144,7 +182,7 @@ export default function useCalculatorQuotationItem() {
                     }
                     result.push({
                         ...item,
-                        perUnitPrice: unitPerprice,
+                        perUnitPrice: Math.ceil(unitPerprice),
                     })
                 }
 
@@ -165,10 +203,39 @@ export default function useCalculatorQuotationItem() {
             calculate: (
                 listItem: CreateQuotationItem[],
                 configs: QuotationConfig[],
+                oldUsedConfigs: QuotationConfig[],
                 total: number
             ) => {
                 let totalPrice = total
-                for (const config of configs) {
+                const configUsed: QuotationConfig[] = []
+                const colorCounter: CategoryColorCounter[] =
+                    aggregateColorCounter(listItem)
+                for (const color of colorCounter) {
+                    const configCategory = configs.filter(
+                        (x) => x.categoryId == color.categoryId
+                    )
+                    for (const config of configCategory) {
+                        const colorCount = color.colorCount.find(
+                            (x) =>
+                                x.color == config.color &&
+                                comparatorActions
+                                    .find(
+                                        (action) =>
+                                            action.oparator == config.comparator
+                                    )!
+                                    .action(x.count, config.compareValue)
+                        )
+                        if (colorCount) {
+                            configUsed.push(config)
+                            if (config.type == CONFIG_TYPE_CATEGORY.DISCOUNT) {
+                                totalPrice -= config.fixedChargePrice
+                            } else {
+                                totalPrice += config.fixedChargePrice
+                            }
+                        }
+                    }
+                }
+                for (const config of oldUsedConfigs) {
                     if (config.type == CONFIG_TYPE_CATEGORY.DISCOUNT) {
                         totalPrice -= config.fixedChargePrice
                     } else {
@@ -177,9 +244,9 @@ export default function useCalculatorQuotationItem() {
                 }
                 return {
                     total: totalPrice,
-                    configs: [],
+                    configs: configUsed,
                     configsByItem: [],
-                    listItem: [],
+                    listItem: listItem,
                 }
                 // item by
             },
@@ -207,22 +274,23 @@ export default function useCalculatorQuotationItem() {
         oldItems = JSON.parse(JSON.stringify(newValue))
         return true
     }
-    function handlerByItemPriceRef(item: CreateQuotationItem, prices: Price[]) {
-        // const itemsPrices = getListDropdownTemplate(
-        //     item.category as ITEM_CATEGORY
-        // )
-        // const itemExsist = itemsPrices.find(
-        //     (x) =>
-        //         x.value.gram == item.gram &&
-        //         x.value.page == item.page &&
-        //         x.value.line == item.pattern
-        // )
-        // if (itemExsist) {
-        //     item.price = itemExsist.value.price
-        // } else {
-        //     item.price = 0
-        // }
-        // return
+    function handlerByItemPriceRef(
+        item: CreateQuotationItem,
+        prices: PriceOption[]
+    ) {
+        const itemsPrices = getListDropdownTemplate(prices, item.categoryId!)
+        const itemExsist = itemsPrices.find(
+            (x) =>
+                x.value.gram == item.gram &&
+                x.value.page == item.page &&
+                x.value.line == item.pattern
+        )
+        if (itemExsist) {
+            item.price = itemExsist.value.price
+        } else {
+            item.price = 0
+        }
+        return
         // if (!item.gram || !item.color || !item.page || !item.pattern) {
         //     return
         // }
@@ -245,9 +313,9 @@ export default function useCalculatorQuotationItem() {
         prices: Price[]
     ) {
         return
-        newValue.forEach((item, index) => {
-            handlerByItemPriceRef(item, prices)
-        })
+        // newValue.forEach((item, index) => {
+        //     handlerByItemPriceRef(item, prices)
+        // })
     }
 
     return {

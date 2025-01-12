@@ -286,16 +286,12 @@
                                         <td>
                                             <div>
                                                 {{
-                                                    (
-                                                        item.options?.split(
-                                                            ','
-                                                        ) || []
-                                                    )
+                                                    (item.configIds || [])
                                                         .map(
                                                             (h) =>
                                                                 configItem?.configs.find(
                                                                     (x) =>
-                                                                        x.key ==
+                                                                        x.id ==
                                                                         h
                                                                 )?.label
                                                         )
@@ -319,9 +315,11 @@
                                         <td>
                                             <span
                                                 :style="`color:${
-                                                    item.perUnitPrice >= 0
-                                                        ? 'green'
-                                                        : 'red'
+                                                    item.perUnitPrice == 0
+                                                        ? 'black'
+                                                        : item.perUnitPrice >= 0
+                                                          ? 'green'
+                                                          : 'red'
                                                 }`"
                                             >
                                                 {{
@@ -334,9 +332,14 @@
                                         </td>
                                         <td>
                                             {{
-                                                parseFloat(
-                                                    `${item.price! + item.perUnitPrice}`
-                                                ) * parseInt(`${item.quantity}`)
+                                                Math.ceil(
+                                                    parseFloat(
+                                                        `${item.price! + item.perUnitPrice}`
+                                                    ) *
+                                                        parseInt(
+                                                            `${item.quantity}`
+                                                        )
+                                                )
                                             }}
                                         </td>
                                         <td
@@ -422,8 +425,10 @@
                                             </div>
                                             <div>
                                                 {{
-                                                    group.fixedChargePrice *
-                                                    group.qty
+                                                    Math.ceil(
+                                                        group.fixedChargePrice *
+                                                            group.qty
+                                                    )
                                                 }}
                                             </div>
                                         </div>
@@ -458,6 +463,34 @@
                                 </div>
                             </div>
 
+                            <div v-if="userProfile?.role === SYSTEM_ROLE.ADMIN">
+                                <v-divider class="my-4"></v-divider>
+                                <div
+                                    class="d-flex w-100 justify-end align-center text-h6"
+                                >
+                                    <div
+                                        class="w-25 d-flex justify-space-between"
+                                    >
+                                        <p>ส่วนเพิ่มท้ายบิล:</p>
+                                        <div>
+                                            <v-text-field
+                                                data-testid="quotation-discount-field"
+                                                :disabled="
+                                                    userProfile?.role !==
+                                                        SYSTEM_ROLE.ADMIN ||
+                                                    quotationForm.status ==
+                                                        STATUS.APPROVED ||
+                                                    quotationForm.status ==
+                                                        STATUS.CANCELED
+                                                "
+                                                v-model="additionPrice"
+                                                type="number"
+                                            ></v-text-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <v-divider class="my-4"></v-divider>
                             <div
                                 class="d-flex w-100 justify-end align-center text-h6"
@@ -465,7 +498,15 @@
                                 <div class="w-25 d-flex justify-space-between">
                                     <p>รวม :</p>
                                     <div>
-                                        {{ total - discount }}
+                                        {{
+                                            Math.ceil(
+                                                total -
+                                                    parseFloat(`${discount}`) +
+                                                    parseFloat(
+                                                        `${additionPrice}`
+                                                    )
+                                            )
+                                        }}
                                     </div>
                                 </div>
                             </div>
@@ -576,6 +617,8 @@ const quotationForm = ref<QuotationForm>({
     remark: '',
 })
 const discount = ref(0)
+const additionPrice = ref(0)
+
 const { plates, lines } = useShare()
 const loading = ref(false)
 const userStore = useUserStore()
@@ -700,7 +743,7 @@ async function create() {
                 quantity: +item.quantity!,
                 price: +item.price!,
                 status: '',
-                options: item.options,
+                configIds: item.configIds,
                 category: item.categoryId,
                 printedContent: item.printedContent,
             }
@@ -713,7 +756,7 @@ async function create() {
                     color: x.color!,
                     gram: x.gram!,
                     hasReference: x.hasReference!,
-                    options: x.options || '',
+                    configIds: x.configIds || [],
                     page: x.page!,
                     pattern: x.pattern!,
                     plate: x.plate!,
@@ -757,19 +800,9 @@ function calculateAllItem() {
         .find((x) => x.level == level)
         ?.calculate(quotationForm.value.items, configItem.value.configs || [])
     if (!resultItem) return
+    console.log('s')
     configUsed.value.push(...resultItem.configs)
     quotationForm.value.items = resultItem.listItem!
-    const resultBill = calculateWithConfigs
-        .find((x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LISTS)!
-        .calculate(
-            quotationForm.value.items,
-            [...configBill.value.configs, ...configUsed.value],
-            quotationForm.value.items!.reduce(
-                (sum, item) => sum + item.price! * item.quantity!,
-                0
-            )
-        )
-    configUsed.value.push(...resultBill.configs)
     const resultPromotion = calculateWithConfigs
         .find((x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LIST_ITEMS)!
         .calculate(
@@ -778,7 +811,21 @@ function calculateAllItem() {
             configUsed.value
         )
     quotationForm.value.items = resultPromotion.listItem
-    total.value = resultPromotion.total
+    const resultBill = calculateWithConfigs
+        .find((x) => x.level == CONFIG_TYPE.QUOTATION_ADDITIONAL_LISTS)!
+        .calculate(
+            quotationForm.value.items,
+            configBill.value.configs,
+            configUsed.value,
+            quotationForm.value.items!.reduce(
+                (sum, item) =>
+                    sum + (item.price! + item.perUnitPrice) * item.quantity!,
+                0
+            )
+        )
+    configUsed.value.push(...resultBill.configs)
+    quotationForm.value.items = resultBill.listItem
+    total.value = Math.ceil(resultBill.total)
 }
 async function addItem() {
     try {
@@ -826,6 +873,7 @@ function deleteItem(index: number) {
     quotationForm.value.items = quotationForm.value.items.filter(
         (_, i) => i !== index
     )
+    calculateAllItem()
 }
 
 async function approve() {
@@ -856,15 +904,14 @@ async function cancel() {
     }
 }
 onMounted(async () => {
-    if (userProfile?.role !== SYSTEM_ROLE.ADMIN) {
-        quotationForm.value.userId = userProfile!.id
-        await getSchools()
-        return
+    await userStore.fetchAllUsers()
+
+    if (userProfile?.role !== SYSTEM_ROLE.ADMIN && props.id == undefined) {
+        await updateCustomerSelect(userProfile!.id)
+        // return
     }
     loading.value = true
     try {
-        await userStore.fetchAllUsers()
-
         if (!props.id) return
         await getQuotationById(props.id)
         quotationForm.value = {
@@ -878,7 +925,7 @@ onMounted(async () => {
                     color: x.color,
                     gram: x.gram,
                     hasReference: x.hasReference,
-                    options: x.options,
+                    configIds: x.configIds,
                     page: x.page,
                     pattern: x.pattern,
                     plate: x.plate,
@@ -908,6 +955,7 @@ onMounted(async () => {
             return
         }
         await priceStore.fetchAllPricesWithCustomer(quotationForm.value.userId)
+        await quotationStore.getConfig(quotationForm.value.userId)
         calculateAllItem()
         emit('status', quotationForm.value.status!)
     } catch (error) {
