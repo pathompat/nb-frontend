@@ -114,7 +114,7 @@ export default function useCalculatorQuotationItem() {
                                 return (
                                     acc +
                                     item.quantity! *
-                                        (item.price! + item.perUnitPrice)
+                                        (item.price! + item.charge!)
                                 )
                             }, 0) +
                             usedConfigs.reduce((acc, item) => {
@@ -127,9 +127,9 @@ export default function useCalculatorQuotationItem() {
                 }
                 const newListItem = listItem.map((item) => {
                     if (promotionUse.type == CONFIG_TYPE_CATEGORY.DISCOUNT) {
-                        item.perUnitPrice! -= promotionUse.value
+                        item.charge! -= promotionUse.value
                     } else {
-                        item.perUnitPrice! += promotionUse.value
+                        item.charge! += promotionUse.value
                     }
                     return item
                 })
@@ -138,8 +138,7 @@ export default function useCalculatorQuotationItem() {
                         newListItem.reduce((acc, item) => {
                             return (
                                 acc +
-                                item.quantity! *
-                                    (item.price! + item.perUnitPrice)
+                                item.quantity! * (item.price! + item.charge!)
                             )
                         }, 0) +
                         usedConfigs.reduce((acc, item) => {
@@ -179,7 +178,7 @@ export default function useCalculatorQuotationItem() {
                     }
                     result.push({
                         ...item,
-                        perUnitPrice: ceilToTwoDecimals(unitPerprice),
+                        charge: ceilToTwoDecimals(unitPerprice),
                     })
                 }
 

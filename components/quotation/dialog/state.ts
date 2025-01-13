@@ -1,8 +1,4 @@
-import { CONFIG_TYPE, type ITEM_CATEGORY } from '~/models/enum/enum'
-import type {
-    CreateQuotationItem,
-    QuotationConfig,
-} from '~/models/quotation/quotation'
+import type { CreateQuotationItem } from '~/models/quotation/quotation'
 import type { TemplateCategory } from '~/models/share/share'
 export type DialogItemQuotationState = ReturnType<
     typeof dialogItemQuotationState
@@ -13,9 +9,6 @@ export default function dialogItemQuotationState() {
     const dialogOpen = ref(false)
     const quotationItem = ref<CreateQuotationItem>(defaultQuotationItem())
     const loading = ref(false)
-    const { calculateWithConfigs } = useCalculatorQuotationItem()
-    const quotationStore = useQuotationStore()
-    const { configItem } = storeToRefs(quotationStore)
     const templateSelect = ref<TemplateCategory | null>(null)
     interface ItemResolve {
         item: CreateQuotationItem
@@ -41,7 +34,7 @@ export default function dialogItemQuotationState() {
             hasReference: false,
             quantity: undefined,
             price: undefined,
-            perUnitPrice: 0,
+            charge: 0,
         }
     }
     const openDialog = async (id?: string): Promise<ItemResolve> => {
