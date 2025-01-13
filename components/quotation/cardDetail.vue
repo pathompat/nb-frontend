@@ -310,27 +310,24 @@
                                                     parseFloat(
                                                         `${item.price!}`
                                                     ) +
-                                                    parseFloat(
-                                                        `${item.perUnitPrice}`
-                                                    )
+                                                    parseFloat(`${item.charge}`)
                                                 }}
                                             </div>
                                         </td>
                                         <td>
                                             <span
                                                 :style="`color:${
-                                                    item.perUnitPrice == 0
+                                                    item.charge == 0
                                                         ? 'black'
-                                                        : item.perUnitPrice >= 0
+                                                        : item.charge! >= 0
                                                           ? 'green'
                                                           : 'red'
                                                 }`"
                                             >
                                                 {{
-                                                    (item.perUnitPrice >= 0
+                                                    (item.charge! >= 0
                                                         ? '+'
-                                                        : '') +
-                                                    item.perUnitPrice
+                                                        : '') + item.charge
                                                 }}
                                             </span>
                                         </td>
@@ -338,7 +335,7 @@
                                             {{
                                                 ceilToTwoDecimals(
                                                     parseFloat(
-                                                        `${item.price! + item.perUnitPrice}`
+                                                        `${item.price! + item.charge!}`
                                                     ) *
                                                         parseInt(
                                                             `${item.quantity}`
@@ -579,7 +576,12 @@
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
-import { CONFIG_TYPE, STATUS, SYSTEM_ROLE } from '~/models/enum/enum'
+import {
+    CONFIG_SPECIAL,
+    CONFIG_TYPE,
+    STATUS,
+    SYSTEM_ROLE,
+} from '~/models/enum/enum'
 import dialogSchoolState, {
     dialogSchoolStateSymbol,
 } from '@/components/school/dialog/state'
@@ -593,6 +595,7 @@ import { useSchoolStore } from '~/stores/school'
 import type {
     CreateQuotationItem,
     QuotationConfig,
+    QuotationConfigWithLevel,
     QuotationForm,
     QuotationItem,
 } from '~/models/quotation/quotation'
@@ -621,6 +624,7 @@ const quotationForm = ref<QuotationForm>({
     userName: '',
     schoolName: '',
     remark: '',
+    additionalLists: [],
 })
 const discount = ref(0)
 const additionPrice = ref(0)
@@ -738,6 +742,26 @@ async function getSchools() {
 }
 async function create() {
     try {
+        quotationForm.value.additionalLists.push(
+            ...configBill.value.configs
+                .filter(
+                    (x) =>
+                        x.key === CONFIG_SPECIAL.Q_ADDITIONAL_CHARGES ||
+                        x.key === CONFIG_SPECIAL.Q_ADDITIONAL_DISCOUNT
+                )
+                .map((x) => {
+                    return {
+                        id: x.id,
+                        key: x.key,
+                        quotationConfigId: x.id,
+                        value:
+                            x.key === CONFIG_SPECIAL.Q_ADDITIONAL_DISCOUNT
+                                ? parseFloat(`${discount.value}`)
+                                : parseFloat(`${additionPrice.value}`),
+                    }
+                })
+        )
+
         const items = quotationForm.value.items.map((item) => {
             return {
                 plate: item.plate,
@@ -752,6 +776,7 @@ async function create() {
                 configIds: item.configIds,
                 categoryId: item.categoryId,
                 printedContent: item.printedContent,
+                change: item.charge,
             }
         })
         const { id } = await createQuotation({
@@ -770,13 +795,13 @@ async function create() {
                     quantity: +x.quantity!,
                     price: +x.price!,
                     printedContent: x.printedContent,
+                    charge: x.change!,
                 }
             }),
             schoolTelephone: quotationForm.value.schoolTelephone.trim(),
             appointmentAt: quotationForm.value.appointmentAt
                 ? new Date(quotationForm.value.appointmentAt)
                 : null,
-
             dueDateAt: new Date(quotationForm.value.dueDateAt!),
         })
         toast.success('บันทึกสำเร็จ')
@@ -784,6 +809,7 @@ async function create() {
             path: `/quotation/${id}`,
         })
     } catch (ex) {
+        console.log(ex)
         toast.error(`${ex}`)
     }
 }
@@ -806,7 +832,6 @@ function calculateAllItem() {
         .find((x) => x.level == level)
         ?.calculate(quotationForm.value.items, configItem.value.configs || [])
     if (!resultItem) return
-    console.log('s')
     configUsed.value.push(...resultItem.configs)
     quotationForm.value.items = resultItem.listItem!
     const resultPromotion = calculateWithConfigs
@@ -825,11 +850,19 @@ function calculateAllItem() {
             configUsed.value,
             quotationForm.value.items!.reduce(
                 (sum, item) =>
-                    sum + (item.price! + item.perUnitPrice) * item.quantity!,
+                    sum + (item.price! + item.charge!) * item.quantity!,
                 0
             )
         )
     configUsed.value.push(...resultBill.configs)
+    quotation.value.additionalLists = configUsed.value.map((x) => {
+        return {
+            id: x.id,
+            key: x.key,
+            quotationConfigId: x.id,
+            value: x.value,
+        }
+    })
     quotationForm.value.items = resultBill.listItem
     total.value = ceilToTwoDecimals(resultBill.total)
 }
@@ -884,6 +917,51 @@ function deleteItem(index: number) {
 
 async function approve() {
     try {
+        if (
+            !quotation.value.additionalLists.find(
+                (x) => x.key === CONFIG_SPECIAL.Q_ADDITIONAL_DISCOUNT
+            )
+        ) {
+            const discountConfig = configBill.value.configs.find(
+                (x) => x.key === CONFIG_SPECIAL.Q_ADDITIONAL_DISCOUNT
+            )
+            if (discountConfig) {
+                discountConfig!.value = parseFloat(`${discount?.value || 0}`)
+                quotation.value.additionalLists.push({
+                    id: discountConfig?.id,
+                    key: discountConfig?.key,
+                    quotationConfigId: discountConfig?.id,
+                    value: discountConfig?.value,
+                })
+            }
+        } else {
+            quotation.value.additionalLists.find(
+                (x) => x.key === CONFIG_SPECIAL.Q_ADDITIONAL_DISCOUNT
+            )!.value = parseFloat(`${discount?.value || 0}`)
+        }
+        if (
+            !quotation.value.additionalLists.find(
+                (x) => x.key === CONFIG_SPECIAL.Q_ADDITIONAL_CHARGES
+            )
+        ) {
+            const changeConfig = configBill.value.configs.find(
+                (x) => x.key === CONFIG_SPECIAL.Q_ADDITIONAL_CHARGES
+            )
+            if (changeConfig) {
+                changeConfig!.value = parseFloat(`${additionPrice?.value || 0}`)
+                quotation.value.additionalLists.push({
+                    id: changeConfig?.id,
+                    key: changeConfig?.key,
+                    quotationConfigId: changeConfig?.id,
+                    value: changeConfig?.value,
+                })
+            }
+        } else {
+            quotation.value.additionalLists.find(
+                (x) => x.key === CONFIG_SPECIAL.Q_ADDITIONAL_CHARGES
+            )!.value = parseFloat(`${additionPrice?.value || 0}`)
+        }
+
         const { productionId } = await quotationStore.updateQuotation(
             `${quotation.value.id!}`,
             {
@@ -919,11 +997,12 @@ onMounted(async () => {
     try {
         if (!props.id) return
         await getQuotationById(props.id)
+
         quotationForm.value = {
             userId: quotation.value.userId,
             schoolId: quotation.value.schoolId,
             remark: quotation.value.remark,
-            items: quotation.value.items.map((x) => {
+            items: quotation.value.items.map((x: QuotationItem) => {
                 return {
                     id: `${x.id}`,
                     categoryId: x.categoryId,
@@ -938,8 +1017,10 @@ onMounted(async () => {
                     quantity: x.quantity!,
                     printedContent: x.printedContent,
                     perUnitPrice: 0,
+                    charge: x.charge,
                 }
             }),
+            additionalLists: quotation.value.additionalLists,
             userName: quotation.value.userName,
             status: quotation.value.status,
             schoolAddress: quotation.value.schoolAddress,
@@ -951,6 +1032,14 @@ onMounted(async () => {
                 : null,
             dueDateAt: new Date(quotation.value.dueDateAt!),
         }
+        discount.value =
+            quotation.value.additionalLists.find(
+                (x) => x.key === CONFIG_SPECIAL.Q_ADDITIONAL_DISCOUNT
+            )?.value || 0
+        additionPrice.value =
+            quotation.value.additionalLists.find(
+                (x) => x.key === CONFIG_SPECIAL.Q_ADDITIONAL_CHARGES
+            )?.value || 0
         await getSchools()
         if (
             userProfile!.role !== SYSTEM_ROLE.ADMIN &&

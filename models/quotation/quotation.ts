@@ -6,6 +6,12 @@ export interface QuotationStat {
     count: number
     type: string
 }
+export interface AdditionalLists {
+    id: number
+    key: string
+    quotationConfigId: number
+    value: number
+}
 export interface Quotation
     extends Omit<CreateQuotation, 'dueDateAt' | 'appointmentAt'> {
     id: number
@@ -33,6 +39,7 @@ export interface CreateQuotation {
     appointmentAt: Date | null
     schoolContactName: string
     items: QuotationItem[]
+    additionalLists: AdditionalLists[]
     remark?: string
     userName?: string
     status?: string
@@ -45,6 +52,7 @@ export interface QuotationItem {
     id?: String
     categoryId: number
     configIds: number[]
+    charge: number
     hasReference: boolean
     quantity: number
     status: string
@@ -59,7 +67,6 @@ export interface QuotationItem {
 export interface CreateQuotationItem
     extends Omit<Partial<QuotationItem>, 'status'> {
     id?: string
-    perUnitPrice: number
 }
 
 export interface ColorTypeCounter {
