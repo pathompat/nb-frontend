@@ -164,11 +164,6 @@ export default function useCalculatorQuotationItem() {
                     for (const option of options) {
                         const config = configs.find((x) => x.id == option)
                         if (config) {
-                            // if (config.type == CONFIG_TYPE_CATEGORY.DISCOUNT) {
-                            //     unitPerprice -= config.value
-                            // } else {
-                            //     unitPerprice += config.value
-                            // }
                             if (config.hasFixedChange) {
                                 if (config.comparator != COMPARATOR.MERGE) {
                                     const comparer = comparatorActions.find(
@@ -190,6 +185,11 @@ export default function useCalculatorQuotationItem() {
                                 } else {
                                     lastBillConfig.push(config)
                                 }
+                            }
+                            if (config.type == CONFIG_TYPE_CATEGORY.DISCOUNT) {
+                                unitPerprice -= config.value
+                            } else {
+                                unitPerprice += config.value
                             }
                         } else {
                             result.push(item)
