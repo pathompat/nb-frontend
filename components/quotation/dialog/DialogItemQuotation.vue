@@ -108,7 +108,7 @@
                                     :rules="emtpyRule"
                                     label="สี"
                                     :disabled="!openFormEdit"
-                                    :items="colors"
+                                    :items="colorOption"
                                     :hide-details="false"
                                     :model-value="quotationItem.color"
                                     @update:model-value="
@@ -284,6 +284,14 @@ const itemOptions = computed(() => {
                 value: x.id,
             }
         })
+})
+const colorOption = computed(() => {
+    if (!quotationItem.value.categoryId) return []
+    if (quotationItem.value.categoryId == 1)
+        return colors.value.filter((x) => x != '0')
+    if (quotationItem.value.categoryId == 2)
+        return colors.value.filter((x) => x != '2')
+    return colors.value
 })
 const { plates, lines, grams, pages, colors, getListDropdownTemplate } =
     useShare()
