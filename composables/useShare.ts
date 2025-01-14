@@ -212,6 +212,10 @@ export function useShare() {
             value: PATTERN.ACCOUNTING,
         },
         {
+            title: 'ปกสิน้ำตาล',
+            value: PATTERN.COVER_BROWN,
+        },
+        {
             title: 'ผลงาน',
             value: PATTERN.WORK,
         },

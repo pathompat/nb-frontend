@@ -35,6 +35,12 @@
                                     @update:model-value="
                                         (e) => {
                                             quotationItem.categoryId = e
+                                            quotationItem.plate = undefined
+                                            quotationItem.gram = undefined
+                                            quotationItem.color = undefined
+                                            quotationItem.page = undefined
+                                            quotationItem.configIds = []
+                                            quotationItem.pattern = undefined
                                             templateSelect = null
                                             handlerByItemPriceRef(
                                                 quotationItem,
