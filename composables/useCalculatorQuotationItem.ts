@@ -233,8 +233,8 @@ export default function useCalculatorQuotationItem() {
                                     .find(
                                         (action) =>
                                             action.oparator == config.comparator
-                                    )!
-                                    .action(x.count, config.compareValue)
+                                    )
+                                    ?.action(x.count, config.compareValue)
                         )
                         if (colorCount) {
                             configUsed.push(config)

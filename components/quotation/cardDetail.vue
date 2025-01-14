@@ -875,11 +875,13 @@ async function addItem() {
     try {
         const { item } = await statedialogItemQuotation.openDialog()
         item.id = undefined
+        console.log('s')
         statedialogItemQuotation.closeDialog()
         quotationForm.value.items.push(item)
         calculateAllItem()
     } catch (e) {
         toast.error(`${e}`)
+        console.log(e)
     }
 }
 async function editItem(index: number) {
