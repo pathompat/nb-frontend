@@ -115,6 +115,13 @@
                             <template #item.id="{ index }">
                                 {{ index + 1 }}
                             </template>
+                            <template #item.categoryId="{ item }">
+                                {{
+                                    itemCategories.find(
+                                        (x) => x.value == item.categoryId
+                                    )?.title || ''
+                                }}
+                            </template>
                             <template #item.hasPlan="{ item }">
                                 <v-checkbox
                                     disabled
@@ -124,13 +131,25 @@
                             <template #item.plate="{ item }">
                                 {{
                                     plates.find((p) => p.value === item.plate)
-                                        ?.title || 'ไม่พบ'
+                                        ?.title || ''
                                 }}
                             </template>
                             <template #item.line="{ item }">
                                 {{
                                     lines.find((l) => l.value === item.pattern)
-                                        ?.title || 'ไม่พบ'
+                                        ?.title || ''
+                                }}
+                            </template>
+                            <template #item.configIds="{ item }">
+                                {{
+                                    item.configIds
+                                        .map(
+                                            (x) =>
+                                                configItem.configs?.find(
+                                                    (l) => l.id == x
+                                                )?.label || ''
+                                        )
+                                        .join(', ')
                                 }}
                             </template>
                             <template #item.status="{ item }">
@@ -271,10 +290,24 @@ const {
 } = useShare()
 const authStore = useAuthStore()
 const { userProfile } = storeToRefs(authStore)
+const quotationStore = useQuotationStore()
+const { getConfig } = quotationStore
+const { configItem } = storeToRefs(quotationStore)
 const dialogConfirm = ref<InstanceType<typeof DialogConfirm> | null>(null)
 const toast = inject(toastPluginSymbol)!
 const { getProductionById, updateProductionItem } = useProductionStore()
 const loading = ref(false)
+const priceStore = usePriceStore()
+const { prices } = storeToRefs(priceStore)
+
+const itemCategories = computed(() => {
+    return prices.value.map((x) => {
+        return {
+            title: x.categoryName,
+            value: x.categoryId,
+        }
+    })
+})
 function defaultForm(): Partial<Production> {
     return {
         schoolName: '',
@@ -287,17 +320,21 @@ function defaultForm(): Partial<Production> {
 const userStore = useUserStore()
 const { users } = storeToRefs(userStore)
 const production = ref<Partial<Production>>(defaultForm())
+
 const headers = ref([
     { title: 'ลำดับ', key: 'id' },
+    { title: 'ประเภท', key: 'categoryId' },
     { title: 'เพลท', key: 'plate' },
     { title: 'แกรม', key: 'gram' },
     { title: 'สี', key: 'color' },
     { title: 'แผ่น', key: 'page' },
     { title: 'เส้น', key: 'line' },
+    { title: 'เพิ่มเติม', key: 'configIds' },
+
     { title: 'เนื้อพิมพ์', key: 'printedContent' },
     { title: 'มีแบบ', key: 'hasPlan' },
 
-    { title: 'จำนวน', key: 'amount' },
+    { title: 'จำนวน', key: 'quantity' },
     { title: 'สถานะ', key: 'status' },
     { title: 'ดำเนินการ', key: 'action' },
 ])
@@ -345,6 +382,10 @@ onMounted(async () => {
         try {
             await userStore.fetchAllUsers()
             production.value = await getProductionById(`${props.id}`)
+            await getConfig(production.value.userId!)
+            await priceStore.fetchAllPricesWithCustomer(
+                production.value.userId!
+            )
             if (
                 userProfile.value!.role !== SYSTEM_ROLE.ADMIN &&
                 userProfile.value!.id !== production.value.userId

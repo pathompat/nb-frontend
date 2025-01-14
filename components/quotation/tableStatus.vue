@@ -147,18 +147,18 @@
                                     userProfile!.role == SYSTEM_ROLE.ADMIN
                                         ? (plates.find(
                                               (p) => p.value === item.plate
-                                          )?.title || 'ไม่พบ') + '/'
+                                          )?.title || '') + '/'
                                         : ''
                                 }}{{
                                     itemCategories.find(
                                         (x) =>
                                             x.value == (item as any).categoryId
-                                    )?.title || 'ไม่พบ'
+                                    )?.title || ''
                                 }}/{{ item.gram }}/{{ item.color }}/{{
                                     item.page
                                 }}/{{
                                     lines.find((l) => l.value === item.pattern)
-                                        ?.title || 'ไม่พบ'
+                                        ?.title || ''
                                 }}
                             </template>
                             <template #item.hasReference="{ item }">
