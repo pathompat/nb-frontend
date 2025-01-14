@@ -226,7 +226,7 @@
                                                     (x) =>
                                                         x.value ==
                                                         item.categoryId
-                                                )?.title || 'ไม่พบ'
+                                                )?.title || ''
                                             }}
                                         </td>
                                         <td
@@ -241,7 +241,7 @@
                                                         (p) =>
                                                             p.value ==
                                                             item.plate
-                                                    )?.title || 'ไม่พบ'
+                                                    )?.title || ''
                                                 }}
                                             </div>
                                         </td>
@@ -267,7 +267,7 @@
                                                         (l) =>
                                                             l.value ==
                                                             item.pattern
-                                                    )?.title || 'ไม่พบ'
+                                                    )?.title || ''
                                                 }}
                                             </div>
                                         </td>
@@ -295,7 +295,7 @@
                                                                         h
                                                                 )?.label
                                                         )
-                                                        .join(', ') || 'ไม่พบ'
+                                                        .join(', ') || ''
                                                 }}
                                             </div>
                                         </td>
@@ -573,6 +573,10 @@
     </main>
     <SchoolDialogSchool></SchoolDialogSchool>
     <QuotationDialogItemQuotation></QuotationDialogItemQuotation>
+    <utils-dialog-confirm ref="dialogConfirm">
+        <template #header>ต้องการดำเนินการต่อหรือไม่?</template>
+        <template #body>หากกดตกลงเเล้วจะมีการเปลี่ยนแปลงเกิดขึ้น</template>
+    </utils-dialog-confirm>
 </template>
 <script setup lang="ts">
 import { useQuotationStore } from '@/stores/quotation'
@@ -589,7 +593,6 @@ import dialogSchoolState, {
 import dialogItemQuotationState, {
     dialogItemQuotationStateSymbol,
 } from '@/components/quotation/dialog/state'
-
 import { toastPluginSymbol } from '~/plugins/toast'
 import { useSchoolStore } from '~/stores/school'
 import type {
@@ -602,6 +605,8 @@ import type {
 import { usePriceStore } from '~/stores/prices'
 const stateDialogCreateNewSchool = dialogSchoolState()
 const statedialogItemQuotation = dialogItemQuotationState()
+import DialogConfirm from '@/components/utils/DialogConfirm.vue'
+const dialogConfirm = ref<InstanceType<typeof DialogConfirm> | null>(null)
 
 provide(dialogSchoolStateSymbol, stateDialogCreateNewSchool)
 provide(dialogItemQuotationStateSymbol, statedialogItemQuotation)
@@ -917,6 +922,10 @@ function deleteItem(index: number) {
 
 async function approve() {
     try {
+        const result = await dialogConfirm.value!.openConfirm()
+        if (!result) {
+            return
+        }
         if (
             !quotation.value.additionalLists.find(
                 (x) => x.key === CONFIG_SPECIAL.Q_ADDITIONAL_DISCOUNT
@@ -977,6 +986,10 @@ async function approve() {
 }
 async function cancel() {
     try {
+        const result = await dialogConfirm.value!.openConfirm()
+        if (!result) {
+            return
+        }
         await quotationStore.updateQuotation(`${quotation.value.id!}`, {
             ...quotation.value,
             status: STATUS.CANCELED,

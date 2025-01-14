@@ -18,7 +18,8 @@ export interface Production {
 }
 export interface ProductionItem {
     id?: string
-    category: string
+    categoryId: number
+    configIds: number[]
     options: string
     hasReference: boolean
     quantity: number

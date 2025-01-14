@@ -29,7 +29,6 @@ export function quotationPdf() {
                                             text: 'ประเภท/แกรม/สี/แผ่น/เส้น',
                                             bold: true,
                                         },
-                                        { text: 'เพิ่มเติม', bold: true },
                                         { text: 'มีแบบ', bold: true },
                                         { text: 'จำนวน', bold: true },
                                         { text: 'ราคา', bold: true },
@@ -41,7 +40,7 @@ export function quotationPdf() {
                                                 (x) =>
                                                     x.value == item.categoryId
                                             )?.title ||
-                                                'ไม่พบ' +
+                                                '' +
                                                     '/' +
                                                     item.gram +
                                                     '/' +
@@ -54,8 +53,7 @@ export function quotationPdf() {
                                                             x.value ==
                                                             item.pattern
                                                     )?.title ||
-                                                'ไม่พบ',
-                                            item.options,
+                                                '',
                                             item.hasReference ? 'มี' : 'ไม่มี',
                                             item.quantity,
                                             item.price,
