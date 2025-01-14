@@ -98,7 +98,7 @@ export interface QuotationConfig extends QuotationConfigResultApi {}
 export interface QuotationConfigResultApi {
     categoryId: number
     categoryKey: string
-    comparator: string
+    comparator: string | null
     compareValue: number
     description: string
     fixedChargePrice: number

@@ -164,13 +164,32 @@ export default function useCalculatorQuotationItem() {
                     for (const option of options) {
                         const config = configs.find((x) => x.id == option)
                         if (config) {
+                            if (config.hasFixedChange) {
+                                if (config.comparator != COMPARATOR.MERGE) {
+                                    const comparer = comparatorActions.find(
+                                        (action) =>
+                                            action.oparator == config.comparator
+                                    )
+                                    if (comparer) {
+                                        if (
+                                            comparer?.action(
+                                                item.quantity!,
+                                                config.compareValue
+                                            )
+                                        ) {
+                                            unitPerprice += config.value
+                                        } else {
+                                            lastBillConfig.push(config)
+                                        }
+                                    }
+                                } else {
+                                    lastBillConfig.push(config)
+                                }
+                            }
                             if (config.type == CONFIG_TYPE_CATEGORY.DISCOUNT) {
                                 unitPerprice -= config.value
                             } else {
                                 unitPerprice += config.value
-                            }
-                            if (config.hasFixedChange) {
-                                lastBillConfig.push(config)
                             }
                         } else {
                             result.push(item)
@@ -214,8 +233,8 @@ export default function useCalculatorQuotationItem() {
                                     .find(
                                         (action) =>
                                             action.oparator == config.comparator
-                                    )!
-                                    .action(x.count, config.compareValue)
+                                    )
+                                    ?.action(x.count, config.compareValue)
                         )
                         if (colorCount) {
                             configUsed.push(config)

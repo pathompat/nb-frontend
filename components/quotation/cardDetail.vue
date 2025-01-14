@@ -880,6 +880,7 @@ async function addItem() {
         calculateAllItem()
     } catch (e) {
         toast.error(`${e}`)
+        console.log(e)
     }
 }
 async function editItem(index: number) {
