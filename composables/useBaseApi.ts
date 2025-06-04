@@ -6,13 +6,17 @@ export default function useBaseApi() {
         option: RequestInit
     ): Promise<T> => {
         try {
+            const config = useRuntimeConfig()
             const header = {
                 authorization:
                     'Bearer ' +
                     localStorage.getItem(LOCALSTORAGE_KEY.AUTH_TOKEN),
             }
             const options = { ...option, headers: header }
-            const result = await fetch('/api/' + url, options)
+            const result = await fetch(
+                `${config.public.baseUrl}/api/${url}`,
+                options
+            )
             if (!result.ok) {
                 if (result.status === 401) {
                     localStorage.removeItem(LOCALSTORAGE_KEY.AUTH_TOKEN)

@@ -14,11 +14,20 @@ export default defineNuxtConfig({
         },
         vuetifyOptions: './vuetify.config.ts',
     },
+    runtimeConfig: {
+        public: {
+            baseUrl:
+                process.env.NUXT_PUBLIC_BASE_URL ||
+                'https://api-test.tickbook.net',
+        },
+    },
     // config for dev local
     nitro: {
         devProxy: {
             '/api': {
-                target: process.env.BASE_URL || 'https://test.tickbook.net/api',
+                target:
+                    process.env.NUXT_PUBLIC_BASE_URL ||
+                    'https://api-test.tickbook.net',
                 changeOrigin: true,
             },
         },
